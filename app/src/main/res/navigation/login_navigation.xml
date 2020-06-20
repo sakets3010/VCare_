@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/login_navigation"
+    app:startDestination="@id/login_Sign_in_fragment">
+    <fragment
+        android:id="@+id/login_Sign_in_fragment"
+        android:name="com.example.vcare.Login_Sign_in_fragment"
+        android:label="fragment_login__sign_in_fragment"
+        tools:layout="@layout/fragment_login__sign_in_fragment" >
+        <action
+            android:id="@+id/action_login_Sign_in_fragment_to_login_enter_detail_fragment"
+            app:destination="@id/login_enter_detail_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/login_enter_detail_fragment"
+        android:name="com.example.vcare.Login_enter_detail_fragment"
+        android:label="fragment_login_enter_detail_fragment"
+        tools:layout="@layout/fragment_login_enter_detail_fragment" />
+</navigation>
