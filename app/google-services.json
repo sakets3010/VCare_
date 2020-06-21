@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "625114654328",
+    "firebase_url": "https://vcare-380f9.firebaseio.com",
+    "project_id": "vcare-380f9",
+    "storage_bucket": "vcare-380f9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:625114654328:android:0d459012f3491722c12f8d",
+        "android_client_info": {
+          "package_name": "com.example.vcare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "625114654328-bug93225kc9melbo5956mcvgqf7nfjig.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.vcare",
+            "certificate_hash": "0206bba2104801ab5d241570d11abfc298bd4855"
+          }
+        },
+        {
+          "client_id": "625114654328-sgp3o5s8mhh556iouisg1e6l1ceq3f5s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyByHVMWx7hKxvOV0iqU8BDAgJMvC5nxhBc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "625114654328-sgp3o5s8mhh556iouisg1e6l1ceq3f5s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

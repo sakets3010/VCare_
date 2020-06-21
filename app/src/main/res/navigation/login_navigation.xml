@@ -17,5 +17,9 @@
         android:id="@+id/login_enter_detail_fragment"
         android:name="com.example.vcare.Login_enter_detail_fragment"
         android:label="fragment_login_enter_detail_fragment"
-        tools:layout="@layout/fragment_login_enter_detail_fragment" />
+        tools:layout="@layout/fragment_login_enter_detail_fragment" >
+        <action
+            android:id="@+id/action_login_enter_detail_fragment_to_login_Sign_in_fragment"
+            app:destination="@id/login_Sign_in_fragment" />
+    </fragment>
 </navigation>
