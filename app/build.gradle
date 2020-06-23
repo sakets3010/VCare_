@@ -54,6 +54,9 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
     //for circular profiles
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+    //recyclerview
+    implementation "com.xwray:groupie:2.1.0"
+    implementation 'com.squareup.picasso:picasso:2.71828'
 
 
 }

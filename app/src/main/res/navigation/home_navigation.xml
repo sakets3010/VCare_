@@ -8,6 +8,6 @@
     <fragment
         android:id="@+id/fragment_home"
         android:name="com.example.vcare.fragment_home"
-        android:label="fragment_home"
+        android:label="VCare Messaging"
         tools:layout="@layout/fragment_home" />
 </navigation>

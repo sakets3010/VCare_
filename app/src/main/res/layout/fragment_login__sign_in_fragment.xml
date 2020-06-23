@@ -5,17 +5,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <TextView
-            style="@style/TextToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            android:padding="4dp"
-            android:text="Sign In"
-            android:textAllCaps="false"
-            android:textSize="24sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+
         <com.google.android.gms.common.SignInButton
             android:id="@+id/google_button"
             android:layout_width="0dp"

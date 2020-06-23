@@ -93,14 +93,5 @@ class Login_Sign_in_fragment : Fragment() {
         }
 
     }
-    //for opening the login activity through an intent.
-    companion object {
-        fun getLaunchIntent(from: Context) = Intent(from, LoginActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        }
-    }
-
-
-
 
 }

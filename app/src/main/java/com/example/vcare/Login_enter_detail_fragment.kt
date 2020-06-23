@@ -58,6 +58,7 @@ class Login_enter_detail_fragment : Fragment() {
                 uploadimageToFirebaseStorage()
                 Toast.makeText(requireContext(),"Registered successfully",Toast.LENGTH_SHORT).show()
                 val intent = Intent(requireContext(),HomeActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
             }
         }
@@ -106,7 +107,7 @@ class Login_enter_detail_fragment : Fragment() {
         val uid = FirebaseAuth.getInstance().uid ?: ""
         val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
 
-        val user = User(uid,login_username_edit.text.toString(), profileImageUrl)
+        val user = User(uid,binding.loginUsernameEdit.text.toString(), profileImageUrl)
 
         ref.setValue(user)
             .addOnSuccessListener {

@@ -6,17 +6,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/username"
-            style="@style/TextToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            android:text="Customize your profile!"
-            android:textAllCaps="false"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/select_photo_button"
@@ -34,7 +23,7 @@
             app:layout_constraintBottom_toTopOf="@+id/login_username_text_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/username"
+            app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Button.Rounded" />
 
         <com.google.android.material.textfield.TextInputLayout
