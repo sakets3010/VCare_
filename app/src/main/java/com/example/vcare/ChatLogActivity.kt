@@ -90,6 +90,7 @@ class ChatLogActivity : AppCompatActivity() {
             edittext_chat_log.text.clear()
             chat_log_recycler.scrollToPosition(adapter.itemCount -1)
         }
+        to_ref.setValue(chatMessage)
     }
 }
 
