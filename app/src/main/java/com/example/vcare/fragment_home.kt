@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.vcare.databinding.FragmentHomeBinding
 import com.example.vcare.helper.ChatMessage
 import com.example.vcare.helper.User
@@ -26,8 +27,24 @@ class fragment_home : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding= DataBindingUtil.inflate(inflater,R.layout.fragment_home,container,false)
+        
         listenForNewMessage()
+        
         binding.homeRecycler.adapter = adapter
+        
+        binding.homeRecycler.addItemDecoration(DividerItemDecoration(requireContext(),DividerItemDecoration.VERTICAL))
+        
+        adapter.setOnItemClickListener { item, view ->
+
+            val intent = Intent(requireContext(),ChatLogActivity::class.java)
+
+            val row = item as HomeItem
+
+            intent.putExtra(NewMessageActivity.USER_KEY,row.chatPartner)
+
+            startActivity(intent)
+        }
+        
         return binding.root
     }
 
@@ -70,6 +87,8 @@ class fragment_home : Fragment() {
     }
 
     class HomeItem(val chatMessage:ChatMessage): Item<ViewHolder>() {
+
+        var chatPartner:User?=null
         override fun getLayout(): Int {
             return  R.layout.home_list
         }
@@ -88,11 +107,10 @@ class fragment_home : Fragment() {
                 }
 
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val user = snapshot.getValue(User::class.java)
-                    viewHolder.itemView.home_username.text = user?.username
-
+                    chatPartner = snapshot.getValue(User::class.java)
+                    viewHolder.itemView.home_username.text = chatPartner?.username
                     val targetImage =  viewHolder.itemView.home_profile
-                    Picasso.get().load(user?.profileImageUrl).into(targetImage)
+                    Picasso.get().load(chatPartner?.profileImageUrl).into(targetImage)
 
                 }
 

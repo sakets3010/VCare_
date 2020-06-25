@@ -56,8 +56,8 @@ class ChatLogActivity : AppCompatActivity() {
                     else
                     {   val userTo = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
                         adapter.add(ChatToItem(chatMessage.text,userTo)) }
-
                 }
+                chat_log_recycler.scrollToPosition(adapter.itemCount-1)
             }
             override fun onCancelled(error: DatabaseError) {
                 TODO("Not yet implemented")
