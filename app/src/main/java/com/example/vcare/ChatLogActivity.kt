@@ -24,14 +24,21 @@ class ChatLogActivity : AppCompatActivity() {
     val adapter = GroupAdapter<ViewHolder>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_chat_log)
+
         val user = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
+
         supportActionBar?.title = user.username
+
         chat_log_recycler.adapter = adapter
+
         listenForMessages()
+
         send_button.setOnClickListener {
             performSendMessage()
         }
+
     }
 
     private fun listenForMessages() {
@@ -71,9 +78,6 @@ class ChatLogActivity : AppCompatActivity() {
 
         })
     }
-
-
-
     private fun performSendMessage() {
 
         val text = edittext_chat_log.text.toString()
@@ -91,6 +95,13 @@ class ChatLogActivity : AppCompatActivity() {
             chat_log_recycler.scrollToPosition(adapter.itemCount -1)
         }
         to_ref.setValue(chatMessage)
+
+        val latesMessageRef = FirebaseDatabase.getInstance().getReference("/latest_messages/$fromId/$toId")
+        latesMessageRef.setValue(chatMessage)
+
+        val latesMessageToRef = FirebaseDatabase.getInstance().getReference("/latest_messages/$toId/$fromId")
+        latesMessageToRef.setValue(chatMessage)
+
     }
 }
 
