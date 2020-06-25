@@ -3,8 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/new_message"
         android:title="New Message"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_new_message" />
     <item android:id="@+id/sign_out"
         android:title="Sign Out"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_sign_out"/>
 </menu>

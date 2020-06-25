@@ -1,5 +1,6 @@
 package com.example.vcare
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.navigation.Navigation
@@ -21,9 +22,14 @@ class NewMessageActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_message)
 
+        supportActionBar?.title = "Connect with Users"
 
         fetchUsers()
 
+
+    }
+    companion object {
+        val USER_KEY = "USER_KEY"
     }
 
     private fun fetchUsers() {
@@ -43,6 +49,15 @@ class NewMessageActivity : AppCompatActivity() {
                         adapter.add(UserItem(user))
                     }
                 }
+                adapter.setOnItemClickListener { item, view ->
+                    val userItem:UserItem = item as UserItem
+                    val intent = Intent(view.context,ChatLogActivity::class.java)
+                    intent.putExtra(USER_KEY,userItem.user)
+                    startActivity(intent)
+                    finish()
+
+                }
+
                 recyclerview_newMessage.adapter=adapter
             }
         })

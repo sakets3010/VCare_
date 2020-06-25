@@ -62,12 +62,12 @@ class Login_Sign_in_fragment : Fragment() {
             try {
                 val account = task.getResult(ApiException::class.java)
                 if (account != null) {
-                    if(account.email?.toLowerCase()?.endsWith("@hyderabad.bits-pilani.ac.in")!!)
-                    {firebaseAuthWithGoogle(account)}
-                    else{
-                        Toast.makeText(requireContext(),"Use your BITS Email Id to log in",Toast.LENGTH_SHORT).show()
-                        mGoogleSignInClient.signOut()
-                    }
+                    //if(account.email?.toLowerCase()?.endsWith("@hyderabad.bits-pilani.ac.in")!!)
+                    firebaseAuthWithGoogle(account)
+//                    else{
+//                        Toast.makeText(requireContext(),"Use your BITS Email Id to log in",Toast.LENGTH_SHORT).show()
+//                        mGoogleSignInClient.signOut()
+//                    }
                 }
             } catch (e: ApiException) {
                 Toast.makeText(requireContext(), "Google sign in failed:(", Toast.LENGTH_LONG).show()
