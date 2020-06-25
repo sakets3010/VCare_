@@ -26,6 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:background="@drawable/rounded_bg"
+        android:maxWidth="240dp"
         android:padding="16dp"
         android:text="TextView"
         app:layout_constraintBottom_toBottomOf="@+id/from_profile"
