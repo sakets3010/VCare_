@@ -61,6 +61,7 @@ class fragment_home : Fragment() {
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatMessage = snapshot.getValue(ChatMessage::class.java)?:return
                 latestMessagesMap[snapshot.key!!]=chatMessage
+                adapter.clear()
                 refreshMessages()
             }
             override fun onCancelled(error: DatabaseError) {
@@ -78,7 +79,7 @@ class fragment_home : Fragment() {
 
     private fun refreshMessages() {
         latestMessagesMap.values.forEach {
-            adapter.clear()
+
             adapter.add(HomeItem(it))
         }
     }
