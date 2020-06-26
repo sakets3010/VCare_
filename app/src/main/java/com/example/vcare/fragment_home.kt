@@ -20,20 +20,17 @@ import kotlinx.android.synthetic.main.home_list.view.*
 
 
 class fragment_home : Fragment() {
-    val adapter = GroupAdapter<ViewHolder>()
+
     private lateinit var binding : FragmentHomeBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding= DataBindingUtil.inflate(inflater,R.layout.fragment_home,container,false)
-        
-        listenForNewMessage()
-        
+
         binding.homeRecycler.adapter = adapter
-        
         binding.homeRecycler.addItemDecoration(DividerItemDecoration(requireContext(),DividerItemDecoration.VERTICAL))
-        
+
         adapter.setOnItemClickListener { item, view ->
 
             val intent = Intent(requireContext(),ChatLogActivity::class.java)
@@ -44,9 +41,11 @@ class fragment_home : Fragment() {
 
             startActivity(intent)
         }
+        listenForNewMessage()
         
         return binding.root
     }
+    val adapter = GroupAdapter<ViewHolder>()
 
     val latestMessagesMap = HashMap<String, ChatMessage>()
 
@@ -74,8 +73,6 @@ class fragment_home : Fragment() {
             override fun onChildRemoved(snapshot: DataSnapshot) {
                 TODO("Not yet implemented")
             }
-
-
         })
     }
 
