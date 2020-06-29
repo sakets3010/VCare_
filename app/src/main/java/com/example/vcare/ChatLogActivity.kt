@@ -52,10 +52,10 @@ class ChatLogActivity : AppCompatActivity() {
                 if (chatMessage != null) {
                     if (chatMessage.fromId ==FirebaseAuth.getInstance().uid)
                     {   val currentUser = HomeActivity.currentUser
-                        adapter.add(ChatFromItem(chatMessage.text,currentUser!!))}
+                        adapter.add(ChatToItem(chatMessage.text,currentUser!!))}
                     else
                     {   val userTo = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
-                        adapter.add(ChatToItem(chatMessage.text,userTo)) }
+                        adapter.add(ChatFromItem(chatMessage.text,userTo)) }
                 }
                 chat_log_recycler.scrollToPosition(adapter.itemCount-1)
             }

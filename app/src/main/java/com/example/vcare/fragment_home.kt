@@ -56,6 +56,7 @@ class fragment_home : Fragment() {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatMessage = snapshot.getValue(ChatMessage::class.java)?:return
                 latestMessagesMap[snapshot.key!!]=chatMessage
+                adapter.clear()
                 refreshMessages()
             }
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {

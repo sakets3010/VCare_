@@ -2,7 +2,9 @@ package com.example.vcare
 
 import android.app.Activity
 import android.content.ContentResolver
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
@@ -30,11 +32,21 @@ import java.util.*
 
 class Login_enter_detail_fragment : Fragment() {
     private lateinit var binding: FragmentLoginEnterDetailFragmentBinding
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        val sharedPref = context?.getSharedPreferences("Vcare",Context.MODE_PRIVATE)
+        if (sharedPref?.getString("username"," ")!==" ")
+        {
+            val intent = Intent(requireContext(),HomeActivity::class.java)
+            startActivity(intent)
+            requireActivity().finish()
+        }
+
+
+
         binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_login_enter_detail_fragment,
@@ -48,6 +60,8 @@ class Login_enter_detail_fragment : Fragment() {
             startActivityForResult(intent, 0)
         }
 
+
+
         binding.register.setOnClickListener {
             if (binding.loginUsernameEdit.text.toString().trim().isEmpty()){
                 binding.loginUsernameEdit.error = "username Required"
@@ -58,6 +72,9 @@ class Login_enter_detail_fragment : Fragment() {
                 uploadimageToFirebaseStorage()
                 Toast.makeText(requireContext(),"Registered successfully",Toast.LENGTH_SHORT).show()
                 val intent = Intent(requireContext(),HomeActivity::class.java)
+                var editor = sharedPref?.edit()
+                editor?.putString("username",binding.loginUsernameEdit.toString())
+                editor?.apply()
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
             }
@@ -103,6 +120,9 @@ class Login_enter_detail_fragment : Fragment() {
         }
 
     }
+
+
+
     private fun saveUserToFirebaseDatabase(profileImageUrl: String) {
         val uid = FirebaseAuth.getInstance().uid ?: ""
         val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
