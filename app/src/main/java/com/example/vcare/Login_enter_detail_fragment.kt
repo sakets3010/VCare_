@@ -45,8 +45,6 @@ class Login_enter_detail_fragment : Fragment() {
             requireActivity().finish()
         }
 
-
-
         binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_login_enter_detail_fragment,
@@ -68,11 +66,16 @@ class Login_enter_detail_fragment : Fragment() {
                 binding.loginUsernameEdit.requestFocus()
                 return@setOnClickListener
             }
-            else if(binding.loginUsernameEdit.text.toString().trim().isNotEmpty()){
+            if(selectedPhotoUri==null){
+                binding.selectPhotoButton.error =  "Profile photo Required"
+                binding.selectPhotoButton.requestFocus()
+                Toast.makeText(requireContext(),"Please add a profile picture",Toast.LENGTH_SHORT).show()
+            }
+            else{
                 uploadimageToFirebaseStorage()
                 Toast.makeText(requireContext(),"Registered successfully",Toast.LENGTH_SHORT).show()
                 val intent = Intent(requireContext(),HomeActivity::class.java)
-                var editor = sharedPref?.edit()
+                val editor = sharedPref?.edit()
                 editor?.putString("username",binding.loginUsernameEdit.toString())
                 editor?.apply()
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -106,9 +109,6 @@ class Login_enter_detail_fragment : Fragment() {
         FirebaseAuth.getInstance().signOut()
     }
     private fun uploadimageToFirebaseStorage(){
-        if(selectedPhotoUri==null){
-         Toast.makeText(requireContext(),"profile image required",Toast.LENGTH_SHORT).show()
-         return}
         val filename = UUID.randomUUID().toString()
         val ref=FirebaseStorage.getInstance().getReference("/images/$filename")
         ref.putFile(selectedPhotoUri!!).addOnSuccessListener {
