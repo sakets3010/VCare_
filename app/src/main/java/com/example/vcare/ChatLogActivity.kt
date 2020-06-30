@@ -29,7 +29,7 @@ class ChatLogActivity : AppCompatActivity() {
 
         val user = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
 
-        supportActionBar?.title = user.username
+        supportActionBar?.title = user?.username
 
         chat_log_recycler.adapter = adapter
 
@@ -52,7 +52,7 @@ class ChatLogActivity : AppCompatActivity() {
                 if (chatMessage != null) {
                     if (chatMessage.fromId ==FirebaseAuth.getInstance().uid)
                     {   val currentUser = HomeActivity.currentUser
-                        adapter.add(ChatToItem(chatMessage.text,currentUser!!))}
+                        adapter.add(ChatToItem(chatMessage.text,currentUser))}
                     else
                     {   val userTo = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
                         adapter.add(ChatFromItem(chatMessage.text,userTo)) }
@@ -105,7 +105,7 @@ class ChatLogActivity : AppCompatActivity() {
     }
 }
 
-class ChatFromItem(val text:String,val user:User):Item<ViewHolder>(){
+class ChatFromItem(val text:String,val user:User?):Item<ViewHolder>(){
     override fun getLayout(): Int {
         return R.layout.chat_row_from
     }
@@ -113,19 +113,19 @@ class ChatFromItem(val text:String,val user:User):Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {
 
         viewHolder.itemView.textView_from_row.text = text
-        val uri = user.profileImageUrl
+        val uri = user?.profileImageUrl
         val targetImage = viewHolder.itemView.from_profile
         Picasso.get().load(uri).into(targetImage)
 
     }
-}class ChatToItem(val text:String,val user:User):Item<ViewHolder>(){
+}class ChatToItem(val text:String,val user:User?):Item<ViewHolder>(){
     override fun getLayout(): Int {
         return R.layout.chat_row_to
     }
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemView.textView_to_row.text = text
-        val uri = user.profileImageUrl
+        val uri = user?.profileImageUrl
         val targetImage = viewHolder.itemView.to_profile
         Picasso.get().load(uri).into(targetImage)
     }

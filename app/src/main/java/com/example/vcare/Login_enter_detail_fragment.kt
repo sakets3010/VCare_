@@ -45,8 +45,6 @@ class Login_enter_detail_fragment : Fragment() {
             requireActivity().finish()
         }
 
-
-
         binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_login_enter_detail_fragment,
@@ -60,26 +58,30 @@ class Login_enter_detail_fragment : Fragment() {
             startActivityForResult(intent, 0)
         }
 
-
-
         binding.register.setOnClickListener {
             if (binding.loginUsernameEdit.text.toString().trim().isEmpty()){
                 binding.loginUsernameEdit.error = "username Required"
                 binding.loginUsernameEdit.requestFocus()
                 return@setOnClickListener
             }
-            else if(binding.loginUsernameEdit.text.toString().trim().isNotEmpty()){
+            else if(selectedPhotoUri==null){
+                binding.selectPhotoButton.error = "profile photo required"
+                binding.selectPhotoButton.requestFocus()
+                return@setOnClickListener
+            }
+
+            else{
+                Log.d("Login-Activity","upload called in onclick listener")
                 uploadimageToFirebaseStorage()
                 Toast.makeText(requireContext(),"Registered successfully",Toast.LENGTH_SHORT).show()
                 val intent = Intent(requireContext(),HomeActivity::class.java)
-                var editor = sharedPref?.edit()
+                val editor = sharedPref?.edit()
                 editor?.putString("username",binding.loginUsernameEdit.toString())
                 editor?.apply()
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
             }
         }
-
 
         return binding.root
     }
@@ -93,7 +95,6 @@ class Login_enter_detail_fragment : Fragment() {
             binding.selectPhotoButton.alpha=0f
         }
     }
-
     private fun setupUI() {
         binding.signOut.setOnClickListener {
             signOut()
@@ -106,18 +107,18 @@ class Login_enter_detail_fragment : Fragment() {
         FirebaseAuth.getInstance().signOut()
     }
     private fun uploadimageToFirebaseStorage(){
-        if(selectedPhotoUri==null){
-         Toast.makeText(requireContext(),"profile image required",Toast.LENGTH_SHORT).show()
-         return}
-        val filename = UUID.randomUUID().toString()
-        val ref=FirebaseStorage.getInstance().getReference("/images/$filename")
-        ref.putFile(selectedPhotoUri!!).addOnSuccessListener {
-            Log.d("LoginActivity","successfully uploaded image:${it.metadata?.path}")
-            ref.downloadUrl.addOnSuccessListener {
-            Log.d("LoginActivity","file location:${it}")
-                saveUserToFirebaseDatabase(it.toString())
+        Log.d("Login-Activity","uploadimagetoFirebaseStorage called")
+            val filename = UUID.randomUUID().toString()
+            val ref=FirebaseStorage.getInstance().getReference("/images/$filename")
+            ref.putFile(selectedPhotoUri!!).addOnSuccessListener {
+                Log.d("Login-Activity","successfully uploaded image:${it.metadata?.path}")
+                ref.downloadUrl.addOnSuccessListener {
+                    Log.d("Login-Activity","file location:${it}")
+                    saveUserToFirebaseDatabase(it.toString())
+                }
+            }.addOnFailureListener {
+                Log.d("Login-Activity","Unable to function properly")
             }
-        }
 
     }
 
@@ -131,10 +132,10 @@ class Login_enter_detail_fragment : Fragment() {
 
         ref.setValue(user)
             .addOnSuccessListener {
-                Log.d("LoginActivity", "Finally we saved the user to Firebase Database")
+                Log.d("Login-Activity", "Finally we saved the user to Firebase Database")
             }
             .addOnFailureListener {
-                Log.d("LoginActivity", "Failed to set value to database: ${it.message}")
+                Log.d("Login-Activity", "Failed to set value to database: ${it.message}")
             }
     }
 }
