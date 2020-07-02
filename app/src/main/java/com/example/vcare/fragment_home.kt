@@ -6,11 +6,13 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.example.vcare.Notifications.Token
 import com.example.vcare.databinding.FragmentHomeBinding
 import com.example.vcare.helper.ChatMessage
 import com.example.vcare.helper.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.google.firebase.iid.FirebaseInstanceId
 import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
@@ -42,9 +44,19 @@ class fragment_home : Fragment() {
             startActivity(intent)
         }
         listenForNewMessage()
+
+        updateToken(FirebaseInstanceId.getInstance().token)
         
         return binding.root
     }
+
+    private fun updateToken(token: String?) {
+        val firebaseUser = FirebaseAuth.getInstance().currentUser
+        val ref = FirebaseDatabase.getInstance().reference.child("Tokens")
+        val token1 = token?.let { Token(it) }
+        ref.child(firebaseUser!!.uid).setValue(token1)
+    }
+
     val adapter = GroupAdapter<ViewHolder>()
 
     val latestMessagesMap = HashMap<String, ChatMessage>()

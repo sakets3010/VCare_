@@ -2,13 +2,13 @@ package com.example.vcare
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
+import com.example.vcare.Notifications.*
+import com.example.vcare.helper.ApiService
 import com.example.vcare.helper.ChatMessage
 import com.example.vcare.helper.User
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
@@ -16,9 +16,14 @@ import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_chat_log.*
 import kotlinx.android.synthetic.main.chat_row_from.view.*
 import kotlinx.android.synthetic.main.chat_row_to.view.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class ChatLogActivity : AppCompatActivity() {
     val adapter = GroupAdapter<ViewHolder>()
+    var notify = false
+    var apiService : ApiService?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -33,8 +38,12 @@ class ChatLogActivity : AppCompatActivity() {
         listenForMessages()
 
         send_button.setOnClickListener {
+            notify = true
             performSendMessage()
         }
+
+        apiService = Client.client.getClient("https://fcm.googleapis.com/")!!.create(ApiService::class.java)
+
 
     }
 
@@ -99,10 +108,89 @@ class ChatLogActivity : AppCompatActivity() {
         val latestMessageToRef = FirebaseDatabase.getInstance().getReference("/latest_messages/$toId/$fromId")
         latestMessageToRef.setValue(chatMessage)
 
+        //fcm
+        val firebaseUser = FirebaseAuth.getInstance().currentUser
+        val refer = FirebaseDatabase.getInstance().reference
+            .child("users").child(firebaseUser!!.uid)
+        refer.addValueEventListener(object:ValueEventListener{
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val user = snapshot.getValue(User::class.java)
+                if(notify)
+                {
+                    sendNotifications(toId,user!!.username,chatMessage!!.text)
+                }
+                notify = false
+            }
+
+
+        })
+
+
+    }
+
+    private fun sendNotifications(toId: String?, username: String, text: String) {
+        val ref = FirebaseDatabase.getInstance().reference.child("Tokens")
+
+        val query = ref.orderByKey().equalTo(toId)
+
+        query.addValueEventListener(object : ValueEventListener{
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for(datasnapshot in snapshot.children){
+                    val firebaseUser = FirebaseAuth.getInstance().currentUser
+                    val token:Token? = datasnapshot.getValue(Token::class.java)
+                    val user = snapshot.getValue(User::class.java)
+                    val fromId = FirebaseAuth.getInstance().uid
+                    val chatMessage = toId?.let {
+                        ChatMessage(ref.key!!,text,fromId!!,
+                            it,System.currentTimeMillis()/1000)
+                    }
+                    val data = Data(firebaseUser!!.uid
+                        ,R.mipmap.ic_launcher,
+                        "${username}:${chatMessage!!.text}"
+                        ,"New Message"
+                        ,toId)
+                    val sender = Sender(data, token?.getToken().toString())
+
+                    apiService!!.sendNotification(sender).enqueue(object:Callback<MyResponse>{
+
+                        override fun onFailure(call: Call<MyResponse>, t: Throwable) {
+                            TODO("Not yet implemented")
+                        }
+
+                        override fun onResponse(
+                            call: Call<MyResponse>,
+                            response: Response<MyResponse>
+                        ) {
+                            if(response.code()==200){
+
+                                if(response.body()!!.success!==1){
+
+                                    Toast.makeText(this@ChatLogActivity,"Failed,Nothing happened",Toast.LENGTH_SHORT).show()
+                                }
+
+                            }
+
+                        }
+                    })
+                }
+
+
+            }
+
+
+        })
     }
 }
 
-class ChatFromItem(val text:String,val user:User):Item<ViewHolder>(){
+class ChatFromItem(val text:String,val user:User?):Item<ViewHolder>(){
     override fun getLayout(): Int {
         return R.layout.chat_row_from
     }
@@ -110,7 +198,7 @@ class ChatFromItem(val text:String,val user:User):Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {
 
         viewHolder.itemView.textView_from_row.text = text
-        val uri = user.profileImageUrl
+        val uri = user?.profileImageUrl
         val targetImage = viewHolder.itemView.from_profile
         Picasso.get().load(uri).into(targetImage)
 
