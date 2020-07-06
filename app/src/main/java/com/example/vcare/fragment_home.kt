@@ -1,11 +1,15 @@
 package com.example.vcare
 
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.example.vcare.Notifications.OreoNotification
 import com.example.vcare.Notifications.Token
 import com.example.vcare.databinding.FragmentHomeBinding
 import com.example.vcare.helper.ChatMessage
@@ -28,19 +32,19 @@ class fragment_home : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        val oreoNotification = OreoNotification(requireContext())
+        oreoNotification.getManager!!.cancelAll()
+
         binding= DataBindingUtil.inflate(inflater,R.layout.fragment_home,container,false)
 
         binding.homeRecycler.adapter = adapter
         binding.homeRecycler.addItemDecoration(DividerItemDecoration(requireContext(),DividerItemDecoration.VERTICAL))
 
         adapter.setOnItemClickListener { item, view ->
-
             val intent = Intent(requireContext(),ChatLogActivity::class.java)
-
             val row = item as HomeItem
-
             intent.putExtra(NewMessageActivity.USER_KEY,row.chatPartner)
-
             startActivity(intent)
         }
         listenForNewMessage()
@@ -105,7 +109,11 @@ class fragment_home : Fragment() {
         }
 
         override fun bind(viewHolder: ViewHolder, position: Int) {
-            viewHolder.itemView.home_latestMessage.text=chatMessage.text
+            if(chatMessage.text!=="text")
+            {viewHolder.itemView.home_latestMessage.text=chatMessage.text}
+            else{
+             viewHolder.itemView.home_latestMessage.text="sent an image"
+            }
             val chatPartnerId:String
             if(chatMessage.fromId==FirebaseAuth.getInstance().uid){
                 chatPartnerId = chatMessage.toId
@@ -120,6 +128,11 @@ class fragment_home : Fragment() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     chatPartner = snapshot.getValue(User::class.java)
                     viewHolder.itemView.home_username.text = chatPartner?.username
+                    if(chatPartner!!.status=="online")
+                    {viewHolder.itemView.online_status_home.visibility = View.VISIBLE}
+                    else if(chatPartner!!.status=="offline"){
+                     viewHolder.itemView.online_status_home.visibility = View.GONE
+                    }
                     val targetImage =  viewHolder.itemView.home_profile
                     Picasso.get().load(chatPartner?.profileImageUrl).into(targetImage)
 

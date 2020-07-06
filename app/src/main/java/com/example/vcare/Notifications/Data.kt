@@ -7,6 +7,7 @@ class Data {
     private var title:String = ""
     private var sented:String = ""
 
+
     constructor(){}
 
     constructor(user:String,icon:Int,body:String,title:String,sented:String){
@@ -15,6 +16,7 @@ class Data {
         this.body = body
         this.title = title
         this.sented = sented
+
     }
 
     fun getUser():String?{
@@ -47,6 +49,7 @@ class Data {
     fun setSented(sented: String){
         this.sented = sented
     }
+
 
 
 

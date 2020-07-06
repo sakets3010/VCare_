@@ -12,12 +12,32 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
-        app:civ_border_color="@color/colorBackgroundAppBar"
-        app:civ_border_width="4dp"
+        app:civ_border_color="@color/colorLightTeal"
+        app:civ_border_width="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
+         />
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/online_status_new_message"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:visibility="visible"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:src="@android:color/holo_green_light"
+        app:layout_constraintBottom_toBottomOf="@id/profile_list"
+        app:layout_constraintEnd_toEndOf="@id/profile_list" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/online_status_new_message"
+        app:layout_constraintEnd_toEndOf="@id/online_status_new_message"
+        app:layout_constraintTop_toTopOf="@id/online_status_new_message"
+        app:layout_constraintBottom_toBottomOf="@id/online_status_new_message"/>
 
     <TextView
         android:id="@+id/username-list"

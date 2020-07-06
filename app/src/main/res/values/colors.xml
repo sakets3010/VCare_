@@ -8,6 +8,13 @@
     <color name="colorBackgroundAppBar">#70295B</color>
     <color name="colorTextAppBar">#FFFFFF</color>
     <color name="colorBlack">#000000</color>
+    <color name="chatlogbg">#607D8B</color>
+    <color name="colorWhite">#ffffff</color>
+    <color name="colorPurple">#7B1FA2</color>
+    <color name="colorDarkGrey">#757575</color>
+    <color name="colorLightGrey">#BDBDBD</color>
+    <color name="colorLightTeal">#48C9B0</color>
+    <color name="colorLightBlack">#2C3E50</color>
 
 
 </resources>

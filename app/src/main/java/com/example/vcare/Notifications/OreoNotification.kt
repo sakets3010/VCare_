@@ -35,7 +35,7 @@ class OreoNotification(base:Context?):ContextWrapper(base) {
               NotificationManager.IMPORTANCE_DEFAULT
           )
 
-        channel.enableLights(false)
+        channel.enableLights(true)
         channel.enableVibration(true)
         channel.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
         getManager!!.createNotificationChannel(channel)

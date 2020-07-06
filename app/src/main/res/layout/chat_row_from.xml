@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/holo_green_light">
+    android:background="@color/chatlogbg">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/from_profile"
@@ -13,7 +13,7 @@
         android:layout_height="50dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="16dp"
         android:maxWidth="240dp"
         android:src="@android:color/background_dark"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -25,13 +25,54 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:background="@drawable/rounded_bg"
+        android:background="@drawable/rounded_white_bg"
+        android:backgroundTint="@color/colorLightBlack"
+        android:textColor="@color/colorWhite"
         android:maxWidth="240dp"
         android:padding="16dp"
         android:text="TextView"
         app:layout_constraintBottom_toBottomOf="@+id/from_profile"
         app:layout_constraintStart_toEndOf="@+id/from_profile"
         app:layout_constraintTop_toTopOf="@+id/from_profile" />
+
+
+    <ImageView
+        android:id="@+id/image_from_cover"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/rounded_white_bg"
+        android:backgroundTint="@color/colorLightBlack"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/image_from"
+        app:layout_constraintTop_toTopOf="@id/image_from"
+        app:layout_constraintEnd_toEndOf="@id/image_from"
+        app:layout_constraintStart_toStartOf="@id/textView_from_row"
+        />
+
+
+
+    <ImageView
+        android:id="@+id/image_from"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxHeight="300dp"
+        android:maxWidth="300dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:adjustViewBounds="true"
+        android:paddingStart="24dp"
+        android:paddingTop="24dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="24dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/from_profile"
+        app:layout_constraintStart_toStartOf="@+id/textView_from_row"
+        app:layout_constraintTop_toTopOf="@+id/from_profile"
+        tools:srcCompat="@tools:sample/avatars" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

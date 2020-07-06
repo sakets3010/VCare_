@@ -1,6 +1,7 @@
 package com.example.vcare.Notifications
-
+import android.app.ActivityManager
 import android.app.Notification
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -9,11 +10,13 @@ import android.os.Build
 import android.os.Bundle
 import com.example.vcare.ChatLogActivity
 import com.example.vcare.HomeActivity
+import com.example.vcare.NewMessageActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
-class MyFirebaseMessaging():FirebaseMessagingService(){
+class MyFirebaseMessaging():FirebaseMessagingService() {
+    private var notificationManager : NotificationManager?=null
 
     override fun onMessageReceived(mRemoteMessage: RemoteMessage) {
         super.onMessageReceived(mRemoteMessage)
@@ -29,10 +32,6 @@ class MyFirebaseMessaging():FirebaseMessagingService(){
                 if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
                     SendOreoNotification(mRemoteMessage)
                 }
-//                else{
-//                    SendNotification(mRemoteMessage)
-//                }
-
             }
         }
     }
@@ -47,25 +46,43 @@ class MyFirebaseMessaging():FirebaseMessagingService(){
         val notification = mRemoteMessage.notification
         val j = user!!.replace("[\\D]".toRegex(),"").toInt()
         val intent = Intent(this,HomeActivity::class.java)
-
         val bundle = Bundle()
         bundle.putString("userid",user)
         intent.putExtras(bundle)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
-        val pendingIntent = PendingIntent.getActivity(this,j,intent,PendingIntent.FLAG_ONE_SHOT)
 
-        val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-
-        val oreoNotification = OreoNotification(this)
-
-        val builder: Notification.Builder = oreoNotification.getOreoNotification(title,body,pendingIntent,defaultSound,icon)
 
         var i = 0
         if(j>0){
             i=j
         }
-        oreoNotification.getManager!!.notify(i,builder.build())
+        val oreoNotification = OreoNotification(this)
+        if(!appInForeground(applicationContext)){
+            var pendingIntent = PendingIntent.getActivity(this,j,intent,PendingIntent.FLAG_ONE_SHOT)
+            val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+
+
+
+
+            val builder: Notification.Builder = oreoNotification.getOreoNotification(title,body,pendingIntent,defaultSound,icon)
+
+
+            oreoNotification.getManager!!.notify(i,builder.build())
+        }
+        else{
+            oreoNotification.getManager!!.cancel(i)
+        }
+
+
+
 
     }
+
+    private fun appInForeground(context: Context): Boolean {
+        val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val runningAppProcesses = activityManager.runningAppProcesses ?: return false
+        return runningAppProcesses.any { it.processName == context.packageName && it.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND }
+    }
+
 }

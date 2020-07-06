@@ -17,6 +17,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
 class HomeActivity : AppCompatActivity() {
+    val firebaseUser = FirebaseAuth.getInstance().currentUser
     companion object{
         var currentUser: User?=null
     }
@@ -45,6 +46,24 @@ class HomeActivity : AppCompatActivity() {
         })
     }
 
+    private fun updateStatus(status:String){
+        val ref = FirebaseDatabase.getInstance().reference.child("users").child(firebaseUser!!.uid)
+
+        val hashMap = HashMap<String,Any>()
+        hashMap["status"] = status
+        ref!!.updateChildren(hashMap)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateStatus("online")
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        updateStatus("offline")
+    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.nav_menu,menu)

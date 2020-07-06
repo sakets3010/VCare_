@@ -3,6 +3,7 @@ package com.example.vcare
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
 import com.example.vcare.helper.User
@@ -72,6 +73,13 @@ class UserItem(val user: User): Item<ViewHolder>(){
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemView.username_list.text = user.username
+        if(user.status=="online"){
+        viewHolder.itemView.online_status_new_message.visibility = View.VISIBLE
+        }
+        else if(user.status=="offline"){
+            viewHolder.itemView.online_status_new_message.visibility = View.GONE
+        }
+
         Picasso.get().load(user.profileImageUrl).into(viewHolder.itemView.profile_list)
     }
 

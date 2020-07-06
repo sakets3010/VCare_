@@ -41,7 +41,7 @@ class Login_enter_detail_fragment : Fragment() {
         if (sharedPref?.getString("username"," ")!==" ")
         {
             val intent = Intent(requireContext(),HomeActivity::class.java)
-            startActivity(intent)
+           startActivity(intent)
             requireActivity().finish()
         }
 
@@ -127,7 +127,7 @@ class Login_enter_detail_fragment : Fragment() {
         val uid = FirebaseAuth.getInstance().uid ?: ""
         val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
 
-        val user = User(uid,binding.loginUsernameEdit.text.toString(), profileImageUrl)
+        val user = User(uid,binding.loginUsernameEdit.text.toString(), profileImageUrl,"")
 
         ref.setValue(user)
             .addOnSuccessListener {
