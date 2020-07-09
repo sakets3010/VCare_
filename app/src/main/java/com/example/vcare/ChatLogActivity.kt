@@ -1,13 +1,21 @@
 package com.example.vcare
 
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.ProgressDialog
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat.startActivity
+import com.example.vcare.HomeActivity.Companion.currentUser
 import com.example.vcare.Notifications.*
 import com.example.vcare.helper.ApiService
 import com.example.vcare.helper.ChatMessage
@@ -15,6 +23,7 @@ import com.example.vcare.helper.User
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthEmailException
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageTask
@@ -24,24 +33,33 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_chat_log.*
+import kotlinx.android.synthetic.main.activity_new_message.*
 import kotlinx.android.synthetic.main.chat_row_from.view.*
+import kotlinx.android.synthetic.main.chat_row_to.*
 import kotlinx.android.synthetic.main.chat_row_to.view.*
+import kotlinx.android.synthetic.main.chat_row_to.view.textView_to_row
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.IndexOutOfBoundsException
+import kotlin.coroutines.coroutineContext
 
 class ChatLogActivity : AppCompatActivity() {
+    var mChatList:List<ChatMessage>?=null
     val adapter = GroupAdapter<ViewHolder>()
     var notify = false
     var apiService : ApiService?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("chat-list","oncreate called")
 
         setContentView(R.layout.activity_chat_log)
 
         val user = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
 
         supportActionBar?.title = user?.username
+
+        chat_log_recycler.setHasFixedSize(true)
 
         chat_log_recycler.adapter = adapter
 
@@ -55,6 +73,7 @@ class ChatLogActivity : AppCompatActivity() {
             else{
                 notify = true
                 performSendMessage()
+
                 }
 
 
@@ -72,22 +91,27 @@ class ChatLogActivity : AppCompatActivity() {
 
     }
 
-    private fun listenForMessages() {
+   private fun listenForMessages() {
+
         val fromId = FirebaseAuth.getInstance().uid
         val user = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
         val toId = user?.uid
-        val ref = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId")
+        val time = System.currentTimeMillis()/1000
+        val ref = FirebaseDatabase.getInstance().reference.child("user-messages").child(fromId!!).child(toId!!)
         ref.addChildEventListener(object: ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val chatMessage = snapshot.getValue(ChatMessage::class.java)
-                if (chatMessage != null) {
-                    if (chatMessage.fromId ==FirebaseAuth.getInstance().uid)
+
+                val chatMessages = snapshot.getValue(ChatMessage::class.java)
+                if (chatMessages != null) {
+                    if (chatMessages.fromId ==FirebaseAuth.getInstance().uid)
                     {   val currentUser = HomeActivity.currentUser
-                        adapter.add(ChatToItem(chatMessage.text,chatMessage.url,currentUser))}
+
+                        adapter.add(ChatToItem(chatMessages.text,chatMessages.url,currentUser,chatMessages.timestamp.toString(),fromId,toId))}
                     else
                     {   val userTo = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
-                        adapter.add(ChatFromItem(chatMessage.text,chatMessage.url,userTo)) }
+                        adapter.add(ChatFromItem(chatMessages.text,chatMessages.url,userTo)) }
                 }
+
                 chat_log_recycler.scrollToPosition(adapter.itemCount-1)
             }
             override fun onCancelled(error: DatabaseError) {
@@ -99,11 +123,12 @@ class ChatLogActivity : AppCompatActivity() {
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                TODO("Not yet implemented")
+
+
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
-                TODO("Not yet implemented")
+
             }
 
 
@@ -115,18 +140,22 @@ class ChatLogActivity : AppCompatActivity() {
         val fromId = FirebaseAuth.getInstance().uid
         val user = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
         val toId = user?.uid
+        val time  =System.currentTimeMillis()/1000
+        val ref = FirebaseDatabase.getInstance().reference.child("user-messages").child(fromId!!).child(toId!!).child(time.toString())
+        val to_ref = FirebaseDatabase.getInstance().reference.child("user-messages").child(toId).child(fromId).child(time.toString())
 
-        val ref = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId").push()
-        val to_ref = FirebaseDatabase.getInstance().getReference("/user-messages/$toId/$fromId").push()
         val chatMessage = toId?.let {
             ChatMessage(ref.key!!,text,fromId!!,
                 it,System.currentTimeMillis()/1000)
         }
+
         ref.setValue(chatMessage).addOnSuccessListener {
             edittext_chat_log.text.clear()
             chat_log_recycler.scrollToPosition(adapter.itemCount -1)
         }
         to_ref.setValue(chatMessage)
+
+
 
         val latestMessageRef = FirebaseDatabase.getInstance().getReference("/latest_messages/$fromId/$toId")
         latestMessageRef.setValue(chatMessage)
@@ -158,6 +187,9 @@ class ChatLogActivity : AppCompatActivity() {
 
 
     }
+
+
+
 
     private fun sendNotifications(toId: String?, username: String, text: String) {
         val ref = FirebaseDatabase.getInstance().reference.child("Tokens")
@@ -217,6 +249,142 @@ class ChatLogActivity : AppCompatActivity() {
         })
     }
 
+    class ChatFromItem(val text:String="",val url:String="",val user:User?):Item<ViewHolder>(){
+
+        override fun getLayout(): Int {
+            return R.layout.chat_row_from
+        }
+
+        override fun bind(viewHolder: ViewHolder, position: Int) {
+
+
+            viewHolder.setIsRecyclable(false)
+            if(url=="")
+            {viewHolder.itemView.textView_from_row.text = text}
+            else if(url !== "")
+            {
+                viewHolder.itemView.textView_from_row.visibility=View.GONE
+                viewHolder.itemView.image_from_cover.visibility=View.VISIBLE
+                viewHolder.itemView.image_from.visibility = View.VISIBLE
+                Picasso.get().load(url).into(viewHolder.itemView.image_from)
+
+                viewHolder.itemView.image_from.setOnClickListener {
+                    val options = arrayOf<CharSequence>(
+                        "View Image","Cancel"
+                    )
+
+                    val builder:AlertDialog.Builder = AlertDialog.Builder(viewHolder.itemView.context)
+                    builder.setTitle("what now?")
+                    builder.setItems(options,DialogInterface.OnClickListener {dialog, which ->
+                        if (which==0){
+                            val intent = Intent(builder.context,ViewFullImageActivity::class.java)
+                            intent.putExtra("url",url)
+                            builder.context.startActivity(intent)
+                        }
+
+                    })
+                    builder.show()
+                }
+            }
+
+
+            val uri = user?.profileImageUrl
+            val targetImage = viewHolder.itemView.from_profile
+            Picasso.get().load(uri).into(targetImage)
+
+        }
+    }
+
+
+    class ChatToItem(val text:String="",val urlimg:String="", val user: User?,time:String,from:String,to:String):Item<ViewHolder>(){
+
+        var fromId:String
+        var toId:String
+        var time:String
+
+        init {
+            this.fromId = from
+            this.toId = to
+            this.time = time
+
+        }
+        override fun getLayout(): Int {
+            return R.layout.chat_row_to
+        }
+
+        override fun bind(viewHolder: ViewHolder, position: Int) {
+            viewHolder.setIsRecyclable(false)
+            if(urlimg=="")
+            {
+                viewHolder.itemView.textView_to_row.text =text
+                viewHolder.itemView.textView_to_row.setOnClickListener {
+                    val options = arrayOf<CharSequence>(
+                        "Delete Message","Cancel"
+                    )
+
+                    val builder:AlertDialog.Builder = AlertDialog.Builder(viewHolder.itemView.context)
+                    builder.setTitle("what now?")
+                    builder.setItems(options,DialogInterface.OnClickListener {dialog, which ->
+                        if(which == 0){
+                            deleteMessage(position,viewHolder)
+
+                        }
+                    })
+                    builder.show()
+                }}
+            else if(urlimg !== "")
+            {
+                viewHolder.itemView.textView_to_row.visibility=View.GONE
+                viewHolder.itemView.image_to_cover.visibility=View.VISIBLE
+                viewHolder.itemView.image_to.visibility = View.VISIBLE
+                Picasso.get().load(urlimg).into(viewHolder.itemView.image_to)
+                viewHolder.itemView.image_to.setOnClickListener {
+                    val options = arrayOf<CharSequence>(
+                        "View Image","Delete Message","Cancel"
+                    )
+
+                    val builder:AlertDialog.Builder = AlertDialog.Builder(viewHolder.itemView.context)
+                    builder.setTitle("what now?")
+                    builder.setItems(options,DialogInterface.OnClickListener {dialog, which ->
+                        if (which==0){
+                            val intent = Intent(builder.context,ViewFullImageActivity::class.java)
+                            intent.putExtra("url",urlimg)
+                            builder.context.startActivity(intent)
+                        }
+                        else if(which == 1){
+                            deleteMessage(position,viewHolder)
+                        }
+                    })
+                    builder.show()
+                }
+            }
+
+            val uri = user?.profileImageUrl
+            val targetImage = viewHolder.itemView.to_profile
+            Picasso.get().load(uri).into(targetImage)
+        }
+
+        @SuppressLint("SetTextI18n")
+        private fun deleteMessage(position: Int, viewHolder: ViewHolder) {
+            val hashMap = HashMap<String,Any>()
+
+            val deletionrefupdate = FirebaseDatabase.getInstance().reference.child("user-messages").child(fromId).child(toId).child(time)
+            val to_deletionrefupdate = FirebaseDatabase.getInstance().reference.child("user-messages").child(toId).child(fromId).child(time)
+            if(urlimg=="")
+            {
+                hashMap["text"] = "This message was deleted"
+
+            }
+            else{
+                hashMap["url"] = ""
+                hashMap["text"] = "This message was deleted"
+            }
+            deletionrefupdate.updateChildren(hashMap)
+            to_deletionrefupdate.updateChildren(hashMap)
+            notifyChanged()
+
+        }
+    }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -241,7 +409,7 @@ class ChatLogActivity : AppCompatActivity() {
                         throw it
                     }
                 }
-                 return@Continuation filePath.downloadUrl
+                return@Continuation filePath.downloadUrl
             }).addOnCompleteListener {task ->
                 if(task.isSuccessful){
                     val downloadUrl = task.result
@@ -249,9 +417,10 @@ class ChatLogActivity : AppCompatActivity() {
                     val firebaseUser = FirebaseAuth.getInstance().currentUser
                     val user = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
                     val toId = user?.uid
+                    val time  =System.currentTimeMillis()/1000
                     val fromId = FirebaseAuth.getInstance().uid
-                    val refer = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId").push()
-                    val to_ref = FirebaseDatabase.getInstance().getReference("/user-messages/$toId/$fromId").push()
+                    val refer = FirebaseDatabase.getInstance().reference.child("user-messages").child(fromId!!).child(toId!!).child(time.toString())
+                    val to_ref = FirebaseDatabase.getInstance().reference.child("user-messages").child(toId).child(fromId).child(time.toString())
 
                     val chatMessage = toId?.let {
                         ChatMessage(refer.key!!,"",fromId!!,
@@ -263,8 +432,11 @@ class ChatLogActivity : AppCompatActivity() {
                         {
                             progressBar.dismiss()
                             val firebaseUser = FirebaseAuth.getInstance().currentUser
+
                             val user = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
+
                             val toId = user?.uid
+
                             val refer = FirebaseDatabase.getInstance().reference
                                 .child("users").child(firebaseUser!!.uid)
                             refer.addValueEventListener(object:ValueEventListener{
@@ -295,52 +467,3 @@ class ChatLogActivity : AppCompatActivity() {
     }
 }
 
-class ChatFromItem(val text:String="",val url:String="",val user:User?):Item<ViewHolder>(){
-    override fun getLayout(): Int {
-        return R.layout.chat_row_from
-    }
-
-    override fun bind(viewHolder: ViewHolder, position: Int) {
-
-
-
-        if(url=="")
-        {viewHolder.itemView.textView_from_row.text = text}
-        else if(url !== "")
-        {
-            viewHolder.itemView.textView_from_row.visibility=View.GONE
-            viewHolder.itemView.image_from_cover.visibility=View.VISIBLE
-            viewHolder.itemView.image_from.visibility = View.VISIBLE
-            Picasso.get().load(url).into(viewHolder.itemView.image_from)
-        }
-
-
-        val uri = user?.profileImageUrl
-        val targetImage = viewHolder.itemView.from_profile
-        Picasso.get().load(uri).into(targetImage)
-
-    }
-}class ChatToItem(val text:String="",val url:String="", val user: User?):Item<ViewHolder>(){
-    override fun getLayout(): Int {
-        return R.layout.chat_row_to
-    }
-
-    override fun bind(viewHolder: ViewHolder, position: Int) {
-
-        if(url=="")
-        {viewHolder.itemView.textView_to_row.text = text}
-        else if(url !== "")
-        {
-         viewHolder.itemView.textView_to_row.visibility=View.GONE
-         viewHolder.itemView.image_to_cover.visibility=View.VISIBLE
-         viewHolder.itemView.image_to.visibility = View.VISIBLE
-         Picasso.get().load(url).into(viewHolder.itemView.image_to)
-        }
-
-        val uri = user?.profileImageUrl
-        val targetImage = viewHolder.itemView.to_profile
-        Picasso.get().load(uri).into(targetImage)
-    }
-
-
-}

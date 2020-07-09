@@ -39,6 +39,7 @@ class fragment_home : Fragment() {
         binding= DataBindingUtil.inflate(inflater,R.layout.fragment_home,container,false)
 
         binding.homeRecycler.adapter = adapter
+
         binding.homeRecycler.addItemDecoration(DividerItemDecoration(requireContext(),DividerItemDecoration.VERTICAL))
 
         adapter.setOnItemClickListener { item, view ->
@@ -109,6 +110,7 @@ class fragment_home : Fragment() {
         }
 
         override fun bind(viewHolder: ViewHolder, position: Int) {
+            viewHolder.setIsRecyclable(false)
             if(chatMessage.text!=="text")
             {viewHolder.itemView.home_latestMessage.text=chatMessage.text}
             else{

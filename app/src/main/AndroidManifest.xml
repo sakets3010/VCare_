@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".ViewFullImageActivity"></activity>
         <activity android:name=".ChatLogActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -33,21 +34,25 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
         <service
             android:name=".Notifications.MyFirebaseMessaging"
-            android:exported="true"
-            android:enabled="true">
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <!-- FirebaseInstanceIdService performs security checks at runtime,
-      no need for explicit permissions despite exported="true"             -->
-        <service android:name=".Notifications.MyFirebaseInstanceId"
-            android:exported="true"
-            android:enabled="true">
+        <!--
+ FirebaseInstanceIdService performs security checks at runtime,
+      no need for explicit permissions despite exported="true"
+        -->
+        <service
+            android:name=".Notifications.MyFirebaseInstanceId"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
     </application>

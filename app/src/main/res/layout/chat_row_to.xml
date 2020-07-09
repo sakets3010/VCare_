@@ -24,6 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
+        android:visibility="visible"
         android:background="@drawable/rounded_white_bg"
         android:backgroundTint="@color/colorLightTeal"
         android:maxWidth="240dp"
@@ -33,6 +34,21 @@
         app:layout_constraintBottom_toBottomOf="@+id/to_profile"
         app:layout_constraintEnd_toStartOf="@+id/to_profile"
         app:layout_constraintTop_toTopOf="@+id/to_profile" />
+    <TextView
+        android:id="@+id/textView_to_row_deleted"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/rounded_white_bg"
+        android:backgroundTint="@color/colorLightTeal"
+        android:maxWidth="240dp"
+        android:padding="16dp"
+        android:text="@string/you_deleted_this_message"
+        android:visibility="gone"
+        android:textColor="@color/colorWhite"
+        app:layout_constraintBottom_toBottomOf="@+id/to_profile"
+        app:layout_constraintEnd_toStartOf="@+id/to_profile"
+        app:layout_constraintTop_toTopOf="@+id/to_profile"/>
 
     <ImageView
         android:id="@+id/image_to_cover"
