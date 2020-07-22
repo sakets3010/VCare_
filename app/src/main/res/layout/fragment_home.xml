@@ -5,7 +5,8 @@
     tools:context=".fragment_home">
     <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+        android:background="@color/primaryColor">
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/home_recycler"
         android:layout_width="match_parent"

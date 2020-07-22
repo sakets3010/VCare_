@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/chatlogbg">
+    android:background="@color/primaryColor">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/to_profile"
@@ -26,11 +26,11 @@
         android:layout_marginEnd="16dp"
         android:visibility="visible"
         android:background="@drawable/rounded_white_bg"
-        android:backgroundTint="@color/colorLightTeal"
+        android:backgroundTint="@color/secondaryColor"
         android:maxWidth="240dp"
         android:padding="16dp"
         android:text="TextView"
-        android:textColor="@color/colorWhite"
+        android:textColor="@color/secondaryTextColor"
         app:layout_constraintBottom_toBottomOf="@+id/to_profile"
         app:layout_constraintEnd_toStartOf="@+id/to_profile"
         app:layout_constraintTop_toTopOf="@+id/to_profile" />
@@ -40,7 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:background="@drawable/rounded_white_bg"
-        android:backgroundTint="@color/colorLightTeal"
+        android:backgroundTint="@color/secondaryColor"
         android:maxWidth="240dp"
         android:padding="16dp"
         android:text="@string/you_deleted_this_message"
@@ -58,7 +58,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/rounded_white_bg"
-        android:backgroundTint="@color/colorLightTeal"
+        android:backgroundTint="@color/secondaryColor"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/image_to"
         app:layout_constraintEnd_toEndOf="@+id/textView_to_row"

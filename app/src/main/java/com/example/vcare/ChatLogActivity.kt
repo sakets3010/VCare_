@@ -10,12 +10,16 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat.startActivity
+import com.example.vcare.ChatLogActivity.typingStatus.Companion.updateTypingStatus
 import com.example.vcare.HomeActivity.Companion.currentUser
+import com.example.vcare.HomeActivity.Status.Companion.updateStatus
 import com.example.vcare.Notifications.*
 import com.example.vcare.helper.ApiService
 import com.example.vcare.helper.ChatMessage
@@ -49,13 +53,18 @@ class ChatLogActivity : AppCompatActivity() {
     val adapter = GroupAdapter<ViewHolder>()
     var notify = false
     var apiService : ApiService?=null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d("chat-list","oncreate called")
 
+
+
         setContentView(R.layout.activity_chat_log)
 
         val user = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
+
+        val toId = user?.uid
 
         supportActionBar?.title = user?.username
 
@@ -64,6 +73,8 @@ class ChatLogActivity : AppCompatActivity() {
         chat_log_recycler.adapter = adapter
 
         listenForMessages()
+
+
 
         send_button.setOnClickListener {
             if(edittext_chat_log.text.toString()==""){
@@ -78,6 +89,33 @@ class ChatLogActivity : AppCompatActivity() {
 
 
         }
+        edittext_chat_log.addTextChangedListener(object:TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                if(edittext_chat_log.text.toString().trim().isNotEmpty()){
+                    Log.d("type-indicator","update called")
+                    if (toId != null) {
+                        updateTypingStatus(toId)
+                        checkTypingStatus()
+                    }
+                }
+                else{
+                    Log.d("type-indicator","update not called")
+                    updateTypingStatus("no-one")
+
+                }
+            }
+
+
+        })
         send_image.setOnClickListener {
             notify = true
             val intent = Intent()
@@ -92,7 +130,8 @@ class ChatLogActivity : AppCompatActivity() {
     }
 
    private fun listenForMessages() {
-
+       adapter.notifyDataSetChanged()
+       val listMessages = mutableListOf<ChatMessage>()
         val fromId = FirebaseAuth.getInstance().uid
         val user = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
         val toId = user?.uid
@@ -104,12 +143,16 @@ class ChatLogActivity : AppCompatActivity() {
                 val chatMessages = snapshot.getValue(ChatMessage::class.java)
                 if (chatMessages != null) {
                     if (chatMessages.fromId ==FirebaseAuth.getInstance().uid)
-                    {   val currentUser = HomeActivity.currentUser
-
-                        adapter.add(ChatToItem(chatMessages.text,chatMessages.url,currentUser,chatMessages.timestamp.toString(),fromId,toId))}
+                    {
+                        val currentUser = HomeActivity.currentUser
+                        adapter.add(ChatToItem(chatMessages.text,chatMessages.url,currentUser,chatMessages.timestamp.toString(),fromId,toId))
+                    }
                     else
-                    {   val userTo = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
-                        adapter.add(ChatFromItem(chatMessages.text,chatMessages.url,userTo)) }
+                    {
+                        val userTo = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
+                        adapter.add(ChatFromItem(chatMessages.text,chatMessages.url,userTo))
+
+                    }
                 }
 
                 chat_log_recycler.scrollToPosition(adapter.itemCount-1)
@@ -123,8 +166,7 @@ class ChatLogActivity : AppCompatActivity() {
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-
-
+                adapter.notifyDataSetChanged()
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
@@ -134,6 +176,57 @@ class ChatLogActivity : AppCompatActivity() {
 
         })
     }
+    private fun checkTypingStatus() {
+        val uid = FirebaseAuth.getInstance().uid ?: ""
+        val fromId = FirebaseAuth.getInstance().uid
+        val ref = FirebaseDatabase.getInstance().getReference("/users")
+        ref.addListenerForSingleValueEvent(object:ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+            }
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for(ds in snapshot.children){
+
+                    val typingStatus = ds.child("typingStatus").getValue()
+
+                    if(typingStatus==fromId)
+                    {
+                        TODO()
+                       //animation goes here
+                    }
+
+                }
+
+
+            }
+        })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateStatus("online")
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        updateStatus("offline")
+        updateTypingStatus("no-one")
+    }
+
+    class typingStatus(){
+        companion object{
+            fun updateTypingStatus(status:String){
+                val uid = FirebaseAuth.getInstance().uid ?: ""
+                val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
+
+                val hashMap = HashMap<String,Any>()
+                hashMap["typingStatus"] = status
+                Log.d("type-indicator","status:${status}")
+                ref!!.updateChildren(hashMap)
+            }
+        }
+    }
+
     private fun performSendMessage() {
 
         val text = edittext_chat_log.text.toString()
@@ -157,10 +250,10 @@ class ChatLogActivity : AppCompatActivity() {
 
 
 
-        val latestMessageRef = FirebaseDatabase.getInstance().getReference("/latest_messages/$fromId/$toId")
+        val latestMessageRef = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId/$toId")
         latestMessageRef.setValue(chatMessage)
 
-        val latestMessageToRef = FirebaseDatabase.getInstance().getReference("/latest_messages/$toId/$fromId")
+        val latestMessageToRef = FirebaseDatabase.getInstance().getReference("/latest-messages/$toId/$fromId")
         latestMessageToRef.setValue(chatMessage)
 
         //fcm
@@ -233,7 +326,6 @@ class ChatLogActivity : AppCompatActivity() {
 
                                 if(response.body()!!.success!==1){
 
-                                    Toast.makeText(this@ChatLogActivity,"Failed,Nothing happened",Toast.LENGTH_SHORT).show()
                                 }
 
                             }
@@ -248,6 +340,9 @@ class ChatLogActivity : AppCompatActivity() {
 
         })
     }
+
+
+
 
     class ChatFromItem(val text:String="",val url:String="",val user:User?):Item<ViewHolder>(){
 
@@ -367,7 +462,9 @@ class ChatLogActivity : AppCompatActivity() {
         @SuppressLint("SetTextI18n")
         private fun deleteMessage(position: Int, viewHolder: ViewHolder) {
             val hashMap = HashMap<String,Any>()
-
+            val progressBar = ProgressDialog(viewHolder.itemView.context)
+            progressBar.setMessage("deleting message..")
+            progressBar.show()
             val deletionrefupdate = FirebaseDatabase.getInstance().reference.child("user-messages").child(fromId).child(toId).child(time)
             val to_deletionrefupdate = FirebaseDatabase.getInstance().reference.child("user-messages").child(toId).child(fromId).child(time)
             if(urlimg=="")
@@ -382,6 +479,13 @@ class ChatLogActivity : AppCompatActivity() {
             deletionrefupdate.updateChildren(hashMap)
             to_deletionrefupdate.updateChildren(hashMap)
             notifyChanged()
+
+
+
+
+
+
+            Toast.makeText(viewHolder.itemView.context,"deleted message",Toast.LENGTH_SHORT).show()
 
         }
     }
@@ -466,4 +570,6 @@ class ChatLogActivity : AppCompatActivity() {
         }
     }
 }
+
+
 

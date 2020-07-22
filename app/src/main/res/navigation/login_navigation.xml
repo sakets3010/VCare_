@@ -10,8 +10,8 @@
         android:label="Sign In"
         tools:layout="@layout/fragment_login__sign_in_fragment">
         <action
-            android:id="@+id/action_login_Sign_in_fragment_to_login_enter_detail_fragment"
-            app:destination="@id/login_enter_detail_fragment" />
+            android:id="@+id/action_login_Sign_in_fragment_to_categoryFragment"
+            app:destination="@id/categoryFragment" />
     </fragment>
     <fragment
         android:id="@+id/login_enter_detail_fragment"
@@ -21,5 +21,17 @@
         <action
             android:id="@+id/action_login_enter_detail_fragment_to_login_Sign_in_fragment"
             app:destination="@id/login_Sign_in_fragment" />
+        <action
+            android:id="@+id/action_login_enter_detail_fragment_to_categoryFragment"
+            app:destination="@id/categoryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/categoryFragment"
+        android:name="com.example.vcare.CategoryFragment"
+        android:label="Choose a category"
+        tools:layout="@layout/fragment_category">
+        <action
+            android:id="@+id/action_categoryFragment_to_login_enter_detail_fragment"
+            app:destination="@id/login_enter_detail_fragment" />
     </fragment>
 </navigation>

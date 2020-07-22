@@ -4,12 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/primaryColor">
 
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/select_photo_button"
             style="@style/Widget.MaterialComponents.Button.Icon"
+            android:backgroundTint="@color/primaryLightColor"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:insetLeft="0dp"
@@ -28,11 +30,13 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/login_username_text_layout"
+            android:backgroundTint="@color/primaryLightColor"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginEnd="32dp"
+            app:hintTextColor="@color/secondaryTextColor"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -43,12 +47,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fontFamily="@font/poppins"
+                android:textColorHint="@color/secondaryTextColor"
+                android:textColor="@color/secondaryTextColor"
                 android:hint="@string/username" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/sign_out"
+            android:backgroundTint="@color/primaryLightColor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="32dp"
@@ -60,7 +67,7 @@
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/circular_profile_holder"
             app:civ_border_width="4dp"
-            app:civ_border_color="@color/colorBackgroundAppBar"
+            app:civ_border_color="@color/secondaryLightColor"
             android:layout_width="150dp"
             android:layout_height="150dp"
             app:layout_constraintBottom_toBottomOf="@+id/select_photo_button"
@@ -69,6 +76,7 @@
             app:layout_constraintTop_toTopOf="@+id/select_photo_button" />
 
         <com.google.android.material.button.MaterialButton
+            android:backgroundTint="@color/primaryLightColor"
             android:id="@+id/register"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

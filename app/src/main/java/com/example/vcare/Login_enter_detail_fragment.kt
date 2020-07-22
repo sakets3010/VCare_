@@ -36,12 +36,11 @@ class Login_enter_detail_fragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         val sharedPref = context?.getSharedPreferences("Vcare",Context.MODE_PRIVATE)
         if (sharedPref?.getString("username"," ")!==" ")
         {
             val intent = Intent(requireContext(),HomeActivity::class.java)
-           startActivity(intent)
+            startActivity(intent)
             requireActivity().finish()
         }
 
@@ -57,15 +56,12 @@ class Login_enter_detail_fragment : Fragment() {
             intent.type = "image/*"
             startActivityForResult(intent, 0)
         }
-
-
-
         binding.register.setOnClickListener {
             if (binding.loginUsernameEdit.text.toString().trim().isEmpty()){
-                binding.loginUsernameEdit.error = "username Required"
-                binding.loginUsernameEdit.requestFocus()
-                return@setOnClickListener
-            }
+            binding.loginUsernameEdit.error = "username Required"
+            binding.loginUsernameEdit.requestFocus()
+            return@setOnClickListener
+        }
             if(selectedPhotoUri==null){
                 binding.selectPhotoButton.error =  "Profile photo Required"
                 binding.selectPhotoButton.requestFocus()
@@ -82,8 +78,6 @@ class Login_enter_detail_fragment : Fragment() {
                 startActivity(intent)
             }
         }
-
-
         return binding.root
     }
     var selectedPhotoUri:Uri?=null
@@ -96,7 +90,6 @@ class Login_enter_detail_fragment : Fragment() {
             binding.selectPhotoButton.alpha=0f
         }
     }
-
     private fun setupUI() {
         binding.signOut.setOnClickListener {
             signOut()
@@ -120,14 +113,11 @@ class Login_enter_detail_fragment : Fragment() {
         }
 
     }
-
-
-
     private fun saveUserToFirebaseDatabase(profileImageUrl: String) {
         val uid = FirebaseAuth.getInstance().uid ?: ""
         val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
 
-        val user = User(uid,binding.loginUsernameEdit.text.toString(), profileImageUrl,"")
+        val user = User(uid,binding.loginUsernameEdit.text.toString(), profileImageUrl,"","")
 
         ref.setValue(user)
             .addOnSuccessListener {

@@ -9,6 +9,7 @@ import android.view.MenuItem
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
+import com.example.vcare.HomeActivity.Status.Companion.updateStatus
 import com.example.vcare.helper.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -45,14 +46,19 @@ class HomeActivity : AppCompatActivity() {
             }
         })
     }
+class Status(){
+    companion object{
+        val firebaseUser = FirebaseAuth.getInstance().currentUser
+        fun updateStatus(status:String){
+            val ref = FirebaseDatabase.getInstance().reference.child("users").child(firebaseUser!!.uid)
 
-    private fun updateStatus(status:String){
-        val ref = FirebaseDatabase.getInstance().reference.child("users").child(firebaseUser!!.uid)
-
-        val hashMap = HashMap<String,Any>()
-        hashMap["status"] = status
-        ref!!.updateChildren(hashMap)
+            val hashMap = HashMap<String,Any>()
+            hashMap["status"] = status
+            ref!!.updateChildren(hashMap)
+        }
     }
+}
+
 
     override fun onResume() {
         super.onResume()

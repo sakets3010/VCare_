@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/primaryColor"
+    >
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_list"
@@ -12,7 +14,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
-        app:civ_border_color="@color/colorLightTeal"
+        app:civ_border_color="@color/secondaryColor"
         app:civ_border_width="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -50,8 +52,21 @@
         android:paddingEnd="8dp"
         android:text="TextView"
         android:textSize="18sp"
+        android:textColor="@color/secondaryTextColor"
         app:layout_constraintBottom_toBottomOf="@+id/profile_list"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/profile_list"
         app:layout_constraintTop_toTopOf="@+id/profile_list" />
+    <View
+        android:id="@+id/divider_new_message"
+        android:layout_width="0dp"
+        android:layout_height="0.5dp"
+        android:background="@color/secondaryTextColor"
+        app:layout_constraintTop_toBottomOf="@+id/profile_list"
+        app:layout_constraintStart_toEndOf="@id/profile_list"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

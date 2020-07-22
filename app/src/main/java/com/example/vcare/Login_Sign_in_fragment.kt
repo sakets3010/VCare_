@@ -78,7 +78,7 @@ class Login_Sign_in_fragment : Fragment() {
         val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener {
             if (it.isSuccessful) {
-                Navigation.findNavController(requireActivity(),R.id.login_navhost).navigate(R.id.action_login_Sign_in_fragment_to_login_enter_detail_fragment)
+                Navigation.findNavController(requireActivity(),R.id.login_navhost).navigate(R.id.action_login_Sign_in_fragment_to_categoryFragment)
                 Toast.makeText(requireContext(),"Sign in successful!",Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(requireContext(), "Google sign in failed:(", Toast.LENGTH_LONG).show()
@@ -89,7 +89,7 @@ class Login_Sign_in_fragment : Fragment() {
         super.onStart()
         val user = FirebaseAuth.getInstance().currentUser
         if (user != null) {
-            Navigation.findNavController(requireActivity(),R.id.login_navhost).navigate(R.id.action_login_Sign_in_fragment_to_login_enter_detail_fragment)
+            Navigation.findNavController(requireActivity(),R.id.login_navhost).navigate(R.id.action_login_Sign_in_fragment_to_categoryFragment)
         }
 
     }

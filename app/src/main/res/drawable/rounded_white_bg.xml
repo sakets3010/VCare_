@@ -3,7 +3,7 @@
     <solid android:color="@color/colorWhite"/>
 
     <stroke android:width="0dp"
-        android:color="@color/colorFragmentBackground"
+        android:color="@color/primaryLightColor"
         />
 
     <padding android:left="4dp"

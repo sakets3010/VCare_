@@ -3,6 +3,8 @@ package com.example.vcare
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
+import androidx.navigation.Navigation
+import androidx.navigation.ui.NavigationUI
 import com.squareup.picasso.Picasso
 
 class ViewFullImageActivity : AppCompatActivity() {
@@ -19,4 +21,6 @@ class ViewFullImageActivity : AppCompatActivity() {
         Picasso.get().load(url).into(image_full)
 
     }
+
+
 }

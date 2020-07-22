@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
+import com.example.vcare.HomeActivity.Status.Companion.updateStatus
 import com.example.vcare.helper.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -63,6 +64,16 @@ class NewMessageActivity : AppCompatActivity() {
                 recyclerview_newMessage.adapter=adapter
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+         updateStatus("online")
+    }
+
+    override fun onPause(){
+        super.onPause()
+        updateStatus("offline")
     }
 
 

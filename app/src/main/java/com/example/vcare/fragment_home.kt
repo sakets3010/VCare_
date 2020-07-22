@@ -40,7 +40,7 @@ class fragment_home : Fragment() {
 
         binding.homeRecycler.adapter = adapter
 
-        binding.homeRecycler.addItemDecoration(DividerItemDecoration(requireContext(),DividerItemDecoration.VERTICAL))
+
 
         adapter.setOnItemClickListener { item, view ->
             val intent = Intent(requireContext(),ChatLogActivity::class.java)
@@ -68,7 +68,7 @@ class fragment_home : Fragment() {
 
     private fun listenForNewMessage() {
         val fromId = FirebaseAuth.getInstance().uid
-        val ref = FirebaseDatabase.getInstance().getReference("/latest_messages/$fromId")
+        val ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId")
         ref.addChildEventListener(object :ChildEventListener{
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatMessage = snapshot.getValue(ChatMessage::class.java)?:return
@@ -130,9 +130,9 @@ class fragment_home : Fragment() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     chatPartner = snapshot.getValue(User::class.java)
                     viewHolder.itemView.home_username.text = chatPartner?.username
-                    if(chatPartner!!.status=="online")
+                    if(chatPartner?.status=="online")
                     {viewHolder.itemView.online_status_home.visibility = View.VISIBLE}
-                    else if(chatPartner!!.status=="offline"){
+                    else if(chatPartner?.status=="offline"){
                      viewHolder.itemView.online_status_home.visibility = View.GONE
                     }
                     val targetImage =  viewHolder.itemView.home_profile
