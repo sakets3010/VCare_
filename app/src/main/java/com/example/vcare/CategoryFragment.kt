@@ -1,6 +1,7 @@
 package com.example.vcare
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,7 +10,11 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.example.vcare.databinding.FragmentCategoryBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import kotlin.coroutines.coroutineContext
 
 
 class CategoryFragment : Fragment() {
@@ -23,6 +28,7 @@ class CategoryFragment : Fragment() {
         if (sharedPref?.getString("category"," ")!==" ")
         {
             Navigation.findNavController(requireActivity(),R.id.login_navhost).navigate(R.id.action_categoryFragment_to_login_enter_detail_fragment)
+
         }
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_category,container,false)
         val items = arrayOf("Helper", "Seeker")
@@ -41,8 +47,13 @@ class CategoryFragment : Fragment() {
                 val editor = sharedPref?.edit()
                 editor?.putString("category",binding.dropdownText.text.toString())
                 editor?.apply()
-                Navigation.findNavController(requireActivity(),R.id.login_navhost).navigate(R.id.action_categoryFragment_to_login_enter_detail_fragment)
+                val category = binding.dropdownText.text.toString()
+                val action = CategoryFragmentDirections.actionCategoryFragmentToLoginEnterDetailFragment(category)
+                findNavController().navigate(action)
             }
+        }
+        binding.backButton2.setOnClickListener {
+            findNavController().navigate(R.id.action_categoryFragment_to_login_enter_detail_fragment)
         }
 
         return binding.root

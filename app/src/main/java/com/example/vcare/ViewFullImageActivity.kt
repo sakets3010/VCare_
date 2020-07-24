@@ -1,11 +1,13 @@
 package com.example.vcare
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.activity_view_full_image.*
 
 class ViewFullImageActivity : AppCompatActivity() {
 

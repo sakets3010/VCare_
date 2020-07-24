@@ -1,6 +1,6 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/secondaryColor</item>
         <item name="colorPrimaryDark">@color/primaryDarkColor</item>
@@ -13,6 +13,12 @@
     <style name="ShapeAppearanceOverlay.MyApp.Button.Rounded" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
+    </style>
+    <style name="TextToolbar">
+        <item name="android:background">@color/secondaryColor</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textAllCaps">true</item>
     </style>
 
 </resources>

@@ -24,6 +24,9 @@
         <action
             android:id="@+id/action_login_enter_detail_fragment_to_categoryFragment"
             app:destination="@id/categoryFragment" />
+        <argument
+            android:name="category"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/categoryFragment"

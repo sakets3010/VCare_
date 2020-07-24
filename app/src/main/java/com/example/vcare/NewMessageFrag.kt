@@ -1,14 +1,13 @@
 package com.example.vcare
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Color
 import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
 import android.view.View
-import androidx.navigation.Navigation
-import androidx.navigation.ui.NavigationUI
-import com.example.vcare.HomeActivity.Status.Companion.updateStatus
+import android.view.ViewGroup
 import com.example.vcare.helper.User
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -17,19 +16,17 @@ import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
-import kotlinx.android.synthetic.main.activity_new_message.*
+import kotlinx.android.synthetic.main.fragment_new_message.*
 import kotlinx.android.synthetic.main.new_message_list.view.*
 
-class NewMessageActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_new_message)
-
-        supportActionBar?.title = "Connect with Users"
-
+class NewMessageFrag : Fragment() {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
         fetchUsers()
-
-
+        return inflater.inflate(R.layout.fragment_new_message, container, false)
     }
     companion object {
         val USER_KEY = "USER_KEY"
@@ -37,7 +34,7 @@ class NewMessageActivity : AppCompatActivity() {
 
     private fun fetchUsers() {
         val ref = FirebaseDatabase.getInstance().getReference("/users")
-        ref.addListenerForSingleValueEvent(object:ValueEventListener {
+        ref.addListenerForSingleValueEvent(object: ValueEventListener {
 
 
             override fun onCancelled(error: DatabaseError) {
@@ -57,8 +54,6 @@ class NewMessageActivity : AppCompatActivity() {
                     val intent = Intent(view.context,ChatLogActivity::class.java)
                     intent.putExtra(USER_KEY,userItem.user)
                     startActivity(intent)
-                    finish()
-
                 }
 
                 recyclerview_newMessage.adapter=adapter
@@ -68,12 +63,12 @@ class NewMessageActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-         updateStatus("online")
+        HomeActivity.Status.updateStatus("online")
     }
 
     override fun onPause(){
         super.onPause()
-        updateStatus("offline")
+        HomeActivity.Status.updateStatus("offline")
     }
 
 
@@ -85,6 +80,12 @@ class UserItem(val user: User): Item<ViewHolder>(){
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemView.username_list.text = user.username
+        if(user.category=="Seeker")
+        {
+            viewHolder.itemView.category_text_new_message.setBackgroundResource(R.drawable.rounded_bg_yellow_coloured)
+            viewHolder.itemView.category_text_new_message.setTextColor(Color.parseColor("#ffff00"))
+        }
+        viewHolder.itemView.category_text_new_message.text=user.category
         if(user.status=="online"){
             viewHolder.itemView.online_status_new_message.visibility = View.VISIBLE
         }
@@ -92,8 +93,9 @@ class UserItem(val user: User): Item<ViewHolder>(){
             viewHolder.itemView.online_status_new_message.visibility = View.GONE
         }
         if(user.profileImageUrl.isNotEmpty())
-        Picasso.get().load(user.profileImageUrl).into(viewHolder.itemView.profile_list)
+            Picasso.get().load(user.profileImageUrl).into(viewHolder.itemView.profile_list)
     }
 
 
 }
+

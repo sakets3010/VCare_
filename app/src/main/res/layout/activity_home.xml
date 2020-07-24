@@ -14,4 +14,14 @@
         android:layout_height="match_parent"
         app:defaultNavHost="true"
         app:navGraph="@navigation/home_navigation" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:itemIconTint="@color/colorWhite"
+        app:itemTextColor="@color/colorWhite"
+        android:background="@color/secondaryColor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:menu="@menu/nav_menu" />
 </androidx.constraintlayout.widget.ConstraintLayout>

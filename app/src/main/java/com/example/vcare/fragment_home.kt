@@ -1,14 +1,19 @@
 package com.example.vcare
 
+import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.example.vcare.NewMessageFrag.Companion.USER_KEY
 import com.example.vcare.Notifications.OreoNotification
 import com.example.vcare.Notifications.Token
 import com.example.vcare.databinding.FragmentHomeBinding
@@ -40,13 +45,18 @@ class fragment_home : Fragment() {
 
         binding.homeRecycler.adapter = adapter
 
-
-
         adapter.setOnItemClickListener { item, view ->
             val intent = Intent(requireContext(),ChatLogActivity::class.java)
             val row = item as HomeItem
-            intent.putExtra(NewMessageActivity.USER_KEY,row.chatPartner)
+            intent.putExtra(NewMessageFrag.USER_KEY,row.chatPartner)
             startActivity(intent)
+        }
+
+        binding.signOutButton.setOnClickListener {
+            val intent = Intent(requireContext(),LoginActivity::class.java)
+            startActivity(intent)
+            Toast.makeText(requireContext(), "Sign out successful!", Toast.LENGTH_SHORT).show()
+            FirebaseAuth.getInstance().signOut()
         }
         listenForNewMessage()
 
@@ -54,6 +64,8 @@ class fragment_home : Fragment() {
         
         return binding.root
     }
+
+
 
     private fun updateToken(token: String?) {
         val firebaseUser = FirebaseAuth.getInstance().currentUser
@@ -67,6 +79,8 @@ class fragment_home : Fragment() {
     val latestMessagesMap = HashMap<String, ChatMessage>()
 
     private fun listenForNewMessage() {
+        val sharedPref = context?.getSharedPreferences("Vcare", Context.MODE_PRIVATE)
+        val category = sharedPref?.getString("category"," ")
         val fromId = FirebaseAuth.getInstance().uid
         val ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId")
         ref.addChildEventListener(object :ChildEventListener{
@@ -74,13 +88,17 @@ class fragment_home : Fragment() {
                 val chatMessage = snapshot.getValue(ChatMessage::class.java)?:return
                 latestMessagesMap[snapshot.key!!]=chatMessage
                 adapter.clear()
-                refreshMessages()
+                if (category != null) {
+                    refreshMessages()
+                }
             }
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatMessage = snapshot.getValue(ChatMessage::class.java)?:return
                 latestMessagesMap[snapshot.key!!]=chatMessage
                 adapter.clear()
-                refreshMessages()
+                if (category != null) {
+                    refreshMessages()
+                }
             }
             override fun onCancelled(error: DatabaseError) {
                 TODO("Not yet implemented")
@@ -97,12 +115,13 @@ class fragment_home : Fragment() {
 
     private fun refreshMessages() {
         latestMessagesMap.values.forEach {
-
             adapter.add(HomeItem(it))
         }
     }
 
     class HomeItem(val chatMessage:ChatMessage): Item<ViewHolder>() {
+
+
 
         var chatPartner:User?=null
         override fun getLayout(): Int {
@@ -110,6 +129,7 @@ class fragment_home : Fragment() {
         }
 
         override fun bind(viewHolder: ViewHolder, position: Int) {
+
             viewHolder.setIsRecyclable(false)
             if(chatMessage.text!=="text")
             {viewHolder.itemView.home_latestMessage.text=chatMessage.text}
@@ -127,9 +147,16 @@ class fragment_home : Fragment() {
                     TODO("Not yet implemented")
                 }
 
+
                 override fun onDataChange(snapshot: DataSnapshot) {
                     chatPartner = snapshot.getValue(User::class.java)
                     viewHolder.itemView.home_username.text = chatPartner?.username
+                    if(chatPartner?.category=="Seeker")
+                    {
+                       viewHolder.itemView.category_text.setBackgroundResource(R.drawable.rounded_bg_yellow_coloured)
+                       viewHolder.itemView.category_text.setTextColor(Color.parseColor("#ffff00"))
+                    }
+                    viewHolder.itemView.category_text.text = chatPartner?.category
                     if(chatPartner?.status=="online")
                     {viewHolder.itemView.online_status_home.visibility = View.VISIBLE}
                     else if(chatPartner?.status=="offline"){
@@ -137,7 +164,6 @@ class fragment_home : Fragment() {
                     }
                     val targetImage =  viewHolder.itemView.home_profile
                     Picasso.get().load(chatPartner?.profileImageUrl).into(targetImage)
-
                 }
 
 

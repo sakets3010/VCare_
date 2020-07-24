@@ -6,7 +6,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/primaryColor">
-
+        <TextView
+            android:id="@+id/textView7"
+            style="@style/TextToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:gravity="center"
+            android:text="Sign In To Continue"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
         <com.google.android.gms.common.SignInButton
             android:id="@+id/google_button"
             android:layout_width="0dp"

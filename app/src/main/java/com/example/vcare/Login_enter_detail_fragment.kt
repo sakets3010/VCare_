@@ -21,6 +21,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.vcare.databinding.FragmentLoginEnterDetailFragmentBinding
 import com.example.vcare.helper.User
 import com.google.firebase.auth.FirebaseAuth
@@ -36,6 +38,8 @@ class Login_enter_detail_fragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        val args: Login_enter_detail_fragmentArgs by navArgs()
         val sharedPref = context?.getSharedPreferences("Vcare",Context.MODE_PRIVATE)
         if (sharedPref?.getString("username"," ")!==" ")
         {
@@ -56,6 +60,9 @@ class Login_enter_detail_fragment : Fragment() {
             intent.type = "image/*"
             startActivityForResult(intent, 0)
         }
+        binding.backButton1.setOnClickListener {
+            findNavController().navigate(R.id.action_login_enter_detail_fragment_to_login_Sign_in_fragment)
+        }
         binding.register.setOnClickListener {
             if (binding.loginUsernameEdit.text.toString().trim().isEmpty()){
             binding.loginUsernameEdit.error = "username Required"
@@ -68,7 +75,7 @@ class Login_enter_detail_fragment : Fragment() {
                 Toast.makeText(requireContext(),"Please add a profile picture",Toast.LENGTH_SHORT).show()
             }
             else{
-                uploadimageToFirebaseStorage()
+                uploadimageToFirebaseStorage(args.category)
                 Toast.makeText(requireContext(),"Registered successfully",Toast.LENGTH_SHORT).show()
                 val intent = Intent(requireContext(),HomeActivity::class.java)
                 val editor = sharedPref?.edit()
@@ -101,23 +108,24 @@ class Login_enter_detail_fragment : Fragment() {
         Toast.makeText(requireContext(), "Sign out successful!", Toast.LENGTH_SHORT).show()
         FirebaseAuth.getInstance().signOut()
     }
-    private fun uploadimageToFirebaseStorage(){
+    private fun uploadimageToFirebaseStorage(category:String){
         val filename = UUID.randomUUID().toString()
         val ref=FirebaseStorage.getInstance().getReference("/images/$filename")
         ref.putFile(selectedPhotoUri!!).addOnSuccessListener {
             Log.d("LoginActivity","successfully uploaded image:${it.metadata?.path}")
             ref.downloadUrl.addOnSuccessListener {
             Log.d("LoginActivity","file location:${it}")
-                saveUserToFirebaseDatabase(it.toString())
+                saveUserToFirebaseDatabase(it.toString(),category)
             }
         }
 
     }
-    private fun saveUserToFirebaseDatabase(profileImageUrl: String) {
+    private fun saveUserToFirebaseDatabase(profileImageUrl: String,category:String) {
+
         val uid = FirebaseAuth.getInstance().uid ?: ""
         val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
 
-        val user = User(uid,binding.loginUsernameEdit.text.toString(), profileImageUrl,"","")
+        val user = User(uid,binding.loginUsernameEdit.text.toString(), profileImageUrl,"","no-one",category)
 
         ref.setValue(user)
             .addOnSuccessListener {
@@ -127,6 +135,8 @@ class Login_enter_detail_fragment : Fragment() {
                 Log.d("LoginActivity", "Failed to set value to database: ${it.message}")
             }
     }
+
+
 }
 
 

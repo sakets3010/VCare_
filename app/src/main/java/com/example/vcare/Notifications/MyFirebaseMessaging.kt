@@ -8,9 +8,7 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.os.Build
 import android.os.Bundle
-import com.example.vcare.ChatLogActivity
 import com.example.vcare.HomeActivity
-import com.example.vcare.NewMessageActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage

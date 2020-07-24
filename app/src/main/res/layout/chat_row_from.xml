@@ -12,7 +12,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="4dp"
         android:layout_marginBottom="16dp"
         android:maxWidth="240dp"
         android:src="@android:color/background_dark"
@@ -50,7 +50,15 @@
         app:layout_constraintStart_toStartOf="@id/textView_from_row"
         />
 
-
+    <TextView
+        android:id="@+id/timestamp_from"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="90dp"
+        android:textColor="@color/secondaryTextColor"
+        android:textColorHint="@color/secondaryTextColor"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView_from_row" />
 
     <ImageView
         android:id="@+id/image_from"

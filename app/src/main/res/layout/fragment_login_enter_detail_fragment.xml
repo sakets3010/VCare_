@@ -6,8 +6,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/primaryColor">
-
-
+        <TextView
+            android:id="@+id/textView2"
+            style="@style/TextToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:gravity="center"
+            android:text="Please Enter Your Details"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/select_photo_button"
             style="@style/Widget.MaterialComponents.Button.Icon"
@@ -30,12 +40,15 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/login_username_text_layout"
-            android:backgroundTint="@color/primaryLightColor"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginEnd="32dp"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/primaryLightColor"
+            app:counterEnabled="true"
+            app:counterMaxLength="15"
             app:hintTextColor="@color/secondaryTextColor"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -47,38 +60,50 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fontFamily="@font/poppins"
-                android:textColorHint="@color/secondaryTextColor"
+                android:hint="@string/username"
                 android:textColor="@color/secondaryTextColor"
-                android:hint="@string/username" />
+                android:textColorHint="@color/secondaryTextColor" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/sign_out"
-            android:backgroundTint="@color/primaryLightColor"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="32dp"
             android:layout_marginBottom="32dp"
+            android:backgroundTint="@color/primaryLightColor"
             android:text="Sign Out"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="@id/register"
+            app:layout_constraintStart_toStartOf="@id/register"
+            app:layout_constraintTop_toBottomOf="@+id/register" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/circular_profile_holder"
-            app:civ_border_width="4dp"
-            app:civ_border_color="@color/secondaryLightColor"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            app:layout_constraintBottom_toBottomOf="@+id/select_photo_button"
+            app:civ_border_color="@color/secondaryLightColor"
+            app:civ_border_width="4dp"
+            app:layout_constraintBottom_toTopOf="@+id/login_username_text_layout"
             app:layout_constraintEnd_toEndOf="@+id/select_photo_button"
             app:layout_constraintStart_toStartOf="@+id/select_photo_button"
-            app:layout_constraintTop_toTopOf="@+id/select_photo_button" />
+            app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+        <ImageButton
+            android:id="@+id/back_button_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_action_back"
+            app:layout_constraintTop_toTopOf="@id/textView2"
+            app:layout_constraintBottom_toBottomOf="@id/textView2"
+            app:layout_constraintStart_toStartOf="parent"
+            android:backgroundTint="@color/secondaryColor"
+            android:layout_marginStart="8dp"/>
 
         <com.google.android.material.button.MaterialButton
             android:backgroundTint="@color/primaryLightColor"
             android:id="@+id/register"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Register"
             app:layout_constraintBottom_toBottomOf="parent"

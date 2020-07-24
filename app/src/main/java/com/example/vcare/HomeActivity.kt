@@ -6,16 +6,22 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.setupWithNavController
 import com.example.vcare.HomeActivity.Status.Companion.updateStatus
 import com.example.vcare.helper.User
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import kotlinx.android.synthetic.main.activity_home.*
 
 class HomeActivity : AppCompatActivity() {
     val firebaseUser = FirebaseAuth.getInstance().currentUser
@@ -26,10 +32,12 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
+        val navController = Navigation.findNavController(this, R.id.home_nav)
+        val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottom_navigation)
+        bottomNavigationView.setupWithNavController(navController)
+
         fetchCurrentUser()
 
-        val navcontroller= Navigation.findNavController(this,R.id.home_nav)
-        NavigationUI.setupActionBarWithNavController(this,navcontroller)
     }
 
     private fun fetchCurrentUser() {
@@ -71,25 +79,7 @@ class Status(){
         updateStatus("offline")
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.nav_menu,menu)
-        return super.onCreateOptionsMenu(menu)
-    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item?.itemId){
-            R.id.new_message ->{
-                val intent = Intent(this,NewMessageActivity::class.java)
-                startActivity(intent)
 
-            }
-            R.id.sign_out ->{
-                FirebaseAuth.getInstance().signOut()
-                val intent = Intent(this,LoginActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
+
 }

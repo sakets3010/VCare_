@@ -43,18 +43,16 @@
 
     <TextView
         android:id="@+id/username-list"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
         android:fontFamily="@font/poppins_bold"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:text="TextView"
-        android:textSize="18sp"
         android:textColor="@color/secondaryTextColor"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/profile_list"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/profile_list"
         app:layout_constraintTop_toTopOf="@+id/profile_list" />
     <View
@@ -69,4 +67,20 @@
         android:layout_marginBottom="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/category_text_new_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="45dp"
+        android:background="@drawable/rounded_bg_green_coloured"
+        android:hint="category"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:textAlignment="center"
+        android:textColor="#00e676"
+        android:textColorHint="#00e676"
+        app:layout_constraintBottom_toBottomOf="@id/profile_list"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/profile_list" />
 </androidx.constraintlayout.widget.ConstraintLayout>

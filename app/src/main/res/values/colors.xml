@@ -11,5 +11,7 @@
   <color name="colorWhite">#ffff</color>
   <color name="colorDarkGreen">#1b5e20</color>
   <color name="colorLightGrey">#bdbdbd</color>
+  <color name="colorLightYellow">#ffff00</color>
+  <color name="colorOnline">#388e3c</color>
 
 </resources>
