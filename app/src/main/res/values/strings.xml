@@ -9,4 +9,5 @@
     <string name="online">online</string>
     <string name="away">away</string>
     <string name="typing">typing..</string>
+    <string name="image_message">sent an image</string>
 </resources>

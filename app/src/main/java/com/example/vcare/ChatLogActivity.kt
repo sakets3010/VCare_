@@ -124,7 +124,8 @@ class ChatLogActivity : AppCompatActivity() {
             startActivityForResult(Intent.createChooser(intent,"pick an image"),438)
         }
 
-        apiService = Client.client.getClient("https://fcm.googleapis.com/")!!.create(ApiService::class.java)
+        apiService = Client.client.getClient("https://fcm.googleapis.com/")!!.create(
+            ApiService::class.java)
 
 
     }

@@ -1,7 +1,5 @@
-package com.example.vcare.helper;
+package com.example.vcare.Notifications;
 
-import com.example.vcare.Notifications.MyResponse;
-import com.example.vcare.Notifications.Sender;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

@@ -1,17 +1,8 @@
 package com.example.vcare
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
-import androidx.navigation.findNavController
-import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.example.vcare.HomeActivity.Status.Companion.updateStatus
 import com.example.vcare.helper.User
@@ -21,10 +12,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import kotlinx.android.synthetic.main.activity_home.*
 
 class HomeActivity : AppCompatActivity() {
-    val firebaseUser = FirebaseAuth.getInstance().currentUser
     companion object{
         var currentUser: User?=null
     }
@@ -46,28 +35,25 @@ class HomeActivity : AppCompatActivity() {
         ref.addListenerForSingleValueEvent(object :ValueEventListener{
 
             override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
+                //does nothing
             }
-
             override fun onDataChange(snapshot: DataSnapshot) {
                 currentUser = snapshot.getValue(User::class.java)
             }
         })
     }
-class Status(){
+class Status{
     companion object{
-        val firebaseUser = FirebaseAuth.getInstance().currentUser
+        private val firebaseUser = FirebaseAuth.getInstance().currentUser
         fun updateStatus(status:String){
             val ref = FirebaseDatabase.getInstance().reference.child("users").child(firebaseUser!!.uid)
 
             val hashMap = HashMap<String,Any>()
             hashMap["status"] = status
-            ref!!.updateChildren(hashMap)
+            ref.updateChildren(hashMap)
         }
     }
 }
-
-
     override fun onResume() {
         super.onResume()
         updateStatus("online")
@@ -78,8 +64,4 @@ class Status(){
         super.onPause()
         updateStatus("offline")
     }
-
-
-
-
 }

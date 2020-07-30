@@ -29,7 +29,7 @@ class NewMessageFrag : Fragment() {
         return inflater.inflate(R.layout.fragment_new_message, container, false)
     }
     companion object {
-        val USER_KEY = "USER_KEY"
+        const val USER_KEY = "USER_KEY"
     }
 
     private fun fetchUsers() {

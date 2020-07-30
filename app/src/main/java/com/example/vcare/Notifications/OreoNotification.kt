@@ -9,7 +9,6 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.net.Uri
 import android.os.Build
-import androidx.annotation.RequiresApi
 
 class OreoNotification(base:Context?):ContextWrapper(base) {
     private var notificationManager : NotificationManager?=null

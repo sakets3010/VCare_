@@ -1,14 +1,13 @@
 package com.example.vcare
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.example.vcare.databinding.FragmentLoginSignInFragmentBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -21,10 +20,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 
 
-class Login_Sign_in_fragment : Fragment() {
-    val RC_SIGN_IN: Int = 1
-    lateinit var mGoogleSignInClient: GoogleSignInClient
-    lateinit var mGoogleSignInOptions: GoogleSignInOptions
+class LoginSignInFragment : Fragment() {
+    private val rcSignIn: Int = 1
+    private lateinit var mGoogleSignInClient: GoogleSignInClient
+    private lateinit var mGoogleSignInOptions: GoogleSignInOptions
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var binding: FragmentLoginSignInFragmentBinding
     override fun onCreateView(
@@ -32,7 +31,7 @@ class Login_Sign_in_fragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         firebaseAuth = FirebaseAuth.getInstance()
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_login__sign_in_fragment,container,false)
+        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_login_sign_in_fragment,container,false)
         configureGoogleSignIn()
         setupUI()
 
@@ -53,15 +52,16 @@ class Login_Sign_in_fragment : Fragment() {
     }
     private fun signIn() {
         val signInIntent: Intent = mGoogleSignInClient.signInIntent
-        startActivityForResult(signInIntent, RC_SIGN_IN)
+        startActivityForResult(signInIntent, rcSignIn)
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RC_SIGN_IN) {
+        if (requestCode == rcSignIn) {
             val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 val account = task.getResult(ApiException::class.java)
                 if (account != null) {
+                    //TODO() filter to keep this BPHC only:)
                     //if(account.email?.toLowerCase()?.endsWith("@hyderabad.bits-pilani.ac.in")!!)
                     firebaseAuthWithGoogle(account)
 //                    else{

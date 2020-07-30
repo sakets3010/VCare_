@@ -6,16 +6,16 @@
     app:startDestination="@id/login_Sign_in_fragment">
     <fragment
         android:id="@+id/login_Sign_in_fragment"
-        android:name="com.example.vcare.Login_Sign_in_fragment"
+        android:name="com.example.vcare.LoginSignInFragment"
         android:label="Sign In"
-        tools:layout="@layout/fragment_login__sign_in_fragment">
+        tools:layout="@layout/fragment_login_sign_in_fragment">
         <action
             android:id="@+id/action_login_Sign_in_fragment_to_categoryFragment"
             app:destination="@id/categoryFragment" />
     </fragment>
     <fragment
-        android:id="@+id/login_enter_detail_fragment"
-        android:name="com.example.vcare.Login_enter_detail_fragment"
+        android:id="@+id/LoginUserDetailFragment"
+        android:name="com.example.vcare.LoginUserDetailFragment"
         android:label="Customize Profile"
         tools:layout="@layout/fragment_login_enter_detail_fragment">
         <action
@@ -35,6 +35,6 @@
         tools:layout="@layout/fragment_category">
         <action
             android:id="@+id/action_categoryFragment_to_login_enter_detail_fragment"
-            app:destination="@id/login_enter_detail_fragment" />
+            app:destination="@id/LoginUserDetailFragment" />
     </fragment>
 </navigation>

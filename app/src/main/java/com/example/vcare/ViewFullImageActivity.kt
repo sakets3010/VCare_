@@ -1,28 +1,20 @@
 package com.example.vcare
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
-import androidx.navigation.Navigation
-import androidx.navigation.ui.NavigationUI
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_view_full_image.*
 
 class ViewFullImageActivity : AppCompatActivity() {
-
-    private var image_full:ImageView?=null
+    private var imageFull:ImageView?=null
     private var url:String? = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view_full_image)
 
         url = intent.getStringExtra("url")
-        image_full = findViewById(R.id.image_full)
+        imageFull = findViewById(R.id.image_full)
 
-        Picasso.get().load(url).into(image_full)
-
+        Picasso.get().load(url).into(imageFull)
     }
-
-
 }

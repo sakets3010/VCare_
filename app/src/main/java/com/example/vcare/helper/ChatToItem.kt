@@ -2,8 +2,6 @@ package com.example.vcare.helper
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.app.ProgressDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.view.View
 import android.widget.Toast
@@ -15,30 +13,21 @@ import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.chat_row_to.view.*
 
-class ChatToItem(val text:String="",val urlimg:String="", val user: User?,time:String?,from:String,to:String):
+class ChatToItem(val text:String="", private val urlimg:String="", val user: User?,
+                 private val time:String?="", from:String, to:String):
     Item<ViewHolder>(){
+    private var fromId:String = from
+    private var toId:String = to
 
-    var fromId:String
-    var toId:String
-    var time:String?
-
-    init {
-        this.fromId = from
-        this.toId = to
-        this.time = time
-
-
-    }
     override fun getLayout(): Int {
         return R.layout.chat_row_to
     }
-
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.setIsRecyclable(false)
         if(urlimg=="")
         {
             viewHolder.itemView.textView_to_row.text =text
-            viewHolder.itemView.timestamp_to.text =time
+            viewHolder.itemView.timestamp_to.text =this.time
             viewHolder.itemView.textView_to_row.setOnClickListener {
                 val options = arrayOf<CharSequence>(
                     "Delete Message","Cancel"
@@ -46,12 +35,12 @@ class ChatToItem(val text:String="",val urlimg:String="", val user: User?,time:S
 
                 val builder: AlertDialog.Builder = AlertDialog.Builder(viewHolder.itemView.context)
                 builder.setTitle("what now?")
-                builder.setItems(options, DialogInterface.OnClickListener { dialog, which ->
+                builder.setItems(options) { _, which ->
                     if(which == 0){
-                        deleteMessage(position,viewHolder)
+                        deleteMessage(viewHolder)
 
                     }
-                })
+                }
                 builder.show()
             }}
         else if(urlimg !== "")
@@ -67,16 +56,15 @@ class ChatToItem(val text:String="",val urlimg:String="", val user: User?,time:S
 
                 val builder: AlertDialog.Builder = AlertDialog.Builder(viewHolder.itemView.context)
                 builder.setTitle("what now?")
-                builder.setItems(options, DialogInterface.OnClickListener { dialog, which ->
+                builder.setItems(options) { _, which ->
                     if (which==0){
                         val intent = Intent(builder.context, ViewFullImageActivity::class.java)
                         intent.putExtra("url",urlimg)
                         builder.context.startActivity(intent)
+                    } else if(which == 1){
+                        deleteMessage(viewHolder)
                     }
-                    else if(which == 1){
-                        deleteMessage(position,viewHolder)
-                    }
-                })
+                }
                 builder.show()
             }
         }
@@ -87,18 +75,15 @@ class ChatToItem(val text:String="",val urlimg:String="", val user: User?,time:S
     }
 
     @SuppressLint("SetTextI18n")
-    private fun deleteMessage(position: Int, viewHolder: ViewHolder) {
+    private fun deleteMessage(viewHolder: ViewHolder) {
         val hashMap = HashMap<String,Any>()
-        val progressBar = ProgressDialog(viewHolder.itemView.context)
-        progressBar.setMessage("deleting message..")
-        progressBar.show()
         val deletionrefupdate =
             time?.let {
                 FirebaseDatabase.getInstance().reference.child("user-messages").child(fromId).child(toId).child(
                     it
                 )
             }
-        val to_deletionrefupdate =
+        val toDeletionrefupdate =
             time?.let {
                 FirebaseDatabase.getInstance().reference.child("user-messages").child(toId).child(fromId).child(
                     it
@@ -114,7 +99,7 @@ class ChatToItem(val text:String="",val urlimg:String="", val user: User?,time:S
             hashMap["text"] = "This message was deleted"
         }
         deletionrefupdate?.updateChildren(hashMap)
-        to_deletionrefupdate?.updateChildren(hashMap)
+        toDeletionrefupdate?.updateChildren(hashMap)
         notifyChanged()
         Toast.makeText(viewHolder.itemView.context,"deleted message", Toast.LENGTH_SHORT).show()
 
