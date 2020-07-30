@@ -38,7 +38,6 @@ class Login_enter_detail_fragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         val args: Login_enter_detail_fragmentArgs by navArgs()
         val sharedPref = context?.getSharedPreferences("Vcare",Context.MODE_PRIVATE)
         if (sharedPref?.getString("username"," ")!==" ")

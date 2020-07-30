@@ -6,4 +6,7 @@
     <string name="how_do_you_want_to_use_the_app">How do you want to use the app?</string>
     <string name="get_started">Get Started</string>
     <string name="select_category">Select Category</string>
+    <string name="online">online</string>
+    <string name="away">away</string>
+    <string name="typing">typing..</string>
 </resources>
