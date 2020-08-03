@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/newMessageFrag"
-        android:name="com.example.vcare.NewMessageFrag"
+        android:name="com.example.vcare.home.NewMessageFrag"
         android:label="fragment_new_message"
         tools:layout="@layout/fragment_new_message" >
         <action
@@ -16,11 +16,16 @@
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.vcare.HomeFragment"
+        android:name="com.example.vcare.home.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
         <action
             android:id="@+id/action_homeFragment_to_newMessageFrag"
             app:destination="@id/newMessageFrag" />
     </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.vcare.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
 </navigation>

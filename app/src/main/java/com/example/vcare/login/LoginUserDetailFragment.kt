@@ -1,4 +1,4 @@
-package com.example.vcare
+package com.example.vcare.login
 
 import android.app.Activity
 import android.content.Context
@@ -16,10 +16,14 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.example.vcare.HomeActivity
+import com.example.vcare.R
 import com.example.vcare.databinding.FragmentLoginEnterDetailFragmentBinding
 import com.example.vcare.helper.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import java.util.*
 
@@ -34,7 +38,8 @@ class LoginUserDetailFragment : Fragment() {
         val sharedPref = context?.getSharedPreferences("Vcare",Context.MODE_PRIVATE)
         if (sharedPref?.getString("username"," ")!==" ")
         {
-            val intent = Intent(requireContext(),HomeActivity::class.java)
+            val intent = Intent(requireContext(),
+                HomeActivity::class.java)
             startActivity(intent)
             requireActivity().finish()
         }
@@ -94,7 +99,9 @@ class LoginUserDetailFragment : Fragment() {
         }
     }
     private fun signOut() {
-        Navigation.findNavController(requireActivity(), R.id.login_navhost)
+        Navigation.findNavController(requireActivity(),
+            R.id.login_navhost
+        )
             .navigate(R.id.action_login_enter_detail_fragment_to_login_Sign_in_fragment)
         Toast.makeText(requireContext(), "Sign out successful!", Toast.LENGTH_SHORT).show()
         FirebaseAuth.getInstance().signOut()
@@ -110,12 +117,10 @@ class LoginUserDetailFragment : Fragment() {
 
     }
     private fun saveUserToFirebaseDatabase(profileImageUrl: String,category:String) {
-
+        Log.d("LoginActivity","saving called...")
         val uid = FirebaseAuth.getInstance().uid ?: ""
         val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
-
-        val user = User(uid,binding.loginUsernameEdit.text.toString(), profileImageUrl,"","no-one",category)
-
+        val user = User(uid,binding.loginUsernameEdit.text.toString(),profileImageUrl,102L,category,"")
         ref.setValue(user)
             .addOnSuccessListener {
                 Log.d("LoginActivity", "Finally we saved the user to Firebase Database")

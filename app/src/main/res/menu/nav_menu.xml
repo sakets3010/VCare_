@@ -11,4 +11,9 @@
         app:showAsAction="ifRoom"
         android:icon="@drawable/ic_action_new_user"
         android:iconTint="@color/secondaryTextColor"/>
+    <item android:id="@+id/profileFragment"
+        android:title="My Account"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_profile"
+        android:iconTint="@color/secondaryTextColor"/>
 </menu>

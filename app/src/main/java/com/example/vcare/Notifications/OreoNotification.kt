@@ -19,7 +19,8 @@ class OreoNotification(base:Context?):ContextWrapper(base) {
         private const val CHANNEL_NAME = "VCare"
     }
     init{
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O)
+        {
             createChannel()
         }
 

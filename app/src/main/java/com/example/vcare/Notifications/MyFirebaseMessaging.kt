@@ -14,7 +14,6 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
 class MyFirebaseMessaging():FirebaseMessagingService() {
-    private var notificationManager : NotificationManager?=null
 
     override fun onMessageReceived(mRemoteMessage: RemoteMessage) {
         super.onMessageReceived(mRemoteMessage)
@@ -28,20 +27,20 @@ class MyFirebaseMessaging():FirebaseMessagingService() {
         if(firebaseUser!==null && sented == firebaseUser.uid){
             if(currentOnlineUser!==user){
                 if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
-                    SendOreoNotification(mRemoteMessage)
+                    sendOreoNotification(mRemoteMessage)
                 }
             }
         }
     }
 
-    private fun SendOreoNotification(mRemoteMessage: RemoteMessage) {
+    private fun sendOreoNotification(mRemoteMessage: RemoteMessage) {
 
         val user = mRemoteMessage.data["user"]
         val title = mRemoteMessage.data["title"]
         val icon = mRemoteMessage.data["icon"]
         val body = mRemoteMessage.data["body"]
 
-        val notification = mRemoteMessage.notification
+
         val j = user!!.replace("[\\D]".toRegex(),"").toInt()
         val intent = Intent(this,HomeActivity::class.java)
         val bundle = Bundle()
@@ -57,7 +56,7 @@ class MyFirebaseMessaging():FirebaseMessagingService() {
         }
         val oreoNotification = OreoNotification(this)
         if(!appInForeground(applicationContext)){
-            var pendingIntent = PendingIntent.getActivity(this,j,intent,PendingIntent.FLAG_ONE_SHOT)
+            val pendingIntent = PendingIntent.getActivity(this,j,intent,PendingIntent.FLAG_ONE_SHOT)
             val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
 

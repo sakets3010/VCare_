@@ -13,12 +13,7 @@ import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.chat_row_to.view.*
 
-class ChatToItem(val text:String="", private val urlimg:String="", val user: User?,
-                 private val time:String?="", from:String, to:String):
-    Item<ViewHolder>(){
-    private var fromId:String = from
-    private var toId:String = to
-
+class ChatToItem(val text:String="", private val urlimg:String="", val user: User?,private val time:String?="", private val  fromId:String="", private val toId:String=""):Item<ViewHolder>(){
     override fun getLayout(): Int {
         return R.layout.chat_row_to
     }
@@ -77,13 +72,13 @@ class ChatToItem(val text:String="", private val urlimg:String="", val user: Use
     @SuppressLint("SetTextI18n")
     private fun deleteMessage(viewHolder: ViewHolder) {
         val hashMap = HashMap<String,Any>()
-        val deletionrefupdate =
+        val deletionrefupdate =                  //TODO(1)
             time?.let {
                 FirebaseDatabase.getInstance().reference.child("user-messages").child(fromId).child(toId).child(
                     it
                 )
             }
-        val toDeletionrefupdate =
+        val toDeletionrefupdate =               //TODO(2)
             time?.let {
                 FirebaseDatabase.getInstance().reference.child("user-messages").child(toId).child(fromId).child(
                     it

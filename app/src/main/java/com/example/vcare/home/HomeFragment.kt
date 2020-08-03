@@ -1,4 +1,4 @@
-package com.example.vcare
+package com.example.vcare.home
 
 
 import android.content.Context
@@ -9,8 +9,12 @@ import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.fragment.findNavController
+import com.example.vcare.ChatLogActivity
+import com.example.vcare.LoginActivity
 import com.example.vcare.Notifications.OreoNotification
 import com.example.vcare.Notifications.Token
+import com.example.vcare.R
 import com.example.vcare.databinding.FragmentHomeBinding
 import com.example.vcare.helper.ChatMessage
 import com.example.vcare.helper.User
@@ -35,19 +39,21 @@ class HomeFragment : Fragment() {
         val oreoNotification = OreoNotification(requireContext())
         oreoNotification.getManager!!.cancelAll()
 
-        binding= DataBindingUtil.inflate(inflater,R.layout.fragment_home,container,false)
+        binding= DataBindingUtil.inflate(inflater,
+            R.layout.fragment_home,container,false)
 
         binding.homeRecycler.adapter = adapter
 
-        adapter.setOnItemClickListener { item, _ ->
-            val intent = Intent(requireContext(),ChatLogActivity::class.java)
+        adapter.setOnItemClickListener { item, view ->
+            val intent = Intent(requireContext(), ChatLogActivity::class.java)
             val row = item as HomeItem
             intent.putExtra(NewMessageFrag.USER_KEY,row.chatPartner)
             startActivity(intent)
         }
 
         binding.signOutButton.setOnClickListener {
-            val intent = Intent(requireContext(),LoginActivity::class.java)
+            val intent = Intent(requireContext(),
+                LoginActivity::class.java)
             startActivity(intent)
             Toast.makeText(requireContext(), "Sign out successful!", Toast.LENGTH_SHORT).show()
             FirebaseAuth.getInstance().signOut()
@@ -76,7 +82,7 @@ class HomeFragment : Fragment() {
         val sharedPref = context?.getSharedPreferences("Vcare", Context.MODE_PRIVATE)
         val category = sharedPref?.getString("category"," ")
         val fromId = FirebaseAuth.getInstance().uid
-        val ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId")
+        val ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId") //TODO(3)
         ref.addChildEventListener(object :ChildEventListener{
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatMessage = snapshot.getValue(ChatMessage::class.java)?:return
@@ -116,7 +122,7 @@ class HomeFragment : Fragment() {
 
         var chatPartner:User?=null
         override fun getLayout(): Int {
-            return  R.layout.home_list
+            return R.layout.home_list
         }
 
         override fun bind(viewHolder: ViewHolder, position: Int) {
@@ -129,7 +135,7 @@ class HomeFragment : Fragment() {
             } else{
                 chatMessage.fromId
             }
-            val ref = FirebaseDatabase.getInstance().getReference("/users/$chatPartnerId")
+            val ref = FirebaseDatabase.getInstance().getReference("/users/$chatPartnerId") //TODO(4)
             ref.addListenerForSingleValueEvent(object :ValueEventListener{
                 override fun onCancelled(error: DatabaseError) {
                     //does nothing
@@ -143,9 +149,9 @@ class HomeFragment : Fragment() {
                         viewHolder.itemView.category_text.setTextColor(Color.parseColor("#ffff00"))
                     }
                     viewHolder.itemView.category_text.text = chatPartner?.category
-                    if(chatPartner?.status=="online")
+                    if(chatPartner?.status==100L)
                     {viewHolder.itemView.online_status_home.visibility = View.VISIBLE}
-                    else if(chatPartner?.status=="offline"){
+                    else if(chatPartner?.status==102L){
                         viewHolder.itemView.online_status_home.visibility = View.GONE
                     }
                     val targetImage =  viewHolder.itemView.home_profile

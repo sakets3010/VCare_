@@ -11,16 +11,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".ChatLogActivity"></activity>
         <activity android:name=".ViewFullImageActivity">
             <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value=".ChatLogActivity" />
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ChatLogActivity" />
         </activity>
-        <activity android:name=".ChatLogActivity"/>
         <activity android:name=".HomeActivity" />
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

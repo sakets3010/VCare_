@@ -1,4 +1,4 @@
-package com.example.vcare
+package com.example.vcare.login
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import com.example.vcare.R
 import com.example.vcare.databinding.FragmentLoginSignInFragmentBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -78,7 +79,9 @@ class LoginSignInFragment : Fragment() {
         val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener {
             if (it.isSuccessful) {
-                Navigation.findNavController(requireActivity(),R.id.login_navhost).navigate(R.id.action_login_Sign_in_fragment_to_categoryFragment)
+                Navigation.findNavController(requireActivity(),
+                    R.id.login_navhost
+                ).navigate(R.id.action_login_Sign_in_fragment_to_categoryFragment)
                 Toast.makeText(requireContext(),"Sign in successful!",Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(requireContext(), "Google sign in failed:(", Toast.LENGTH_LONG).show()
@@ -89,9 +92,10 @@ class LoginSignInFragment : Fragment() {
         super.onStart()
         val user = FirebaseAuth.getInstance().currentUser
         if (user != null) {
-            Navigation.findNavController(requireActivity(),R.id.login_navhost).navigate(R.id.action_login_Sign_in_fragment_to_categoryFragment)
+            Navigation.findNavController(requireActivity(),
+                R.id.login_navhost
+            ).navigate(R.id.action_login_Sign_in_fragment_to_categoryFragment)
         }
-
     }
 
 }

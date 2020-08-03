@@ -49,14 +49,14 @@ class ChatFromItem(val text:String="",val url:String="",val user:User?,time:Stri
 
                 val builder: AlertDialog.Builder = AlertDialog.Builder(viewHolder.itemView.context)
                 builder.setTitle("what now?")
-                builder.setItems(options, DialogInterface.OnClickListener { dialog, which ->
+                builder.setItems(options) { _, which ->
                     if (which==0){
                         val intent = Intent(builder.context, ViewFullImageActivity::class.java)
                         intent.putExtra("url",url)
                         builder.context.startActivity(intent)
                     }
 
-                })
+                }
                 builder.show()
             }
         }
