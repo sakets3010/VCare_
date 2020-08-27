@@ -13,14 +13,22 @@
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"
             android:gravity="center"
-            android:text="Vcare Messaging"
-            android:paddingEnd="175dp"
             android:textAllCaps="false"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="@id/textView4"
+            app:layout_constraintBottom_toBottomOf="@id/textView4"
+            app:layout_constraintStart_toStartOf="@id/textView4"
+            android:textSize="20sp"
+            android:textColor="@color/colorWhite"
+            android:layout_marginStart="24dp"
+            android:text="@string/vcare_messaging"/>
         <ImageButton
             android:id="@+id/sign_out_button"
             android:layout_width="30dp"
@@ -30,7 +38,8 @@
             android:backgroundTint="@color/colorWhite"
             app:layout_constraintBottom_toBottomOf="@id/textView4"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/textView4" />
+            app:layout_constraintTop_toTopOf="@id/textView4"
+            tools:targetApi="lollipop" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/home_recycler"

@@ -55,7 +55,7 @@ class CategoryFragment : Fragment() {
             }
         }
         binding.backButton2.setOnClickListener {
-            findNavController().navigate(R.id.action_categoryFragment_to_login_enter_detail_fragment)
+            findNavController().navigate(R.id.action_categoryFragment_to_login_Sign_in_fragment)
         }
 
         return binding.root

@@ -14,14 +14,12 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.example.vcare.HomeActivity
+import com.example.vcare.home.HomeActivity
 import com.example.vcare.R
 import com.example.vcare.databinding.FragmentLoginEnterDetailFragmentBinding
 import com.example.vcare.helper.User
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -56,9 +54,6 @@ class LoginUserDetailFragment : Fragment() {
             intent.type = "image/*"
             startActivityForResult(intent, 0)
         }
-        binding.backButton1.setOnClickListener {
-            findNavController().navigate(R.id.action_login_enter_detail_fragment_to_login_Sign_in_fragment)
-        }
         binding.register.setOnClickListener {
             if (binding.loginUsernameEdit.text.toString().trim().isEmpty()){
             binding.loginUsernameEdit.error = "username Required"
@@ -73,7 +68,7 @@ class LoginUserDetailFragment : Fragment() {
             else{
                 uploadimageToFirebaseStorage(args.category)
                 Toast.makeText(requireContext(),"Registered successfully",Toast.LENGTH_SHORT).show()
-                val intent = Intent(requireContext(),HomeActivity::class.java)
+                val intent = Intent(requireContext(), HomeActivity::class.java)
                 val editor = sharedPref?.edit()
                 editor?.putString("username",binding.loginUsernameEdit.toString())
                 editor?.apply()
@@ -117,17 +112,13 @@ class LoginUserDetailFragment : Fragment() {
 
     }
     private fun saveUserToFirebaseDatabase(profileImageUrl: String,category:String) {
-        Log.d("LoginActivity","saving called...")
+        Log.d("EnterDetailFragment","saving called...")
+        val db = Firebase.firestore
         val uid = FirebaseAuth.getInstance().uid ?: ""
-        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
         val user = User(uid,binding.loginUsernameEdit.text.toString(),profileImageUrl,102L,category,"")
-        ref.setValue(user)
-            .addOnSuccessListener {
-                Log.d("LoginActivity", "Finally we saved the user to Firebase Database")
-            }
-            .addOnFailureListener {
-                Log.d("LoginActivity", "Failed to set value to database: ${it.message}")
-            }
+        db.collection("Users")
+            .document(uid).set(user)
+            .addOnSuccessListener{ Log.d("EnterDetailFragment", "DocumentSnapshot successfully written!") }
     }
 
 

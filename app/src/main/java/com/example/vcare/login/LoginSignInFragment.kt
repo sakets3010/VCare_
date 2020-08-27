@@ -62,7 +62,7 @@ class LoginSignInFragment : Fragment() {
             try {
                 val account = task.getResult(ApiException::class.java)
                 if (account != null) {
-                    //TODO() filter to keep this BPHC only:)
+
                     //if(account.email?.toLowerCase()?.endsWith("@hyderabad.bits-pilani.ac.in")!!)
                     firebaseAuthWithGoogle(account)
 //                    else{

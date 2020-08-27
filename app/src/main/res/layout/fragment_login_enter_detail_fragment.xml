@@ -5,6 +5,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        style="@style/AppTheme"
         android:background="@color/primaryColor">
         <TextView
             android:id="@+id/textView2"
@@ -12,7 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"
             android:gravity="center"
-            android:text="Please Enter Your Details"
+            android:text="@string/please_enter_your_details"
             android:textAllCaps="false"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -24,20 +25,14 @@
             android:backgroundTint="@color/primaryLightColor"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:insetLeft="0dp"
-            android:insetTop="0dp"
-            android:insetRight="0dp"
-            android:insetBottom="0dp"
-            android:padding="8dp"
-            android:text="Select Photo"
-            app:iconPadding="0dp"
+            android:text="@string/select_photo"
             app:iconSize="24dp"
             app:layout_constraintBottom_toTopOf="@+id/login_username_text_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Button.Rounded" />
-
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Button.Rounded"
+            tools:targetApi="lollipop" />
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/login_username_text_layout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -50,10 +45,12 @@
             app:counterEnabled="true"
             app:counterMaxLength="15"
             app:hintTextColor="@color/secondaryTextColor"
+            android:textColorHint="@color/secondaryTextColor"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            tools:targetApi="lollipop">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/login_username_edit"
@@ -65,18 +62,18 @@
                 android:textColorHint="@color/secondaryTextColor" />
 
         </com.google.android.material.textfield.TextInputLayout>
-
         <Button
             android:id="@+id/sign_out"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
             android:backgroundTint="@color/primaryLightColor"
-            android:text="Sign Out"
+            android:text="@string/sign_out"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/register"
             app:layout_constraintStart_toStartOf="@id/register"
-            app:layout_constraintTop_toBottomOf="@+id/register" />
+            app:layout_constraintTop_toBottomOf="@+id/register"
+            tools:targetApi="lollipop" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/circular_profile_holder"
@@ -89,28 +86,17 @@
             app:layout_constraintStart_toStartOf="@+id/select_photo_button"
             app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
-        <ImageButton
-            android:id="@+id/back_button_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_action_back"
-            app:layout_constraintTop_toTopOf="@id/textView2"
-            app:layout_constraintBottom_toBottomOf="@id/textView2"
-            app:layout_constraintStart_toStartOf="parent"
-            android:backgroundTint="@color/secondaryColor"
-            android:layout_marginStart="8dp"/>
-
         <com.google.android.material.button.MaterialButton
-            android:backgroundTint="@color/primaryLightColor"
             android:id="@+id/register"
+            android:backgroundTint="@color/primaryLightColor"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Register"
+            android:text="@string/register"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/login_username_text_layout"
             app:layout_constraintStart_toStartOf="@+id/login_username_text_layout"
-            app:layout_constraintTop_toBottomOf="@+id/login_username_text_layout" />
-
+            app:layout_constraintTop_toBottomOf="@+id/login_username_text_layout"
+            tools:targetApi="lollipop" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

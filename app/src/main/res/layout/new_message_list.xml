@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/primaryColor"
-    >
+    android:background="@color/primaryColor">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_list"
@@ -18,55 +17,70 @@
         app:civ_border_width="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-         />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/online_status_new_message"
         android:layout_width="10dp"
         android:layout_height="10dp"
-        android:visibility="visible"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:src="@android:color/holo_green_light"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@id/profile_list"
         app:layout_constraintEnd_toEndOf="@id/profile_list" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/online_status_new_message"
+        app:layout_constraintBottom_toBottomOf="@id/online_status_new_message"
         app:layout_constraintEnd_toEndOf="@id/online_status_new_message"
-        app:layout_constraintTop_toTopOf="@id/online_status_new_message"
-        app:layout_constraintBottom_toBottomOf="@id/online_status_new_message"/>
+        app:layout_constraintStart_toStartOf="@id/online_status_new_message"
+        app:layout_constraintTop_toTopOf="@id/online_status_new_message" />
 
     <TextView
-        android:id="@+id/username-list"
+        android:id="@+id/user_bio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:textColor="@color/colorWhite"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/username_list"
+        app:layout_constraintTop_toBottomOf="@+id/username_list" />
+
+    <TextView
+        android:id="@+id/username_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:fontFamily="@font/poppins_bold"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
-        android:text="TextView"
+        android:text="@string/textview"
         android:textColor="@color/secondaryTextColor"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/profile_list"
+        app:layout_constraintBottom_toTopOf="@+id/user_bio"
         app:layout_constraintStart_toEndOf="@+id/profile_list"
-        app:layout_constraintTop_toTopOf="@+id/profile_list" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
     <View
         android:id="@+id/divider_new_message"
         android:layout_width="0dp"
         android:layout_height="0.5dp"
-        android:background="@color/secondaryTextColor"
-        app:layout_constraintTop_toBottomOf="@+id/profile_list"
-        app:layout_constraintStart_toEndOf="@id/profile_list"
         android:layout_marginStart="4dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="4dp"
+        android:background="@color/secondaryTextColor"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
+        app:layout_constraintStart_toEndOf="@id/profile_list"
+        app:layout_constraintTop_toBottomOf="@+id/profile_list" />
 
     <TextView
         android:id="@+id/category_text_new_message"
@@ -74,7 +88,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="45dp"
         android:background="@drawable/rounded_bg_green_coloured"
-        android:hint="category"
+        android:hint="@string/category"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:textAlignment="center"

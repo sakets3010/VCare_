@@ -22,7 +22,7 @@
             android:id="@+id/action_login_enter_detail_fragment_to_login_Sign_in_fragment"
             app:destination="@id/login_Sign_in_fragment" />
         <action
-            android:id="@+id/action_login_enter_detail_fragment_to_categoryFragment"
+            android:id="@+id/backToCategory"
             app:destination="@id/categoryFragment" />
         <argument
             android:name="category"
@@ -36,5 +36,8 @@
         <action
             android:id="@+id/action_categoryFragment_to_login_enter_detail_fragment"
             app:destination="@id/LoginUserDetailFragment" />
+        <action
+            android:id="@+id/action_categoryFragment_to_login_Sign_in_fragment"
+            app:destination="@id/login_Sign_in_fragment" />
     </fragment>
 </navigation>

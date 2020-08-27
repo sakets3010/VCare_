@@ -60,11 +60,5 @@ class ChatFromItem(val text:String="",val url:String="",val user:User?,time:Stri
                 builder.show()
             }
         }
-
-
-        val uri = user?.profileImageUrl
-        val targetImage = viewHolder.itemView.from_profile
-        Picasso.get().load(uri).into(targetImage)
-
     }
 }

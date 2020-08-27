@@ -1,14 +1,13 @@
 package com.example.vcare.Notifications
 import android.app.ActivityManager
 import android.app.Notification
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
 import android.os.Build
 import android.os.Bundle
-import com.example.vcare.HomeActivity
+import com.example.vcare.home.HomeActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -42,7 +41,7 @@ class MyFirebaseMessaging():FirebaseMessagingService() {
 
 
         val j = user!!.replace("[\\D]".toRegex(),"").toInt()
-        val intent = Intent(this,HomeActivity::class.java)
+        val intent = Intent(this, HomeActivity::class.java)
         val bundle = Bundle()
         bundle.putString("userid",user)
         intent.putExtras(bundle)

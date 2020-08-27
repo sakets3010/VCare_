@@ -6,41 +6,27 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/primaryColor">
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/from_profile"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="16dp"
-        android:maxWidth="240dp"
-        android:src="@android:color/background_dark"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/textView_from_row"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="24dp"
         android:background="@drawable/rounded_white_bg"
         android:backgroundTint="@color/colorDarkGreen"
         android:textColor="@color/secondaryTextColor"
         android:maxWidth="240dp"
         android:padding="16dp"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="@+id/from_profile"
-        app:layout_constraintStart_toEndOf="@+id/from_profile"
-        app:layout_constraintTop_toTopOf="@+id/from_profile" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:targetApi="lollipop" />
     <ImageView
         android:id="@+id/image_from_cover"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="4dp"
         android:background="@drawable/rounded_white_bg"
         android:backgroundTint="@color/colorDarkGreen"
         android:visibility="gone"
@@ -48,16 +34,14 @@
         app:layout_constraintTop_toTopOf="@id/image_from"
         app:layout_constraintEnd_toEndOf="@id/image_from"
         app:layout_constraintStart_toStartOf="@id/textView_from_row"
-        />
-
+        tools:targetApi="lollipop" />
     <TextView
         android:id="@+id/timestamp_from"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="90dp"
         android:textColor="@color/secondaryTextColor"
         android:textColorHint="@color/secondaryTextColor"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@id/textView_from_row"
         app:layout_constraintTop_toBottomOf="@id/textView_from_row" />
 
     <ImageView
@@ -66,7 +50,7 @@
         android:layout_height="wrap_content"
         android:maxHeight="300dp"
         android:maxWidth="300dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:adjustViewBounds="true"
@@ -75,9 +59,9 @@
         android:paddingEnd="24dp"
         android:paddingBottom="24dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/from_profile"
+        app:layout_constraintBottom_toBottomOf="@+id/textView_from_row"
         app:layout_constraintStart_toStartOf="@+id/textView_from_row"
-        app:layout_constraintTop_toTopOf="@+id/from_profile"
+        app:layout_constraintTop_toTopOf="@id/textView_from_row"
         tools:srcCompat="@tools:sample/avatars" />
 
 
