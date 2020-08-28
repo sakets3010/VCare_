@@ -1,9 +1,11 @@
-package com.example.vcare.helper
+package com.example.vcare.helper.groupieAdapters
 
 import android.graphics.Color
 import android.util.Log
 import android.view.View
 import com.example.vcare.R
+import com.example.vcare.helper.ChatMessage
+import com.example.vcare.helper.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -12,9 +14,9 @@ import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.home_list.view.*
 
-class HomeItem(private val chatMessage:ChatMessage): Item<ViewHolder>() {
+class HomeItem(private val chatMessage: ChatMessage): Item<ViewHolder>() {
 
-    var chatPartner:User?=null
+    var chatPartner: User?=null
     override fun getLayout(): Int {
         return R.layout.home_list
     }

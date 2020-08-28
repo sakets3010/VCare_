@@ -1,8 +1,9 @@
-package com.example.vcare
+package com.example.vcare.chatLog
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
+import com.example.vcare.R
 import com.squareup.picasso.Picasso
 
 class ViewFullImageActivity : AppCompatActivity() {

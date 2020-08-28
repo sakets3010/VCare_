@@ -7,7 +7,7 @@
     android:background="@color/primaryColor">
 
     <TextView
-        android:id="@+id/textView_to_row"
+        android:id="@+id/textMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_white_bg"
@@ -22,7 +22,7 @@
         android:visibility="visible"
         tools:targetApi="lollipop" />
     <ImageView
-        android:id="@+id/image_to_cover"
+        android:id="@+id/imageCover"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="4dp"
@@ -31,14 +31,14 @@
         android:background="@drawable/rounded_white_bg"
         android:backgroundTint="@color/secondaryColor"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/image_to"
-        app:layout_constraintEnd_toEndOf="@+id/textView_to_row"
-        app:layout_constraintStart_toStartOf="@+id/image_to"
-        app:layout_constraintTop_toTopOf="@id/image_to"
+        app:layout_constraintBottom_toBottomOf="@id/imageMessage"
+        app:layout_constraintEnd_toEndOf="@+id/textMessage"
+        app:layout_constraintStart_toStartOf="@+id/imageMessage"
+        app:layout_constraintTop_toTopOf="@id/imageMessage"
         tools:targetApi="lollipop" />
 
     <ImageView
-        android:id="@+id/image_to"
+        android:id="@+id/imageMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
@@ -50,19 +50,19 @@
         android:paddingEnd="24dp"
         android:paddingBottom="24dp"
         android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="@+id/textView_to_row"
-        app:layout_constraintTop_toTopOf="@id/textView_to_row"
-        app:layout_constraintBottom_toBottomOf="@id/textView_to_row"
+        app:layout_constraintEnd_toEndOf="@+id/textMessage"
+        app:layout_constraintTop_toTopOf="@id/textMessage"
+        app:layout_constraintBottom_toBottomOf="@id/textMessage"
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
-        android:id="@+id/timestamp_to"
+        android:id="@+id/messageTimestamp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/secondaryTextColor"
         android:textColorHint="@color/secondaryTextColor"
-        app:layout_constraintEnd_toEndOf="@id/textView_to_row"
-        app:layout_constraintTop_toBottomOf="@id/textView_to_row" />
+        app:layout_constraintEnd_toEndOf="@id/textMessage"
+        app:layout_constraintTop_toBottomOf="@id/textMessage" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

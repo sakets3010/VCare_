@@ -3,30 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/login_navigation"
-    app:startDestination="@id/login_Sign_in_fragment">
-    <fragment
-        android:id="@+id/login_Sign_in_fragment"
-        android:name="com.example.vcare.login.LoginSignInFragment"
-        android:label="Sign In"
-        tools:layout="@layout/fragment_login_sign_in_fragment">
-        <action
-            android:id="@+id/action_login_Sign_in_fragment_to_categoryFragment"
-            app:destination="@id/categoryFragment" />
-    </fragment>
+    app:startDestination="@id/loginSignInFragment">
     <fragment
         android:id="@+id/LoginUserDetailFragment"
         android:name="com.example.vcare.login.LoginUserDetailFragment"
         android:label="Customize Profile"
         tools:layout="@layout/fragment_login_enter_detail_fragment">
         <action
-            android:id="@+id/action_login_enter_detail_fragment_to_login_Sign_in_fragment"
-            app:destination="@id/login_Sign_in_fragment" />
-        <action
             android:id="@+id/backToCategory"
             app:destination="@id/categoryFragment" />
         <argument
             android:name="category"
             app:argType="string" />
+        <action
+            android:id="@+id/action_LoginUserDetailFragment_to_loginSignInFragment"
+            app:destination="@id/loginSignInFragment" />
     </fragment>
     <fragment
         android:id="@+id/categoryFragment"
@@ -37,7 +28,15 @@
             android:id="@+id/action_categoryFragment_to_login_enter_detail_fragment"
             app:destination="@id/LoginUserDetailFragment" />
         <action
-            android:id="@+id/action_categoryFragment_to_login_Sign_in_fragment"
-            app:destination="@id/login_Sign_in_fragment" />
+            android:id="@+id/action_categoryFragment_to_loginSignInFragment"
+            app:destination="@id/loginSignInFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginSignInFragment"
+        android:name="com.example.vcare.login.LoginSignInFragment"
+        android:label="LoginSignInFragment" >
+        <action
+            android:id="@+id/action_loginSignInFragment_to_categoryFragment"
+            app:destination="@id/categoryFragment" />
     </fragment>
 </navigation>

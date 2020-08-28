@@ -10,7 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.example.vcare.R
-import com.example.vcare.databinding.FragmentLoginSignInFragmentBinding
+import com.example.vcare.databinding.FragmentLoginSignInBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -26,13 +26,13 @@ class LoginSignInFragment : Fragment() {
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var mGoogleSignInOptions: GoogleSignInOptions
     private lateinit var firebaseAuth: FirebaseAuth
-    private lateinit var binding: FragmentLoginSignInFragmentBinding
+    private lateinit var binding: FragmentLoginSignInBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         firebaseAuth = FirebaseAuth.getInstance()
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_login_sign_in_fragment,container,false)
+        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_login_sign_in,container,false)
         configureGoogleSignIn()
         setupUI()
 
@@ -81,7 +81,7 @@ class LoginSignInFragment : Fragment() {
             if (it.isSuccessful) {
                 Navigation.findNavController(requireActivity(),
                     R.id.login_navhost
-                ).navigate(R.id.action_login_Sign_in_fragment_to_categoryFragment)
+                ).navigate(R.id.action_loginSignInFragment_to_categoryFragment)
                 Toast.makeText(requireContext(),"Sign in successful!",Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(requireContext(), "Google sign in failed:(", Toast.LENGTH_LONG).show()
@@ -94,7 +94,7 @@ class LoginSignInFragment : Fragment() {
         if (user != null) {
             Navigation.findNavController(requireActivity(),
                 R.id.login_navhost
-            ).navigate(R.id.action_login_Sign_in_fragment_to_categoryFragment)
+            ).navigate(R.id.action_loginSignInFragment_to_categoryFragment)
         }
     }
 

@@ -1,25 +1,26 @@
-package com.example.vcare.home
+package com.example.vcare.home.profile
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import com.example.vcare.ChatRepository
 import com.example.vcare.helper.User
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class ProfileFragmentViewmodel: ViewModel() {
-    var userDetails:MutableLiveData<User> = MutableLiveData()
+    private var userDetails:MutableLiveData<User> = MutableLiveData()
+    private val repository = ChatRepository()
 
     fun fetchUserDetails(uid:String):LiveData<User>{
-        Firebase.firestore.collection("Users").document(uid).addSnapshotListener { doc, error ->
+        repository.getUserReference(uid)?.addSnapshotListener { doc, _ ->
             val user = doc?.toObject(User::class.java)
             userDetails.value = user
         }
         return userDetails
     }
     fun updateUserDetails(uid:String,Bio:String){
-        Firebase.firestore.collection("Users").document(uid).update(
+        repository.getUserReference(uid)?.update(
             mapOf(
                 "bio" to Bio
             )

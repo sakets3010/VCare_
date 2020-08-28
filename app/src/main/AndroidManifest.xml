@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".chatLog.ChatLogActivity"/>
-        <activity android:name=".ViewFullImageActivity">
+        <activity android:name=".chatLog.ViewFullImageActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".chatLog.ChatLogActivity" />

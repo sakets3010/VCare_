@@ -1,9 +1,11 @@
-package com.example.vcare.home
+package com.example.vcare.home.home
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.example.vcare.ChatRepository
 import com.example.vcare.Notifications.Token
 import com.example.vcare.helper.*
+import com.example.vcare.helper.groupieAdapters.HomeItem
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.ktx.firestore
@@ -13,7 +15,7 @@ import com.xwray.groupie.ViewHolder
 
 class HomeFragmentViewmodel:ViewModel() {
     val adapter = GroupAdapter<ViewHolder>()
-
+    private val repository = ChatRepository()
     fun updateToken(token: String?) {
         val firebaseUser = FirebaseAuth.getInstance().currentUser
         val ref = FirebaseDatabase.getInstance().reference.child("Tokens")
@@ -44,25 +46,25 @@ class HomeFragmentViewmodel:ViewModel() {
                     Log.d("failed", "Current data: null")
                 }
             }
-        Log.d("listen","list contains:$conversations")
-    }
+        }
     private val latestMessagesMap = HashMap<String, ChatMessage>()
     private fun displayUsers(conversations:MutableList<ChatChannelIdWrapper>) {
         adapter.clear()
         conversations.forEach {
-            Log.d("listen","loop2 : ${it}")
+            Log.d("listen","loop2 : $it")
             adapter.clear()
             latestMessagesMap.values.clear()
-            Firebase.firestore.collection("ChatChannels").document(it.docId).collection("Messages").orderBy("timestamp",
-                com.google.firebase.firestore.Query.Direction.DESCENDING).limit(1).addSnapshotListener { documents, _ ->
-                if (documents != null) {
-                    for(doc in documents){
-                        latestMessagesMap[it.docId] = doc.toObject(ChatMessage::class.java)
-                        adapter.clear()
-                        refreshMessages()
+            repository.getChatReference()?.document(it.docId)?.collection("Messages")?.orderBy("timestamp",
+                com.google.firebase.firestore.Query.Direction.DESCENDING)?.limit(1)
+                ?.addSnapshotListener { documents, _ ->
+                    if (documents != null) {
+                        for(doc in documents){
+                            latestMessagesMap[it.docId] = doc.toObject(ChatMessage::class.java)
+                            adapter.clear()
+                            refreshMessages()
+                        }
                     }
                 }
-            }
         }
     }
     private fun refreshMessages() {

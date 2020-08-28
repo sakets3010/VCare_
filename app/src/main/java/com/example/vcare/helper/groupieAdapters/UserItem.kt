@@ -1,9 +1,9 @@
-package com.example.vcare.helper
+package com.example.vcare.helper.groupieAdapters
 
 import android.graphics.Color
-import android.util.Log
 import android.view.View
 import com.example.vcare.R
+import com.example.vcare.helper.User
 import com.squareup.picasso.Picasso
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder

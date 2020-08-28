@@ -15,19 +15,19 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
-import com.example.vcare.home.HomeActivity
+import com.example.vcare.ChatRepository
 import com.example.vcare.R
 import com.example.vcare.databinding.FragmentLoginEnterDetailFragmentBinding
 import com.example.vcare.helper.User
+import com.example.vcare.home.HomeActivity
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import java.util.*
 
 
 class LoginUserDetailFragment : Fragment() {
     private lateinit var binding: FragmentLoginEnterDetailFragmentBinding
+    private val repository = ChatRepository()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -97,7 +97,7 @@ class LoginUserDetailFragment : Fragment() {
         Navigation.findNavController(requireActivity(),
             R.id.login_navhost
         )
-            .navigate(R.id.action_login_enter_detail_fragment_to_login_Sign_in_fragment)
+            .navigate(R.id.action_LoginUserDetailFragment_to_loginSignInFragment)
         Toast.makeText(requireContext(), "Sign out successful!", Toast.LENGTH_SHORT).show()
         FirebaseAuth.getInstance().signOut()
     }
@@ -113,12 +113,10 @@ class LoginUserDetailFragment : Fragment() {
     }
     private fun saveUserToFirebaseDatabase(profileImageUrl: String,category:String) {
         Log.d("EnterDetailFragment","saving called...")
-        val db = Firebase.firestore
         val uid = FirebaseAuth.getInstance().uid ?: ""
         val user = User(uid,binding.loginUsernameEdit.text.toString(),profileImageUrl,102L,category,"")
-        db.collection("Users")
-            .document(uid).set(user)
-            .addOnSuccessListener{ Log.d("EnterDetailFragment", "DocumentSnapshot successfully written!") }
+        repository.getUserReference(uid)?.set(user)
+            ?.addOnSuccessListener{ Log.d("EnterDetailFragment", "DocumentSnapshot successfully written!") }
     }
 
 
