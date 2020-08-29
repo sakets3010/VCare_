@@ -40,7 +40,6 @@ class ChatLogViewmodel:ViewModel() {
     private lateinit var docId:String
     var notify = false
     private val fromId = Firebase.auth.uid
-    private val time = System.currentTimeMillis() / 1000
     val uid = Firebase.auth.uid
     private val firebaseUser = FirebaseAuth.getInstance().currentUser
 
@@ -114,6 +113,7 @@ class ChatLogViewmodel:ViewModel() {
     }
     fun performSendMessage(user: User?,text:String,apiService: ApiService?) {
         val toId = user?.uid
+        val time = System.currentTimeMillis() / 1000
         val chatMessage= ChatMessage(text, fromId!!, toId!!, time)
         val betweenList = mutableListOf(Id(fromId),Id(toId))
         val sortedList = betweenList.sortedBy { it.Id }
@@ -215,6 +215,7 @@ class ChatLogViewmodel:ViewModel() {
                 val downloadUrl = task.result
                 val url = downloadUrl.toString()
                 val toId = user.uid
+                val time = System.currentTimeMillis() / 1000
                 val chatMessage = ChatMessage(fromId = fromId!!, toId = toId,timestamp = time,url = url)
                 val betweenList = mutableListOf(Id(fromId),Id(toId))
                 val sortedList = betweenList.sortedBy { it.Id }
