@@ -18,7 +18,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".chatLog.ChatLogActivity" />
         </activity>
-        <activity android:name=".home.HomeActivity" />
+        <activity android:name=".home.HomeActivity"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".login.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

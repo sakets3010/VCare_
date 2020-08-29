@@ -11,7 +11,7 @@ import com.example.vcare.R
 import com.example.vcare.chatLog.ChatLogActivity
 import com.example.vcare.helper.User
 import com.example.vcare.helper.groupieAdapters.UserItem
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.xwray.groupie.GroupAdapter
@@ -40,7 +40,7 @@ class NewMessageFragment : Fragment() {
                 val adapter = GroupAdapter<ViewHolder>()
                  snapshot.documents.forEach {
                      val user = it.toObject(User::class.java)
-                     if(user!==null&& user.uid !== FirebaseAuth.getInstance().currentUser?.uid){
+                     if(user!==null && !(user.uid.equals(Firebase.auth.uid))){
                          adapter.add(UserItem(user))
                     }
                  }
