@@ -114,7 +114,7 @@ class LoginUserDetailFragment : Fragment() {
     private fun saveUserToFirebaseDatabase(profileImageUrl: String,category:String) {
         Log.d("EnterDetailFragment","saving called...")
         val uid = FirebaseAuth.getInstance().uid ?: ""
-        val user = User(uid,binding.loginUsernameEdit.text.toString(),profileImageUrl,102L,category,"")
+        val user = User(uid,binding.loginUsernameEdit.text.toString(),profileImageUrl,102L,category)
         repository.getUserReference(uid)?.set(user)
             ?.addOnSuccessListener{ Log.d("EnterDetailFragment", "DocumentSnapshot successfully written!") }
     }
