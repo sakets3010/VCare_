@@ -7,54 +7,30 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import com.example.vcare.R
 import com.example.vcare.chatLog.ChatLogActivity
-import com.example.vcare.helper.User
-import com.example.vcare.helper.groupieAdapters.UserItem
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.fragment_new_message.*
 
 class NewMessageFragment : Fragment() {
+    private val viewModel by viewModels<NewMessageViewmodel>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        fetchUsers()
+        viewModel.fetchUsers().observe(viewLifecycleOwner, Observer { users ->
+            recyclerview_newMessage.adapter = NewMessageAdapter(users) { availableUsers ->
+                val intent = Intent(requireContext(), ChatLogActivity::class.java)
+                intent.putExtra(USER_KEY, availableUsers)
+                startActivity(intent)
+            }
+        })
         return inflater.inflate(R.layout.fragment_new_message, container, false)
     }
+
     companion object {
         const val USER_KEY = "USER_KEY"
-    }
-    private fun fetchUsers() {
-        val db = Firebase.firestore
-        db.collection("Users").addSnapshotListener{snapshot,e ->
-            if (e != null) {
-                Log.w("NewMessageFragment", "Listen failed.", e)
-                return@addSnapshotListener
-            }
-            if (snapshot != null) {
-                val adapter = GroupAdapter<ViewHolder>()
-                 snapshot.documents.forEach {
-                     val user = it.toObject(User::class.java)
-                     if(user!==null && !(user.uid.equals(Firebase.auth.uid))){
-                         adapter.add(UserItem(user))
-                    }
-                 }
-                adapter.setOnItemClickListener { item, view ->
-                    val userItem: UserItem = item as UserItem
-                    val intent = Intent(view.context, ChatLogActivity::class.java)
-                    intent.putExtra(USER_KEY,userItem.user)
-                    startActivity(intent)
-                }
-                recyclerview_newMessage?.adapter=adapter
-            } else {
-                Log.d("NewMessageFragment", "Current data: null")
-            }
-        }
     }
 }
 

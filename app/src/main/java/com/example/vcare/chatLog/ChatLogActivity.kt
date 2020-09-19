@@ -8,8 +8,8 @@ import android.text.TextWatcher
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.example.vcare.Notifications.ApiService
-import com.example.vcare.Notifications.Client
+import com.example.vcare.notifications.ApiService
+import com.example.vcare.notifications.Client
 import com.example.vcare.R
 import com.example.vcare.databinding.ActivityChatLogBinding
 import com.example.vcare.helper.Status
@@ -78,7 +78,7 @@ class ChatLogActivity : AppCompatActivity() {
             })
         }
 
-        apiService = Client.client.getClient("https://fcm.googleapis.com/")!!.create(
+        apiService = Client.getClient("https://fcm.googleapis.com/")!!.create(
             ApiService::class.java)
 
         binding.sendButton.setOnClickListener {

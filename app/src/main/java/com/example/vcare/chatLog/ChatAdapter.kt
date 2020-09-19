@@ -23,7 +23,6 @@ class ChatAdapter(private val message: List<ChatMessage>) : RecyclerView.Adapter
         const val VIEW_TYPE_1 = 1
         const val VIEW_TYPE_2 = 2
     }
-
     private inner class View1ViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         val textMessage: TextView =itemView.textMessage

@@ -1,4 +1,5 @@
-package com.example.vcare.Notifications
+package com.example.vcare.notifications
+
 import android.app.ActivityManager
 import android.app.Notification
 import android.app.PendingIntent
@@ -12,20 +13,20 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
-class MyFirebaseMessaging():FirebaseMessagingService() {
+class MyFirebaseMessaging() : FirebaseMessagingService() {
 
     override fun onMessageReceived(mRemoteMessage: RemoteMessage) {
         super.onMessageReceived(mRemoteMessage)
 
         val sented = mRemoteMessage.data["sented"]
         val user = mRemoteMessage.data["user"]
-        val sharedPref = getSharedPreferences("PREFS",Context.MODE_PRIVATE)
-        val currentOnlineUser = sharedPref.getString("currentUser","none")
+        val sharedPref = getSharedPreferences("PREFS", Context.MODE_PRIVATE)
+        val currentOnlineUser = sharedPref.getString("currentUser", "none")
         val firebaseUser = FirebaseAuth.getInstance().currentUser
 
-        if(firebaseUser!==null && sented == firebaseUser.uid){
-            if(currentOnlineUser!==user){
-                if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
+        if (firebaseUser !== null && sented == firebaseUser.uid) {
+            if (currentOnlineUser !== user) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     sendOreoNotification(mRemoteMessage)
                 }
             }
@@ -40,37 +41,32 @@ class MyFirebaseMessaging():FirebaseMessagingService() {
         val body = mRemoteMessage.data["body"]
 
 
-        val j = user!!.replace("[\\D]".toRegex(),"").toInt()
+        val j = user!!.replace("[\\D]".toRegex(), "").toInt()
         val intent = Intent(this, HomeActivity::class.java)
         val bundle = Bundle()
-        bundle.putString("userid",user)
+        bundle.putString("userid", user)
         intent.putExtras(bundle)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
 
-
         var i = 0
-        if(j>0){
-            i=j
+        if (j > 0) {
+            i = j
         }
         val oreoNotification = OreoNotification(this)
-        if(!appInForeground(applicationContext)){
-            val pendingIntent = PendingIntent.getActivity(this,j,intent,PendingIntent.FLAG_ONE_SHOT)
+        if (!appInForeground(applicationContext)) {
+            val pendingIntent =
+                PendingIntent.getActivity(this, j, intent, PendingIntent.FLAG_ONE_SHOT)
             val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
 
+            val builder: Notification.Builder =
+                oreoNotification.getOreoNotification(title, body, pendingIntent, defaultSound, icon)
 
-
-            val builder: Notification.Builder = oreoNotification.getOreoNotification(title,body,pendingIntent,defaultSound,icon)
-
-
-            oreoNotification.getManager!!.notify(i,builder.build())
-        }
-        else{
+            oreoNotification.getManager!!.notify(i, builder.build())
+        } else {
             oreoNotification.getManager!!.cancel(i)
         }
-
-
 
 
     }

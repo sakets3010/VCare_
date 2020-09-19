@@ -1,4 +1,4 @@
-package com.example.vcare.Notifications
+package com.example.vcare.notifications
 
 class Data(
     private var user: String,
@@ -6,7 +6,4 @@ class Data(
     private var body: String,
     private var title: String,
     private var sented: String
-) {
-
-
-}
+)

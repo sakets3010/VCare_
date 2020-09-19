@@ -33,7 +33,7 @@
             android:resource="@array/preloaded_fonts" />
 
         <service
-            android:name=".Notifications.MyFirebaseMessaging"
+            android:name=".notifications.MyFirebaseMessaging"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -45,7 +45,7 @@
       no need for explicit permissions despite exported="true"
         -->
         <service
-            android:name=".Notifications.MyFirebaseInstanceId"
+            android:name=".notifications.MyFirebaseInstanceId"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

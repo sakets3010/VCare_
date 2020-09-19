@@ -19,24 +19,27 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 
 class LoginSignInFragment : Fragment() {
     private val rcSignIn: Int = 1
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var mGoogleSignInOptions: GoogleSignInOptions
-    private lateinit var firebaseAuth: FirebaseAuth
+    private val firebaseAuth = Firebase.auth
     private lateinit var binding: FragmentLoginSignInBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        firebaseAuth = FirebaseAuth.getInstance()
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_login_sign_in,container,false)
+        return binding.root
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         configureGoogleSignIn()
         setupUI()
-
-        return binding.root
     }
 
     private fun configureGoogleSignIn() {
@@ -90,7 +93,7 @@ class LoginSignInFragment : Fragment() {
     }
     override fun onStart() {
         super.onStart()
-        val user = FirebaseAuth.getInstance().currentUser
+        val user = firebaseAuth.currentUser
         if (user != null) {
             Navigation.findNavController(requireActivity(),
                 R.id.login_navhost

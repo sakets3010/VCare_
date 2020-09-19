@@ -10,22 +10,20 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.example.vcare.chatLog.ChatLogActivity
+import androidx.lifecycle.Observer
 import com.example.vcare.login.LoginActivity
-import com.example.vcare.Notifications.OreoNotification
+import com.example.vcare.notifications.OreoNotification
 import com.example.vcare.R
+import com.example.vcare.chatLog.ChatLogActivity
 import com.example.vcare.databinding.FragmentHomeBinding
-import com.example.vcare.helper.groupieAdapters.HomeItem
 import com.example.vcare.home.newMessage.NewMessageFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.iid.FirebaseInstanceId
-import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.ViewHolder
 
 
 class HomeFragment : Fragment() {
     private val viewModel by viewModels<HomeFragmentViewmodel>()
-    private lateinit var binding : FragmentHomeBinding
+    private lateinit var binding: FragmentHomeBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -34,25 +32,28 @@ class HomeFragment : Fragment() {
         val oreoNotification = OreoNotification(requireContext())
         oreoNotification.getManager!!.cancelAll()
 
-        binding= DataBindingUtil.inflate(inflater,
-            R.layout.fragment_home,container,false)
+        binding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.fragment_home, container, false
+        )
 
-        binding.homeRecycler.adapter = viewModel.adapter
-
-        viewModel.adapter.setOnItemClickListener { item, _ ->
-            val intent = Intent(requireContext(), ChatLogActivity::class.java)
-            val row = item as HomeItem
-            intent.putExtra(NewMessageFragment.USER_KEY,row.chatPartner)
-            startActivity(intent)
-        }
+        viewModel.listenForNewMessage().observe(viewLifecycleOwner, Observer {
+            viewModel.displayUsers(it).observe(viewLifecycleOwner, Observer { chatMessages ->
+                binding.homeRecycler.adapter = HomeAdapter(chatMessages) {chatPartner->
+                    val intent = Intent(requireContext(), ChatLogActivity::class.java)
+                    intent.putExtra(NewMessageFragment.USER_KEY, chatPartner)
+                    startActivity(intent)
+                }
+            })
+        })
 
         binding.signOutButton.setOnClickListener {
-            val intent = Intent(requireContext(),LoginActivity::class.java)
+            val intent = Intent(requireContext(), LoginActivity::class.java)
             startActivity(intent)
             Toast.makeText(requireContext(), "Sign out successful!", Toast.LENGTH_SHORT).show()
             FirebaseAuth.getInstance().signOut()
         }
-        viewModel.listenForNewMessage()
+
         viewModel.updateToken(FirebaseInstanceId.getInstance().token)
         return binding.root
     }

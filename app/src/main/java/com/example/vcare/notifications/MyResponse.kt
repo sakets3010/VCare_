@@ -1,4 +1,4 @@
-package com.example.vcare.Notifications
+package com.example.vcare.notifications
 
 class MyResponse {
 

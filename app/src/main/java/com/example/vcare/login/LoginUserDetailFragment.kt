@@ -18,6 +18,7 @@ import androidx.navigation.fragment.navArgs
 import com.example.vcare.ChatRepository
 import com.example.vcare.R
 import com.example.vcare.databinding.FragmentLoginEnterDetailFragmentBinding
+import com.example.vcare.helper.Status
 import com.example.vcare.helper.User
 import com.example.vcare.home.HomeActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -33,7 +34,7 @@ class LoginUserDetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val args: LoginUserDetailFragmentArgs by navArgs()
-        val sharedPref = context?.getSharedPreferences("Vcare",Context.MODE_PRIVATE)
+        val sharedPref = requireContext().getSharedPreferences("Vcare",Context.MODE_PRIVATE)
         if (sharedPref?.getString("username"," ")!==" ")
         {
             val intent = Intent(requireContext(),
@@ -114,7 +115,7 @@ class LoginUserDetailFragment : Fragment() {
     private fun saveUserToFirebaseDatabase(profileImageUrl: String,category:String) {
         Log.d("EnterDetailFragment","saving called...")
         val uid = FirebaseAuth.getInstance().uid ?: ""
-        val user = User(uid,binding.loginUsernameEdit.text.toString(),profileImageUrl,102L,category)
+        val user = User(uid,binding.loginUsernameEdit.text.toString(),profileImageUrl,Status.OFFLINE,category)
         repository.getUserReference(uid)?.set(user)
             ?.addOnSuccessListener{ Log.d("EnterDetailFragment", "DocumentSnapshot successfully written!") }
     }

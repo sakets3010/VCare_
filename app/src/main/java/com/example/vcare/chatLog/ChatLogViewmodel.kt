@@ -7,12 +7,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.vcare.ChatRepository
-import com.example.vcare.Notifications.*
 import com.example.vcare.R
 import com.example.vcare.helper.ChatChannelId
 import com.example.vcare.helper.ChatMessage
 import com.example.vcare.helper.Id
 import com.example.vcare.helper.User
+import com.example.vcare.notifications.*
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
@@ -159,7 +159,7 @@ class ChatLogViewmodel:ViewModel() {
         repository.getChatReference()?.document(Id)?.
         collection("Messages")?.add(chatMessage)
     }
-     private fun sendNotifications(toId: String?, username: String, text: String, apiService:ApiService) {
+     private fun sendNotifications(toId: String?, username: String, text: String, apiService: ApiService) {
         val ref = FirebaseDatabase.getInstance().reference.child("Tokens")
         val query = ref.orderByKey().equalTo(toId)
 

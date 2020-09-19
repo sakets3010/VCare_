@@ -1,4 +1,4 @@
-package com.example.vcare.Notifications
+package com.example.vcare.notifications
 
 import android.annotation.TargetApi
 import android.app.Notification
