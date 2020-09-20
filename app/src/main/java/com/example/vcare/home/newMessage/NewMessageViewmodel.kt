@@ -10,10 +10,12 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class NewMessageViewmodel : ViewModel() {
-    private var availableUsers: MutableLiveData<List<User>> = MutableLiveData()
-    private var users = mutableListOf<User>()
 
-    fun fetchUsers(): LiveData<List<User>> {
+    private val _availableUsers: MutableLiveData<List<User>> = MutableLiveData()
+    val availableUsers: LiveData<List<User>>
+        get() = _availableUsers
+
+    private fun fetchUsers() {
         val db = Firebase.firestore
         db.collection("Users").addSnapshotListener { snapshot, e ->
             if (e != null) {
@@ -21,20 +23,19 @@ class NewMessageViewmodel : ViewModel() {
                 return@addSnapshotListener
             }
             if (snapshot != null) {
-                users.clear()
+                val users = mutableListOf<User>()
                 snapshot.documents.forEach {
                     val user = it.toObject(User::class.java)
                     if (user !== null && !(user.uid.equals(Firebase.auth.uid))) {
                         users.add(user)
                     }
                 }
-
-            } else {
-                Log.d("NewMessageFragment", "Current data: null")
+                _availableUsers.value = users
             }
-            availableUsers.value = users
-            Log.d("check", "value:${users}")
         }
-        return availableUsers
+    }
+
+    init {
+        fetchUsers()
     }
 }

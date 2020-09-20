@@ -19,7 +19,7 @@ class NewMessageFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel.fetchUsers().observe(viewLifecycleOwner, Observer { users ->
+        viewModel.availableUsers.observe(viewLifecycleOwner, Observer { users ->
             recyclerview_newMessage.adapter = NewMessageAdapter(users) { availableUsers ->
                 val intent = Intent(requireContext(), ChatLogActivity::class.java)
                 intent.putExtra(USER_KEY, availableUsers)

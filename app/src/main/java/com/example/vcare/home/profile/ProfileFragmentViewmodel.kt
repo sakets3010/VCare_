@@ -3,10 +3,8 @@ package com.example.vcare.home.profile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.vcare.ChatRepository
+import com.example.vcare.helper.ChatRepository
 import com.example.vcare.helper.User
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 
 class ProfileFragmentViewmodel: ViewModel() {
     private var userDetails:MutableLiveData<User> = MutableLiveData()

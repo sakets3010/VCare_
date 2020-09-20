@@ -15,7 +15,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
-import com.example.vcare.ChatRepository
+import com.example.vcare.helper.ChatRepository
 import com.example.vcare.R
 import com.example.vcare.databinding.FragmentLoginEnterDetailFragmentBinding
 import com.example.vcare.helper.Status

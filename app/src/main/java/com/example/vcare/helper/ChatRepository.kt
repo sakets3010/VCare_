@@ -1,4 +1,4 @@
-package com.example.vcare
+package com.example.vcare.helper
 
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.CollectionReference

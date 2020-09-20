@@ -17,16 +17,16 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 
+
 class LoginSignInFragment : Fragment() {
     private val rcSignIn: Int = 1
-    private lateinit var mGoogleSignInClient: GoogleSignInClient
-    private lateinit var mGoogleSignInOptions: GoogleSignInOptions
+    private lateinit var _googleSignInClient: GoogleSignInClient
+    private lateinit var _googleSignInOptions: GoogleSignInOptions
     private val firebaseAuth = Firebase.auth
     private lateinit var binding: FragmentLoginSignInBinding
     override fun onCreateView(
@@ -43,11 +43,11 @@ class LoginSignInFragment : Fragment() {
     }
 
     private fun configureGoogleSignIn() {
-        mGoogleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        _googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
-        mGoogleSignInClient = GoogleSignIn.getClient(requireContext(),mGoogleSignInOptions)
+        _googleSignInClient = GoogleSignIn.getClient(requireContext(),_googleSignInOptions)
     }
     private fun setupUI() {
         binding.googleButton.setOnClickListener {
@@ -55,7 +55,7 @@ class LoginSignInFragment : Fragment() {
         }
     }
     private fun signIn() {
-        val signInIntent: Intent = mGoogleSignInClient.signInIntent
+        val signInIntent: Intent = _googleSignInClient.signInIntent
         startActivityForResult(signInIntent, rcSignIn)
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

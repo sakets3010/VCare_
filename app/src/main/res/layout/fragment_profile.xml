@@ -54,8 +54,9 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="32dp"
-            android:background="@color/colorWhite"
+            android:background="@color/primaryLightColor"
             android:fontFamily="@font/poppins"
+            android:textColor="@color/colorWhite"
             android:padding="16dp"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -72,31 +73,29 @@
             android:textColor="@color/colorWhite"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@id/bio"
-            app:layout_constraintStart_toStartOf="@id/bio"
+            app:layout_constraintBottom_toTopOf="@id/edit_text_bio"
+            app:layout_constraintStart_toStartOf="@id/edit_text_bio"
             app:layout_constraintTop_toBottomOf="@+id/login_username_text_layout_profile" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/bio"
+        <EditText
+            android:id="@+id/edit_text_bio"
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             app:counterEnabled="true"
             app:counterMaxLength="25"
+            android:textColor="@color/colorWhite"
+            android:textColorHint="@color/colorWhite"
+            android:hint="@string/tell_us_about_yourself"
+            android:background="@color/primaryLightColor"
+            android:fontFamily="@font/poppins"
+            android:padding="16dp"
+            android:textSize="18sp"
             app:hintTextColor="@color/secondaryTextColor"
             app:layout_constraintEnd_toEndOf="@id/login_username_text_layout_profile"
             app:layout_constraintStart_toStartOf="@+id/login_username_text_layout_profile"
-            app:layout_constraintTop_toBottomOf="@id/bio_header">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_text_bio"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fontFamily="@font/poppins"
-                android:hint="@string/tell_us_about_yourself" />
-
-        </com.google.android.material.textfield.TextInputLayout>
+            app:layout_constraintTop_toBottomOf="@id/bio_header"/>
 
         <Button
             android:id="@+id/btn_save"
@@ -105,9 +104,10 @@
             android:layout_marginTop="16dp"
             android:backgroundTint="@color/primaryLightColor"
             android:text="@string/save"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/login_username_text_layout_profile"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/bio"
+            app:layout_constraintTop_toBottomOf="@+id/edit_text_bio"
             tools:targetApi="lollipop" />
 
         <Button

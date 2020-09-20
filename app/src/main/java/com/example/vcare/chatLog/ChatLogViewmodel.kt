@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.vcare.ChatRepository
+import com.example.vcare.helper.ChatRepository
 import com.example.vcare.R
 import com.example.vcare.helper.ChatChannelId
 import com.example.vcare.helper.ChatMessage

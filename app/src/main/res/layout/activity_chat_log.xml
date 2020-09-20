@@ -97,6 +97,8 @@
             android:padding="8dp"
             android:paddingStart="16dp"
             android:paddingEnd="75dp"
+            android:textColorHint="@color/primaryLightColor"
+            android:textColor="@color/primaryLightColor"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintCircleRadius="25dp"
             app:layout_constraintEnd_toEndOf="parent"
