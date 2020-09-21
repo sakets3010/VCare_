@@ -1,17 +1,39 @@
 <!--?xml version="1.0" encoding="UTF-8"?-->
 <resources>
-  <color name="primaryColor">#263238</color>
-  <color name="primaryLightColor">#4f5b62</color>
-  <color name="primaryDarkColor">#001064</color>
-  <color name="secondaryColor">#283593</color>
-  <color name="secondaryLightColor">#5f5fc4</color>
-  <color name="secondaryDarkColor">#001064</color>
-  <color name="primaryTextColor">#bdbdbd</color>
-  <color name="secondaryTextColor">#bdbdbd</color>
+  <color name="primaryColor">#ffffff</color>
+  <color name="primaryLightColor">#fffff6</color>
+  <color name="primaryDarkColor">#b0bec5</color>
+  <color name="secondaryColor">#546e7a</color>
+  <color name="secondaryLightColor">#cfcfcf</color>
+  <color name="secondaryDarkColor">#546e7a</color>
+  <color name="primaryTextColor">#000000</color>
+  <color name="secondaryTextColor">#757575</color>
   <color name="colorWhite">#ffff</color>
   <color name="colorDarkGreen">#1b5e20</color>
-  <color name="colorLightGrey">#bdbdbd</color>
-  <color name="colorLightYellow">#ffff00</color>
+  <color name="colorLightGrey">#757575</color>
+  <color name="colorLightYellow">#fdd835</color>
   <color name="colorOnline">#388e3c</color>
-
+  //non default-light
+  <color name="secondaryColorWB">#283593</color>
+  <color name="secondaryLightColorWB">#5f5fc4</color>
+  <color name="secondaryDarkColorWB">#001064</color>
+  <color name="secondaryTextColorWB">#ffffff</color>
+  //dark
+  <color name="primaryColorD">#455a64</color>
+  <color name="primaryLightColorD">#607d8b</color>
+  <color name="primaryDarkColorD">#263238</color>
+  <color name="secondaryColorD">#616161</color>
+  <color name="secondaryLightColorD">#757575</color>
+  <color name="secondaryDarkColorD">#424242</color>
+  <color name="primaryTextColorD">#ffffff</color>
+  <color name="secondaryTextColorD">#ffffff</color>
+  //non default-dark
+  <color name="primaryColorND">#37474f</color>
+  <color name="primaryLightColorND">#62727b</color>
+  <color name="primaryDarkColorND">#102027</color>
+  <color name="secondaryColorND">#283593</color>
+  <color name="secondaryLightColorND">#5f5fc4</color>
+  <color name="secondaryDarkColorND">#001064</color>
+  <color name="primaryTextColorND">#ffffff</color>
+  <color name="secondaryTextColorND">#ffffff</color>
 </resources>

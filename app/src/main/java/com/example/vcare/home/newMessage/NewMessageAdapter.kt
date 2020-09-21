@@ -28,7 +28,7 @@ class NewMessageAdapter(private val users: List<User>,private val listener: (Use
         if(user.category=="Seeker")
         {
             holder.category.setBackgroundResource(R.drawable.rounded_bg_yellow_coloured)
-            holder.category.setTextColor(Color.parseColor("#ffff00"))
+            holder.category.setTextColor(Color.parseColor("#fdd835"))
         }
 
         holder.category.text=user.category

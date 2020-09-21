@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.example.vcare.R
 import com.example.vcare.databinding.FragmentProfileBinding
 import com.example.vcare.login.LoginActivity
@@ -30,6 +31,9 @@ class ProfileFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_profile,container,false)
         binding.btnSignOut.setOnClickListener {
             signOut()
+        }
+        binding.buttonSetting.setOnClickListener {
+            findNavController().navigate(R.id.action_profileFragment_to_settingsFragment)
         }
         binding.btnSave.setOnClickListener {
             viewModel.updateUserDetails(uid!!,binding.editTextBio.text.toString())

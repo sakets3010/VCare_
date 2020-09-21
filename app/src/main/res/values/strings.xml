@@ -32,4 +32,31 @@
     <string name="users">Users</string>
     <string name="my_account">My Account</string>
     <string name="account">Account</string>
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="settings">settings</string>
+    <string name="enable_biometric_during_the_app_start">Enable Biometric during the app start</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="biometrics">Biometrics</string>
+    <string name="white_blue">White-Blue</string>
+    <string name="metallic_gray_green">metallic gray-green</string>
+    <string name="blue_grey">Blue-grey</string>
+    <string name="metallic_grey_green">metallic grey-green</string>
+    <string name="white_grey">White-Grey</string>
+    <string name="blue_white">Blue-White</string>
+    <string name="profile">Profile</string>
+    <string name="settings_">Settings</string>
+    <string name="themes">Themes</string>
 </resources>

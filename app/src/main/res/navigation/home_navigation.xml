@@ -9,23 +9,24 @@
         android:id="@+id/newMessageFrag"
         android:name="com.example.vcare.home.newMessage.NewMessageFragment"
         android:label="fragment_new_message"
-        tools:layout="@layout/fragment_new_message" >
-        <action
-            android:id="@+id/action_newMessageFrag_to_homeFragment"
-            app:destination="@id/homeFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_new_message" />
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.vcare.home.home.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" >
-        <action
-            android:id="@+id/action_homeFragment_to_newMessageFrag"
-            app:destination="@id/newMessageFrag" />
-    </fragment>
+        tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.vcare.home.profile.ProfileFragment"
         android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profileFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.vcare.settings.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" />
 </navigation>

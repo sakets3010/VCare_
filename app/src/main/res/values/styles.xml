@@ -1,6 +1,7 @@
 <resources>
+
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/secondaryColor</item>
+        <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryDarkColor</item>
         <item name="colorPrimaryVariant">@color/primaryLightColor</item>
         <item name="colorOnPrimary">@color/primaryTextColor</item>
@@ -9,13 +10,39 @@
         <item name="colorOnSecondary">@color/secondaryTextColor</item>
     </style>
 
+    <style name="OverlayThemeBlue" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/secondaryColorWB</item>
+        <item name="colorPrimaryDark">@color/secondaryDarkColorWB</item>
+        <item name="colorPrimaryVariant">@color/secondaryColorWB</item>
+    </style>
+
+    <style name="DarkOverlayDefault" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primaryColorD</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColorD</item>
+        <item name="colorPrimaryVariant">@color/primaryLightColorD</item>
+        <item name="colorOnPrimary">@color/primaryTextColorD</item>
+        <item name="colorSecondary">@color/secondaryColorD</item>
+        <item name="colorSecondaryVariant">@color/secondaryDarkColorD</item>
+        <item name="colorOnSecondary">@color/secondaryTextColorD</item>
+    </style>
+
+    <style name="DarkOverlayNonDefault" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primaryColorND</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColorND</item>
+        <item name="colorPrimaryVariant">@color/primaryLightColorND</item>
+        <item name="colorOnPrimary">@color/primaryTextColorND</item>
+        <item name="colorSecondary">@color/secondaryColorND</item>
+        <item name="colorSecondaryVariant">@color/secondaryDarkColorND</item>
+        <item name="colorOnSecondary">@color/secondaryTextColorND</item>
+    </style>
+
+
     <style name="ShapeAppearanceOverlay.MyApp.Button.Rounded" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
 
     <style name="TextToolbar">
-        <item name="android:background">@color/secondaryColor</item>
         <item name="android:textColor">@color/colorWhite</item>
         <item name="android:textSize">18sp</item>
         <item name="android:textAllCaps">true</item>

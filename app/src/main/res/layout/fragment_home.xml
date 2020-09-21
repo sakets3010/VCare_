@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     tools:context=".home.home.HomeFragment">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/primaryColor">
-        <TextView
+        >
+
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/textView4"
             style="@style/TextToolbar"
             android:layout_width="match_parent"
@@ -18,28 +20,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-        <TextView
+
+        <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:text="@string/vcare_messaging"
+            android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="@id/textView4"
             app:layout_constraintBottom_toBottomOf="@id/textView4"
             app:layout_constraintStart_toStartOf="@id/textView4"
-            android:textSize="20sp"
-            android:textColor="@color/colorWhite"
-            android:layout_marginStart="24dp"
-            android:text="@string/vcare_messaging"/>
-        <ImageButton
-            android:id="@+id/sign_out_button"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginEnd="32dp"
-            android:background="@drawable/ic_action_sign_out"
-            android:backgroundTint="@color/colorWhite"
-            app:layout_constraintBottom_toBottomOf="@id/textView4"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/textView4"
-            tools:targetApi="lollipop" />
+            app:layout_constraintTop_toTopOf="@id/textView4" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/home_recycler"

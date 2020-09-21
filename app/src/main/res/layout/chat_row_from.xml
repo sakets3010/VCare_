@@ -4,46 +4,46 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/primaryColor">
-    <TextView
+    android:layout_height="wrap_content">
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/textMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="1dp"
         android:background="@drawable/rounded_white_bg"
-        android:backgroundTint="@color/colorDarkGreen"
-        android:textColor="@color/secondaryTextColor"
+        android:backgroundTint="@color/colorLightGrey"
+        android:textColor="@color/colorWhite"
         android:maxWidth="240dp"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/messageTimestamp"
         tools:targetApi="lollipop" />
     <ImageView
         android:id="@+id/imageCover"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="1dp"
         android:layout_marginStart="24dp"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="1dp"
         android:background="@drawable/rounded_white_bg"
-        android:backgroundTint="@color/colorDarkGreen"
+        android:backgroundTint="@color/colorLightGrey"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/imageMessage"
         app:layout_constraintTop_toTopOf="@id/imageMessage"
         app:layout_constraintEnd_toEndOf="@id/imageMessage"
         app:layout_constraintStart_toStartOf="@id/textMessage"
         tools:targetApi="lollipop" />
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/messageTimestamp"
+        android:visibility="gone"
+        android:layout_marginTop="16dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/secondaryTextColor"
-        android:textColorHint="@color/secondaryTextColor"
         app:layout_constraintStart_toStartOf="@id/textMessage"
-        app:layout_constraintTop_toBottomOf="@id/textMessage" />
-
+        app:layout_constraintTop_toTopOf="parent" />
     <ImageView
         android:id="@+id/imageMessage"
         android:layout_width="wrap_content"
@@ -51,8 +51,6 @@
         android:maxHeight="300dp"
         android:maxWidth="300dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
         android:adjustViewBounds="true"
         android:paddingStart="24dp"
         android:paddingTop="24dp"
@@ -63,6 +61,4 @@
         app:layout_constraintStart_toStartOf="@+id/textMessage"
         app:layout_constraintTop_toTopOf="@id/textMessage"
         tools:srcCompat="@tools:sample/avatars" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

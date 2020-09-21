@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vcare.R
 import com.example.vcare.helper.ChatMessage
+import com.example.vcare.helper.convertDurationToFormatted
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
@@ -18,41 +19,52 @@ import kotlinx.android.synthetic.main.chat_row_list.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ChatAdapter(private val message: List<ChatMessage>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ChatAdapter(private val message: List<ChatMessage>) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object {
         const val VIEW_TYPE_1 = 1
         const val VIEW_TYPE_2 = 2
     }
+
     private inner class View1ViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
-        val textMessage: TextView =itemView.textMessage
-        val messageTimestamp: TextView =itemView.messageTimestamp
-        val imageMessage: ImageView =itemView.imageMessage
-        val imageCover:ImageView =itemView.imageCover
+        val textMessage: TextView = itemView.textMessage
+        val messageTimestamp: TextView = itemView.messageTimestamp
+        val imageMessage: ImageView = itemView.imageMessage
+        val imageCover: ImageView = itemView.imageCover
         fun bind(position: Int) {
             setIsRecyclable(false)
             val item = message[position]
-            if(item.url==""){
+
+            val itemPrev = if (position !== 0) {
+                message[position - 1]
+            } else message[position]
+            if (item.url == "") {
                 textMessage.text = item.text
-                messageTimestamp.text = getDateTime(item.timestamp)
-            }
-            else if(item.url !== ""){
-                textMessage.visibility= View.GONE
-                messageTimestamp.visibility =View.GONE
+                if (convertDurationToFormatted(itemPrev.timestamp*1000, item.timestamp*1000)||itemPrev==message[position]) {
+                    messageTimestamp.visibility = View.VISIBLE
+                     messageTimestamp.text = getDateTime(item.timestamp)
+                }
+                else{
+                    messageTimestamp.visibility = View.GONE
+                }
+            } else if (item.url !== "") {
+                textMessage.visibility = View.GONE
+                messageTimestamp.visibility = View.GONE
                 Picasso.get().load(item.url).into(imageMessage)
-                imageCover.visibility= View.VISIBLE
+                imageCover.visibility = View.VISIBLE
                 imageMessage.visibility = View.VISIBLE
                 imageMessage.setOnClickListener {
                     val options = arrayOf<CharSequence>(
-                        "View Image","Cancel"
+                        "View Image", "Cancel"
                     )
 
                     val builder: AlertDialog.Builder = AlertDialog.Builder(itemView.context)
                     builder.setTitle("what now?")
                     builder.setItems(options) { _, which ->
-                        if (which==0){
+                        if (which == 0) {
                             val intent = Intent(builder.context, ViewFullImageActivity::class.java)
-                            intent.putExtra("url",item.url)
+                            intent.putExtra("url", item.url)
                             builder.context.startActivity(intent)
                         }
                     }
@@ -64,34 +76,39 @@ class ChatAdapter(private val message: List<ChatMessage>) : RecyclerView.Adapter
 
     private inner class View2ViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
-        val textMessage: TextView =itemView.textMessage
-        val messageTimestamp: TextView =itemView.messageTimestamp
-        val imageMessage: ImageView =itemView.imageMessage
-        val imageCover:ImageView =itemView.imageCover
+        val textMessage: TextView = itemView.textMessage
+        val messageTimestamp: TextView = itemView.messageTimestamp
+        val imageMessage: ImageView = itemView.imageMessage
+        val imageCover: ImageView = itemView.imageCover
         fun bind(position: Int) {
             setIsRecyclable(false)
             val item = message[position]
-            if(item.url==""){
+            val itemPrev = if (position !== 0) {
+                message[position - 1]
+            } else message[position]
+            if (item.url == "") {
                 textMessage.text = item.text
-                messageTimestamp.text = getDateTime(item.timestamp)
-            }
-            else if(item.url !== ""){
-                textMessage.visibility= View.GONE
-                messageTimestamp.visibility =View.GONE
+                if (convertDurationToFormatted(itemPrev.timestamp*1000, item.timestamp*1000)||itemPrev==message[position]) {
+                    messageTimestamp.visibility = View.VISIBLE
+                    messageTimestamp.text = getDateTime(item.timestamp)
+                }
+            } else if (item.url !== "") {
+                textMessage.visibility = View.GONE
+                messageTimestamp.visibility = View.GONE
                 Picasso.get().load(item.url).into(imageMessage)
-                imageCover.visibility= View.VISIBLE
+                imageCover.visibility = View.VISIBLE
                 imageMessage.visibility = View.VISIBLE
                 imageMessage.setOnClickListener {
                     val options = arrayOf<CharSequence>(
-                        "View Image","Cancel"
+                        "View Image", "Cancel"
                     )
 
                     val builder: AlertDialog.Builder = AlertDialog.Builder(itemView.context)
                     builder.setTitle("what now?")
                     builder.setItems(options) { _, which ->
-                        if (which==0){
+                        if (which == 0) {
                             val intent = Intent(builder.context, ViewFullImageActivity::class.java)
-                            intent.putExtra("url",item.url)
+                            intent.putExtra("url", item.url)
                             builder.context.startActivity(intent)
                         }
                     }
@@ -100,7 +117,6 @@ class ChatAdapter(private val message: List<ChatMessage>) : RecyclerView.Adapter
             }
         }
     }
-
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -125,6 +141,7 @@ class ChatAdapter(private val message: List<ChatMessage>) : RecyclerView.Adapter
             e.toString()
         }
     }
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (message[position].fromId == Firebase.auth.uid) {
             (holder as View1ViewHolder).bind(position)
@@ -134,11 +151,9 @@ class ChatAdapter(private val message: List<ChatMessage>) : RecyclerView.Adapter
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if(message[position].fromId == Firebase.auth.uid)
-        {
+        return if (message[position].fromId == Firebase.auth.uid) {
             VIEW_TYPE_1
-        }
-        else{
+        } else {
             VIEW_TYPE_2
         }
     }

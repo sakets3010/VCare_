@@ -5,15 +5,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/primaryColor">
+    android:layout_height="wrap_content">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/home_profile"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_marginStart="16dp"
-        app:civ_border_color="@color/secondaryColor"
         app:civ_border_width="2dp"
         app:layout_constraintBottom_toBottomOf="@id/divider_home"
         app:layout_constraintStart_toStartOf="parent"
@@ -32,20 +30,19 @@
         app:layout_constraintEnd_toEndOf="@id/home_profile" />
 
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/home_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:fontFamily="@font/poppins"
         android:text="@string/textview"
-        android:textColor="@color/secondaryTextColor"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/home_latestMessage"
         app:layout_constraintStart_toEndOf="@+id/home_profile"
         app:layout_constraintTop_toTopOf="@+id/home_profile" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/home_latestMessage"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -53,7 +50,6 @@
         android:fontFamily="@font/poppins_bold"
         android:text="@string/textview"
         android:textSize="12sp"
-        android:textColor="@color/colorWhite"
         app:layout_constraintBottom_toBottomOf="@+id/home_profile"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/home_username"
@@ -71,7 +67,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"/>
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/category_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

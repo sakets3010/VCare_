@@ -50,7 +50,7 @@ class HomeAdapter(private val chatMessages: List<ChatMessage>,private val listen
                 if(chatPartner?.category=="Seeker")
                 {
                     holder.category.setBackgroundResource(R.drawable.rounded_bg_yellow_coloured)
-                    holder.category.setTextColor(Color.parseColor("#ffff00"))
+                    holder.category.setTextColor(Color.parseColor("#fdd835"))
                 }
                 holder.category.text = chatPartner?.category
                 if(chatPartner?.status==100L)

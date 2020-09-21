@@ -135,7 +135,7 @@ class ChatLogActivity : AppCompatActivity() {
         if(viewModel.returnUser(user)?.category =="Seeker")
         {
             binding.categoryTextChatLog.setBackgroundResource(R.drawable.rounded_bg_yellow_coloured)
-            binding.categoryTextChatLog.setTextColor(Color.parseColor("#ffff00"))
+            binding.categoryTextChatLog.setTextColor(Color.parseColor("#fdd835"))
         }
         binding.usernameChatLog.text = viewModel.returnUser(user)?.username
         Picasso.get().load(viewModel.returnUser(user)?.profileImageUrl).into(binding.chatLogProfile)

@@ -28,10 +28,10 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         val oreoNotification = OreoNotification(requireContext())
         oreoNotification.getManager!!.cancelAll()
 
+        requireContext().setTheme(R.style.OverlayThemeBlue)
         binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_home, container, false
@@ -46,13 +46,6 @@ class HomeFragment : Fragment() {
                 }
             })
         })
-
-        binding.signOutButton.setOnClickListener {
-            val intent = Intent(requireContext(), LoginActivity::class.java)
-            startActivity(intent)
-            Toast.makeText(requireContext(), "Sign out successful!", Toast.LENGTH_SHORT).show()
-            FirebaseAuth.getInstance().signOut()
-        }
 
         viewModel.updateToken(FirebaseInstanceId.getInstance().token)
         return binding.root

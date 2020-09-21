@@ -1,8 +1,11 @@
 package com.example.vcare.home
 
+import android.content.Context
+import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
 import com.example.vcare.R
@@ -19,12 +22,27 @@ class HomeActivity : AppCompatActivity() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_home)
         val navController = Navigation.findNavController(this, R.id.home_nav)
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottom_navigation)
         bottomNavigationView.setupWithNavController(navController)
         fetchCurrentUser()
     }
+
+    override fun getTheme(): Resources.Theme {
+        val theme = super.getTheme()
+        val sharedPref = this.getSharedPreferences("Vcare", Context.MODE_PRIVATE)
+        Log.d("theme","called :${sharedPref.getLong("theme",1L)}")
+        when(sharedPref.getLong("theme",1L)){
+            1L -> theme.applyStyle(R.style.AppTheme,true)
+            2L -> theme.applyStyle(R.style.OverlayThemeBlue,true)
+            3L -> theme.applyStyle(R.style.DarkOverlayDefault,true)
+            4L -> theme.applyStyle(R.style.DarkOverlayNonDefault,true)
+        }
+        return theme
+    }
+
     private fun fetchCurrentUser() {
         val uid = FirebaseAuth.getInstance().uid ?:""
         val db = Firebase.firestore
@@ -43,7 +61,6 @@ class HomeActivity : AppCompatActivity() {
 class Status{
     companion object{
         private val db = Firebase.firestore
-
         fun updateStatus(userId:String,status:Long){
             db.collection("Users").document(userId).update(
                 mapOf(
