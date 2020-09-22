@@ -8,31 +8,40 @@ import android.text.TextWatcher
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.example.vcare.notifications.ApiService
-import com.example.vcare.notifications.Client
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.vcare.R
 import com.example.vcare.databinding.ActivityChatLogBinding
 import com.example.vcare.helper.Status
 import com.example.vcare.helper.User
 import com.example.vcare.home.HomeActivity
 import com.example.vcare.home.newMessage.NewMessageFragment
+import com.example.vcare.notifications.ApiService
+import com.example.vcare.notifications.Client
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.ml.naturallanguage.FirebaseNaturalLanguage
+import com.google.firebase.ml.naturallanguage.smartreply.FirebaseTextMessage
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_chat_log.*
-
 
 
 @AndroidEntryPoint
 class ChatLogActivity : AppCompatActivity() {
     private val viewModel by viewModels<ChatLogViewmodel>()
     private var apiService : ApiService?=null
+    private val messages = arrayListOf<FirebaseTextMessage>()
+    private val suggestions = arrayListOf<String>()
+    private val suggestionAdapter = SuggestionAdapter(suggestions)
+    private val smartReply = FirebaseNaturalLanguage.getInstance().smartReply
     private lateinit var binding: ActivityChatLogBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChatLogBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+
+        suggestion_rv.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true)
+        suggestion_rv.adapter = suggestionAdapter
 
         val user = intent.getParcelableExtra<User>(NewMessageFragment.USER_KEY)
         val toId = user?.uid
@@ -80,7 +89,6 @@ class ChatLogActivity : AppCompatActivity() {
                 }
             })
         }
-
         apiService = Client.getClient("https://fcm.googleapis.com/")!!.create(
             ApiService::class.java)
 
@@ -91,10 +99,30 @@ class ChatLogActivity : AppCompatActivity() {
             }
             else{
                 viewModel.notify = true
-
                 viewModel.performSendMessage(user,edittext_chat_log.text.toString(),apiService)
-
+                val message = FirebaseTextMessage.createForRemoteUser(
+                    edittext_chat_log.text.toString(), //Content of the message
+                    System.currentTimeMillis(), //Time at which the message was sent
+                    user!!.uid //This has to be unique for every other person involved in the chat who is not your user
+                )
+                messages.add(
+                    message
+                )
                 binding.edittextChatLog.text.clear()
+                smartReply.suggestReplies(
+                    messages.takeLast(2)
+                )
+                    .addOnSuccessListener {
+                        suggestions.clear()
+                        it.suggestions.forEach {
+                            Log.d("smart","text:${it.text}")
+                            suggestions.add(it.text)
+                        }
+                        suggestionAdapter.notifyDataSetChanged()
+                    }
+                    .addOnFailureListener {
+                        it.printStackTrace()
+                    }
             }
         }
         binding.edittextChatLog.addTextChangedListener(object: TextWatcher {

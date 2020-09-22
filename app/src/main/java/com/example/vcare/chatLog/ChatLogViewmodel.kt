@@ -172,20 +172,23 @@ class ChatLogViewmodel @ViewModelInject constructor(
     }
 
     private fun addMessage(Id: String, chatMessage: ChatMessage) {
-        repository.getChatReference()?.document(Id)?.collection("Messages")?.add(chatMessage)?.addOnSuccessListener {
-            updateMessageStatus(Id,it)
-        }
+        repository.getChatReference()?.document(Id)?.collection("Messages")?.add(chatMessage)
+            ?.addOnSuccessListener {
+                updateMessageStatus(Id, it)
+            }
     }
 
     private fun updateMessageStatus(id: String, it: DocumentReference?) {
         if (it != null) {
-            repository.getChatReference()?.document(id)?.collection("Messages")?.document(it.id)?.update(
-                mapOf(
-                    "status" to true
+            repository.getChatReference()?.document(id)?.collection("Messages")?.document(it.id)
+                ?.update(
+                    mapOf(
+                        "status" to true
+                    )
                 )
-            )
         }
     }
+
 
     private fun sendNotifications(
         toId: String?,
@@ -264,31 +267,38 @@ class ChatLogViewmodel @ViewModelInject constructor(
                             for (document in documents) {
                                 repository.getChatReference()!!.document(document.id)
                                     .collection("Messages").add(chatMessage).addOnSuccessListener {
-                                    if (firebaseUser != null) {
-                                        repository.getUserReference(uid!!)
-                                            ?.addSnapshotListener { snapshot, e ->
-                                                if (e != null) {
-                                                    Log.w("ChatLogActivity", "Listen failed.", e)
-                                                    return@addSnapshotListener
-                                                }
-                                                if (snapshot != null && snapshot.exists()) {
-                                                    val userSnap =
-                                                        snapshot.toObject(User::class.java)
-                                                    if (notify) {
-                                                        sendNotifications(
-                                                            toId,
-                                                            userSnap!!.username,
-                                                            "sent you an image",
-                                                            apiService
+                                        if (firebaseUser != null) {
+                                            repository.getUserReference(uid!!)
+                                                ?.addSnapshotListener { snapshot, e ->
+                                                    if (e != null) {
+                                                        Log.w(
+                                                            "ChatLogActivity",
+                                                            "Listen failed.",
+                                                            e
+                                                        )
+                                                        return@addSnapshotListener
+                                                    }
+                                                    if (snapshot != null && snapshot.exists()) {
+                                                        val userSnap =
+                                                            snapshot.toObject(User::class.java)
+                                                        if (notify) {
+                                                            sendNotifications(
+                                                                toId,
+                                                                userSnap!!.username,
+                                                                "sent you an image",
+                                                                apiService
+                                                            )
+                                                        }
+                                                        notify = false
+                                                    } else {
+                                                        Log.d(
+                                                            "ChatLogActivity",
+                                                            "Current data: null"
                                                         )
                                                     }
-                                                    notify = false
-                                                } else {
-                                                    Log.d("ChatLogActivity", "Current data: null")
                                                 }
-                                            }
+                                        }
                                     }
-                                }
                             }
                         } else {
                             repository.getChatReference()!!.add(ChatChannelId(sortedList))

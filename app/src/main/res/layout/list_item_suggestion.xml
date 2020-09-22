@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    android:id="@+id/tvSuggestion"
+    android:padding="8dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:textStyle="bold"
+    android:textColor="#ffffff"
+    android:backgroundTint="@color/colorLightGrey"
+    android:background="@drawable/rounded_white_bg"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />
