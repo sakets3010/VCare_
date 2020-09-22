@@ -18,8 +18,9 @@ import com.example.vcare.login.LoginActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.squareup.picasso.Picasso
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class ProfileFragment : Fragment() {
     private val viewModel by viewModels<ProfileFragmentViewmodel>()
     private lateinit var binding:FragmentProfileBinding

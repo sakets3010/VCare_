@@ -1,8 +1,11 @@
 package com.example.vcare.home.home
 
 import android.util.Log
+import androidx.hilt.Assisted
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.example.vcare.helper.ChatRepository
 import com.example.vcare.helper.ChatChannelId
@@ -14,13 +17,16 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import dagger.hilt.android.AndroidEntryPoint
 
-class HomeFragmentViewmodel : ViewModel() {
+class HomeFragmentViewmodel@ViewModelInject constructor(
+    private val repository: ChatRepository,
+    @Assisted private val savedStateHandle: SavedStateHandle
+) : ViewModel() {
     private var activeUsers: MutableLiveData<List<ChatMessage>> = MutableLiveData()
     private var users = mutableListOf<ChatMessage>()
     private var conversations = mutableListOf<ChatChannelIdWrapper>()
     private var conversationList: MutableLiveData<List<ChatChannelIdWrapper>> = MutableLiveData()
-    private val repository = ChatRepository()
 
     fun updateToken(token: String?) {
         val firebaseUser = FirebaseAuth.getInstance().currentUser

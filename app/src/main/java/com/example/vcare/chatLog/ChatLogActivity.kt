@@ -18,9 +18,12 @@ import com.example.vcare.home.HomeActivity
 import com.example.vcare.home.newMessage.NewMessageFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.squareup.picasso.Picasso
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_chat_log.*
 
 
+
+@AndroidEntryPoint
 class ChatLogActivity : AppCompatActivity() {
     private val viewModel by viewModels<ChatLogViewmodel>()
     private var apiService : ApiService?=null

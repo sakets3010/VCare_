@@ -23,6 +23,16 @@
         android:visibility="visible"
         tools:targetApi="lollipop" />
     <ImageView
+        android:id="@+id/delivered_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_action_delivered"
+        app:layout_constraintTop_toTopOf="@id/textMessage"
+        app:layout_constraintBottom_toBottomOf="@id/textMessage"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="24dp"/>
+    <ImageView
         android:id="@+id/imageCover"
         android:layout_width="0dp"
         android:layout_height="0dp"

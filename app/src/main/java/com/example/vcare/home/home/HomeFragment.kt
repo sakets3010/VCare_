@@ -19,8 +19,8 @@ import com.example.vcare.databinding.FragmentHomeBinding
 import com.example.vcare.home.newMessage.NewMessageFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.iid.FirebaseInstanceId
-
-
+import dagger.hilt.android.AndroidEntryPoint
+@AndroidEntryPoint
 class HomeFragment : Fragment() {
     private val viewModel by viewModels<HomeFragmentViewmodel>()
     private lateinit var binding: FragmentHomeBinding

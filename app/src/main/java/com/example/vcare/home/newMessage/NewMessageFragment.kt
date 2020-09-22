@@ -11,8 +11,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.example.vcare.R
 import com.example.vcare.chatLog.ChatLogActivity
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_new_message.*
 
+@AndroidEntryPoint
 class NewMessageFragment : Fragment() {
     private val viewModel by viewModels<NewMessageViewmodel>()
     override fun onCreateView(

@@ -16,6 +16,11 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.chat_row_list.view.*
+import kotlinx.android.synthetic.main.chat_row_list.view.imageCover
+import kotlinx.android.synthetic.main.chat_row_list.view.imageMessage
+import kotlinx.android.synthetic.main.chat_row_list.view.messageTimestamp
+import kotlinx.android.synthetic.main.chat_row_list.view.textMessage
+import kotlinx.android.synthetic.main.chat_row_to.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -32,22 +37,31 @@ class ChatAdapter(private val message: List<ChatMessage>) :
         val messageTimestamp: TextView = itemView.messageTimestamp
         val imageMessage: ImageView = itemView.imageMessage
         val imageCover: ImageView = itemView.imageCover
+        val deliveredReceipt: ImageView = itemView.delivered_image
         fun bind(position: Int) {
             setIsRecyclable(false)
             val item = message[position]
-
             val itemPrev = if (position !== 0) {
                 message[position - 1]
             } else message[position]
+
+            if(item.status){
+                deliveredReceipt.visibility = View.VISIBLE
+            }
+
             if (item.url == "") {
                 textMessage.text = item.text
-                if (convertDurationToFormatted(itemPrev.timestamp*1000, item.timestamp*1000)||itemPrev==message[position]) {
+                if (convertDurationToFormatted(
+                        itemPrev.timestamp * 1000,
+                        item.timestamp * 1000
+                    ) || itemPrev == message[position]
+                ) {
                     messageTimestamp.visibility = View.VISIBLE
-                     messageTimestamp.text = getDateTime(item.timestamp)
-                }
-                else{
+                    messageTimestamp.text = getDateTime(item.timestamp)
+                } else {
                     messageTimestamp.visibility = View.GONE
                 }
+
             } else if (item.url !== "") {
                 textMessage.visibility = View.GONE
                 messageTimestamp.visibility = View.GONE
@@ -88,7 +102,11 @@ class ChatAdapter(private val message: List<ChatMessage>) :
             } else message[position]
             if (item.url == "") {
                 textMessage.text = item.text
-                if (convertDurationToFormatted(itemPrev.timestamp*1000, item.timestamp*1000)||itemPrev==message[position]) {
+                if (convertDurationToFormatted(
+                        itemPrev.timestamp * 1000,
+                        item.timestamp * 1000
+                    ) || itemPrev == message[position]
+                ) {
                     messageTimestamp.visibility = View.VISIBLE
                     messageTimestamp.text = getDateTime(item.timestamp)
                 }
