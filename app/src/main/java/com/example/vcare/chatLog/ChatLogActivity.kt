@@ -31,7 +31,10 @@ class ChatLogActivity : AppCompatActivity() {
     private var apiService : ApiService?=null
     private val messages = arrayListOf<FirebaseTextMessage>()
     private val suggestions = arrayListOf<String>()
-    private val suggestionAdapter = SuggestionAdapter(suggestions)
+    private val suggestionAdapter = SuggestionAdapter(suggestions){
+        binding.edittextChatLog.text.clear()
+        binding.edittextChatLog.setText(it)
+    }
     private val smartReply = FirebaseNaturalLanguage.getInstance().smartReply
     private lateinit var binding: ActivityChatLogBinding
     override fun onCreate(savedInstanceState: Bundle?) {
