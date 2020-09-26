@@ -26,6 +26,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageTask
@@ -88,6 +89,17 @@ class ChatLogViewmodel @ViewModelInject constructor(
     var isScrollable: MutableLiveData<Boolean> = MutableLiveData()
 
     fun listener(docId: String): LiveData<List<ChatMessage>> {
+//        val first = repository.getChatReference()?.document(docId)?.collection("Messages")
+//            ?.orderBy("timestamp",Query.Direction.ASCENDING)
+//            ?.limit(25)
+//
+//        first?.addSnapshotListener { snap, error ->
+//            val lastVisible = snap!!.documents[snap.size() - 1]
+//            val next = repository.getChatReference()?.document(docId)?.collection("Messages")
+//                ?.orderBy("timestamp",Query.Direction.ASCENDING)
+//                ?.startAfter(lastVisible)
+//                ?.limit(25)
+// }
         repository.getChatReference()?.document(docId)?.collection("Messages")?.orderBy(
             "timestamp",
             Query.Direction.ASCENDING
@@ -109,6 +121,8 @@ class ChatLogViewmodel @ViewModelInject constructor(
             messageList.value = messages
         }
         return messageList
+
+
     }
 
     fun updateTypingStatus(status: Long) {
@@ -155,12 +169,15 @@ class ChatLogViewmodel @ViewModelInject constructor(
                 if (snapshot != null && snapshot.exists()) {
                     val userLocal = snapshot.toObject(User::class.java)
                     if (notify) {
-                        sendNotifications(
-                            toId,
-                            userLocal!!.username,
-                            chatMessage.text,
-                            apiService!!
-                        )
+                        if (userLocal != null) {
+                            sendNotifications(
+                                toId,
+                                userLocal.username,
+                                chatMessage.text,
+                                apiService!!
+                            )
+                            Log.d("notif","sent:${userLocal.username}")
+                        }
                     }
                     notify = false
 
@@ -191,7 +208,7 @@ class ChatLogViewmodel @ViewModelInject constructor(
 
 
     private fun sendNotifications(
-        toId: String?,
+        toId: String,
         username: String,
         text: String,
         apiService: ApiService
@@ -211,10 +228,7 @@ class ChatLogViewmodel @ViewModelInject constructor(
                     val chatMessage =
                         ChatMessage(text, fromId!!, toId!!, System.currentTimeMillis() / 1000)
 
-                    val data = Data(
-                        uid!!, R.mipmap.ic_launcher,
-                        "${username}:${chatMessage.text}", "New Message from $username", toId
-                    )
+                    val data = Data(uid!!,username, chatMessage.text, "New Message from $username",toId)
                     val sender = Sender(data, token?.getToken().toString())
 
                     apiService.sendNotification(sender).enqueue(object : Callback<MyResponse> {
@@ -228,6 +242,7 @@ class ChatLogViewmodel @ViewModelInject constructor(
                             response: Response<MyResponse>
                         ) {
                             //does nothing
+                            Log.d("notif","sending:${data}")
                         }
                     })
                 }
