@@ -1,21 +1,23 @@
-package com.example.vcare.chatLog
-
+package com.example.vcare.chatLog.paging
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vcare.R
+import com.example.vcare.chatLog.ViewFullImageActivity
 import com.example.vcare.helper.ChatMessage
 import com.example.vcare.helper.convertDurationToFormatted
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.chat_row_list.view.*
 import kotlinx.android.synthetic.main.chat_row_list.view.imageCover
 import kotlinx.android.synthetic.main.chat_row_list.view.imageMessage
 import kotlinx.android.synthetic.main.chat_row_list.view.messageTimestamp
@@ -24,13 +26,18 @@ import kotlinx.android.synthetic.main.chat_row_to.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ChatAdapter(private val message: List<ChatMessage>) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    companion object {
+class ChatPagedAdapter : PagingDataAdapter<ChatMessage, RecyclerView.ViewHolder>(Companion) {
+    companion object : DiffUtil.ItemCallback<ChatMessage>() {
+        override fun areItemsTheSame(oldItem: ChatMessage, newItem: ChatMessage): Boolean {
+            return oldItem.timestamp == newItem.timestamp
+        }
+
+        override fun areContentsTheSame(oldItem: ChatMessage, newItem: ChatMessage): Boolean {
+            return oldItem == newItem
+        }
         const val VIEW_TYPE_1 = 1
         const val VIEW_TYPE_2 = 2
     }
-
     private inner class View1ViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         val textMessage: TextView = itemView.textMessage
@@ -38,23 +45,19 @@ class ChatAdapter(private val message: List<ChatMessage>) :
         val imageMessage: ImageView = itemView.imageMessage
         val imageCover: ImageView = itemView.imageCover
         val deliveredReceipt: ImageView = itemView.delivered_image
-        fun bind(position: Int) {
+        fun bind(item:ChatMessage,itemPrev:ChatMessage,position: Int) {
             setIsRecyclable(false)
-            val item = message[position]
-            val itemPrev = if (position !== 0) {
-                message[position - 1]
-            } else message[position]
-
             if(item.status){
                 deliveredReceipt.visibility = View.VISIBLE
             }
 
             if (item.url == "") {
                 textMessage.text = item.text
+                Log.d("return","text1:${item.text}")
                 if (convertDurationToFormatted(
                         itemPrev.timestamp * 1000,
                         item.timestamp * 1000
-                    ) || itemPrev == message[position]
+                    ) || itemPrev == item
                 ) {
                     messageTimestamp.visibility = View.VISIBLE
                     messageTimestamp.text = getDateTime(item.timestamp)
@@ -94,18 +97,17 @@ class ChatAdapter(private val message: List<ChatMessage>) :
         val messageTimestamp: TextView = itemView.messageTimestamp
         val imageMessage: ImageView = itemView.imageMessage
         val imageCover: ImageView = itemView.imageCover
-        fun bind(position: Int) {
+        fun bind(item:ChatMessage,itemPrev:ChatMessage,position: Int) {
             setIsRecyclable(false)
-            val item = message[position]
-            val itemPrev = if (position !== 0) {
-                message[position - 1]
-            } else message[position]
+
+
             if (item.url == "") {
                 textMessage.text = item.text
+                Log.d("return","text2:${item.text}")
                 if (convertDurationToFormatted(
                         itemPrev.timestamp * 1000,
                         item.timestamp * 1000
-                    ) || itemPrev == message[position]
+                    ) || itemPrev == item
                 ) {
                     messageTimestamp.visibility = View.VISIBLE
                     messageTimestamp.text = getDateTime(item.timestamp)
@@ -136,20 +138,41 @@ class ChatAdapter(private val message: List<ChatMessage>) :
         }
     }
 
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):RecyclerView.ViewHolder {
         if (viewType == VIEW_TYPE_1) {
+            Log.d("return","first viewholder called")
             return View1ViewHolder(
+
                 LayoutInflater.from(parent.context).inflate(R.layout.chat_row_to, parent, false)
             )
         }
+        Log.d("return","second viewholder called")
         return View2ViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.chat_row_from, parent, false)
         )
     }
 
-    override fun getItemCount(): Int = message.size
+    override fun getItemViewType(position: Int): Int {
+        return if (getItem(position)?.fromId == Firebase.auth.uid) {
+            VIEW_TYPE_1
+        } else {
+            VIEW_TYPE_2
+        }
+    }
 
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val item = getItem(position)
+        val itemPrev = if (position !== 0) {
+            getItem(position-1)
+        } else getItem(position)
+        if (item?.fromId == Firebase.auth.uid) {
+            Log.d("return","first viewholder set")
+            (holder as ChatPagedAdapter.View1ViewHolder).bind(item!!,itemPrev!!,position)
+        } else {
+            Log.d("return","second viewholder set")
+            (holder as ChatPagedAdapter.View2ViewHolder).bind(item!!,itemPrev!!,position)
+        }
+    }
     private fun getDateTime(s: Long): String? {
         return try {
             val sdf = SimpleDateFormat("EEE,hh:mmaa", Locale.getDefault())
@@ -159,22 +182,5 @@ class ChatAdapter(private val message: List<ChatMessage>) :
             e.toString()
         }
     }
-
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (message[position].fromId == Firebase.auth.uid) {
-            (holder as View1ViewHolder).bind(position)
-        } else {
-            (holder as View2ViewHolder).bind(position)
-        }
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        return if (message[position].fromId == Firebase.auth.uid) {
-            VIEW_TYPE_1
-        } else {
-            VIEW_TYPE_2
-        }
-    }
-
-
 }
+

@@ -8,8 +8,14 @@ import android.text.TextWatcher
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.vcare.R
+import com.example.vcare.chatLog.paging.ChatPagedAdapter
 import com.example.vcare.databinding.ActivityChatLogBinding
 import com.example.vcare.helper.Status
 import com.example.vcare.helper.User
@@ -18,11 +24,16 @@ import com.example.vcare.home.newMessage.NewMessageFragment
 import com.example.vcare.notifications.ApiService
 import com.example.vcare.notifications.Client
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.ml.naturallanguage.FirebaseNaturalLanguage
 import com.google.firebase.ml.naturallanguage.smartreply.FirebaseTextMessage
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_chat_log.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -31,6 +42,7 @@ class ChatLogActivity : AppCompatActivity() {
     private var apiService : ApiService?=null
     private val messages = arrayListOf<FirebaseTextMessage>()
     private val suggestions = arrayListOf<String>()
+
     private val suggestionAdapter = SuggestionAdapter(suggestions){
         binding.edittextChatLog.text.clear()
         binding.edittextChatLog.setText(it)
@@ -42,13 +54,14 @@ class ChatLogActivity : AppCompatActivity() {
         binding = ActivityChatLogBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-
+        val chatAdapter = ChatPagedAdapter()
+        binding.chatLogRecycler.adapter = chatAdapter
         suggestion_rv.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true)
         suggestion_rv.adapter = suggestionAdapter
 
         val user = intent.getParcelableExtra<User>(NewMessageFragment.USER_KEY)
-        val toId = user?.uid
 
+        val toId = user?.uid
         setUi(user)
 
         viewModel.evaluateStatus(user).observe(this, {
@@ -75,22 +88,46 @@ class ChatLogActivity : AppCompatActivity() {
         viewModel.isScrollable.observe(this, {
             if(it){
                 if (binding.chatLogRecycler.adapter!==null)
-                    binding.chatLogRecycler.scrollToPosition(((binding.chatLogRecycler.adapter)?.itemCount!!) -1)
+                    chatAdapter.refresh()
+                    binding.chatLogRecycler.scrollToPosition(0)
             }
         })
 
         setRecycler()
+        viewModel.shouldRefresh.observe(this, Observer{
+            if(it){
+                chatAdapter.refresh()
+                binding.chatLogRecycler.scrollToPosition(0)
+            }
+        })
 
-        if (user != null) {
-            viewModel.listenForMessages(user).observe(this, {
-                it.forEach {doc->
-                    viewModel.listener(doc).observe(this, { chatMessages->
-                        binding.chatLogRecycler.adapter = ChatAdapter(chatMessages)
-                        if (binding.chatLogRecycler.adapter!==null)
-                            binding.chatLogRecycler.scrollToPosition(((binding.chatLogRecycler.adapter)?.itemCount!!) -1)
-                    })
+        var docId = " "
+        Firebase.firestore.collection("ChatChannels").whereEqualTo("between", viewModel.listenForMessages(user!!))
+            .addSnapshotListener { documents, e ->
+                if (e != null) {
+                    return@addSnapshotListener
                 }
-            })
+                if (documents != null) {
+                    for (document in documents) {
+                        docId = document.id
+                        lifecycleScope.launch {
+                            viewModel.getFlow(docId).collect {
+                                Log.d("return","it:$it")
+                                chatAdapter.submitData(it)
+                            }
+                        }
+                    }
+                }
+            }
+
+        binding.chatLogProfile.setOnClickListener {
+            binding.chatLogRecycler.scrollToPosition(0)
+        }
+        lifecycleScope.launch {
+            chatAdapter.loadStateFlow.collectLatest { loadStates ->
+                binding.loadMoreProgressBar.isVisible = loadStates.refresh is LoadState.Loading
+                binding.loadMoreProgressBar.isVisible = loadStates.append is LoadState.Loading
+            }
         }
         apiService = Client.getClient("https://fcm.googleapis.com/")!!.create(
             ApiService::class.java)
@@ -163,6 +200,7 @@ class ChatLogActivity : AppCompatActivity() {
 
     private fun setRecycler() {
         binding.chatLogRecycler.setHasFixedSize(true)
+
     }
 
     private fun setUi(user: User?) {

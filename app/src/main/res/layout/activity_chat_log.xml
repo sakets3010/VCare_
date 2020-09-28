@@ -110,6 +110,7 @@
             android:layout_marginBottom="4dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
+            app:reverseLayout="true"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/toolbar_chat_log"
@@ -152,15 +153,14 @@
             app:srcCompat="@drawable/ic_action_attach" />
 
         <ProgressBar
-            android:id="@+id/image_progressBar"
+            android:id="@+id/load_more_progressBar"
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/edittext_chat_log"
-            app:layout_constraintEnd_toEndOf="@+id/chat_log_recycler"
-            app:layout_constraintStart_toStartOf="@+id/chat_log_recycler"
-            app:layout_constraintTop_toTopOf="@+id/toolbar_chat_log" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_chat_log" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
