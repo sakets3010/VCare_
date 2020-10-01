@@ -11,13 +11,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.example.vcare.helper.*
 import com.example.vcare.notifications.Token
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 
 class HomeFragmentViewmodel @ViewModelInject constructor(
-    private val _repository: ChatRepository,
+    private val repository: ChatRepository,
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private var _activeUsers: MutableLiveData<List<ChatMessage>> = MutableLiveData()
@@ -35,7 +34,7 @@ class HomeFragmentViewmodel @ViewModelInject constructor(
     }
 
     fun listenForNewMessage(): LiveData<List<ChatChannelIdWrapper>> {
-        _repository.getChatReference()?.whereArrayContains(
+        repository.getChatReference()?.whereArrayContains(
             "between", Id(Firebase.auth.currentUser?.uid)
         )
             ?.addSnapshotListener { documents, e ->
@@ -68,7 +67,7 @@ class HomeFragmentViewmodel @ViewModelInject constructor(
     fun displayUsers(conversations: List<ChatChannelIdWrapper>?): LiveData<List<ChatMessage>> {
         _users.clear()
         conversations?.forEach {
-            _repository.getChatReference()?.document(it.docId)?.collection("Messages")
+            repository.getChatReference()?.document(it.docId)?.collection("Messages")
                 ?.orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
                 ?.limit(1)
                 ?.addSnapshotListener { documents, _ ->
