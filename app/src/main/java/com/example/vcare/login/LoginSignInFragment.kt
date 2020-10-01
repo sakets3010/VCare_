@@ -24,10 +24,10 @@ import com.google.firebase.ktx.Firebase
 
 
 class LoginSignInFragment : Fragment() {
-    private val rcSignIn: Int = 1
+    private val _rcSignIn: Int = 1
     private lateinit var _googleSignInClient: GoogleSignInClient
     private lateinit var _googleSignInOptions: GoogleSignInOptions
-    private val firebaseAuth = Firebase.auth
+    private val _firebaseAuth = Firebase.auth
     private lateinit var binding: FragmentLoginSignInBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,11 +56,11 @@ class LoginSignInFragment : Fragment() {
     }
     private fun signIn() {
         val signInIntent: Intent = _googleSignInClient.signInIntent
-        startActivityForResult(signInIntent, rcSignIn)
+        startActivityForResult(signInIntent, _rcSignIn)
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == rcSignIn) {
+        if (requestCode == _rcSignIn) {
             val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 val account = task.getResult(ApiException::class.java)
@@ -74,26 +74,26 @@ class LoginSignInFragment : Fragment() {
 //                    }
                 }
             } catch (e: ApiException) {
-                Toast.makeText(requireContext(), "Google sign in failed:(", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), getString(R.string.failed), Toast.LENGTH_LONG).show()
             }
         }
     }
-    private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
-        val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
-        firebaseAuth.signInWithCredential(credential).addOnCompleteListener {
+    private fun firebaseAuthWithGoogle(account: GoogleSignInAccount) {
+        val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+        _firebaseAuth.signInWithCredential(credential).addOnCompleteListener {
             if (it.isSuccessful) {
                 Navigation.findNavController(requireActivity(),
                     R.id.login_navhost
                 ).navigate(R.id.action_loginSignInFragment_to_categoryFragment)
-                Toast.makeText(requireContext(),"Sign in successful!",Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),getString(R.string.sign_in_successful),Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(requireContext(), "Google sign in failed:(", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), getString(R.string.g_sign_in_failed), Toast.LENGTH_LONG).show()
             }
         }
     }
     override fun onStart() {
         super.onStart()
-        val user = firebaseAuth.currentUser
+        val user = _firebaseAuth.currentUser
         if (user != null) {
             Navigation.findNavController(requireActivity(),
                 R.id.login_navhost

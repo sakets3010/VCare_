@@ -4,24 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/primaryColor">
+        android:layout_height="match_parent">
         <TextView
             android:id="@+id/textView2"
             style="@style/TextToolbar"
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"
-            android:gravity="center"
-            android:text="@string/please_enter_your_details"
-            android:textAllCaps="false"
-            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="@id/textView2"
+            app:layout_constraintBottom_toBottomOf="@id/textView2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="@string/please_enter_your_details"/>
         <com.google.android.material.button.MaterialButton
             android:id="@+id/select_photo_button"
             style="@style/Widget.MaterialComponents.Button.Icon"
-            android:backgroundTint="@color/primaryLightColor"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:text="@string/select_photo"
@@ -40,11 +46,8 @@
             android:layout_marginStart="32dp"
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="16dp"
-            android:backgroundTint="@color/primaryLightColor"
             app:counterEnabled="true"
             app:counterMaxLength="15"
-            app:hintTextColor="@color/secondaryTextColor"
-            android:textColorHint="@color/secondaryTextColor"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -56,9 +59,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fontFamily="@font/poppins"
-                android:hint="@string/username"
-                android:textColor="@color/secondaryTextColor"
-                android:textColorHint="@color/secondaryTextColor" />
+                android:hint="@string/username" />
 
         </com.google.android.material.textfield.TextInputLayout>
         <Button
@@ -66,7 +67,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
-            android:backgroundTint="@color/primaryLightColor"
             android:text="@string/sign_out"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/register"
@@ -78,7 +78,6 @@
             android:id="@+id/circular_profile_holder"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            app:civ_border_color="@color/secondaryLightColor"
             app:civ_border_width="4dp"
             app:layout_constraintBottom_toTopOf="@+id/login_username_text_layout"
             app:layout_constraintEnd_toEndOf="@+id/select_photo_button"
@@ -87,7 +86,6 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/register"
-            android:backgroundTint="@color/primaryLightColor"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/register"

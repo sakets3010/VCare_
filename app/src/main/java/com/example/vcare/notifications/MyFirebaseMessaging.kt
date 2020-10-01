@@ -9,12 +9,10 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Icon
 import android.os.Build
-import android.os.Bundle
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContentProviderCompat.requireContext
+import com.example.vcare.R
 import com.example.vcare.helper.ChatRepository
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -26,112 +24,86 @@ class MyFirebaseMessaging() : FirebaseMessagingService() {
         val KEY_TEXT_REPLY = "key_text_reply"
         val USER_ID = "userId"
         val TO_ID = "toId"
-        val NOTIFICATION_ID = "notf-id"
+        val NOTIFICATION_ID = "notificationId"
     }
 
 
     val repository = ChatRepository()
 
     @RequiresApi(Build.VERSION_CODES.KITKAT_WATCH)
-    override fun onMessageReceived(mRemoteMessage: RemoteMessage) {
-        Log.d("notif", "called 1")
-        super.onMessageReceived(mRemoteMessage)
-        val toId = mRemoteMessage.data["toId"]
-        val user = mRemoteMessage.data["user"]
+    override fun onMessageReceived(remoteMessage: RemoteMessage) {
+        super.onMessageReceived(remoteMessage)
+        val toId = remoteMessage.data["toId"]
+        val user = remoteMessage.data["user"]
 
-
-        Log.d("notif", "${toId},${user}")
         val sharedPref = getSharedPreferences("PREFS", Context.MODE_PRIVATE)
         val currentOnlineUser = sharedPref.getString("currentUser", "none")
-        val firebaseUser = FirebaseAuth.getInstance().currentUser
+        val firebaseUser = Firebase.auth.currentUser
 
         if (firebaseUser !== null) {
             if (currentOnlineUser !== user && toId == Firebase.auth.uid) {
-                Log.d("notif", "called func")
-                sendOreoNotification(mRemoteMessage)
+                sendOreoNotification(remoteMessage)
             }
         }
     }
 
     @SuppressLint("NewApi")
     @RequiresApi(Build.VERSION_CODES.KITKAT_WATCH)
-    private fun sendOreoNotification(mRemoteMessage: RemoteMessage) {
-        val sharedPref = this.getSharedPreferences("Vcare", Context.MODE_PRIVATE)
-        val editor = sharedPref.edit()
+    private fun sendOreoNotification(remoteMessage: RemoteMessage) {
+        val user = remoteMessage.data["user"]
+        val body = remoteMessage.data["body"]
+        val name = remoteMessage.data["username"].toString()
+        val toId = remoteMessage.data["toId"]
 
-        Log.d("notif", "call received")
-        val user = mRemoteMessage.data["user"]
-        val body = mRemoteMessage.data["body"]
-        val name = mRemoteMessage.data["username"].toString()
-        val toId = mRemoteMessage.data["toId"]
 
-        Log.d("notif", "called")
-        val replyLabel = "Enter your reply here"
+        val replyLabel = getString(R.string.reply_here)
         val remoteInput = RemoteInput.Builder(KEY_TEXT_REPLY)
             .setLabel(replyLabel)
             .build()
-        Log.d("notif", "${body},${name},${user}")
+
 
         val j = user!!.replace("[\\D]".toRegex(), "").toInt()
-        val intent = Intent(this, MessageNotificationReceiver::class.java)
-        val pendingIntent =
-            PendingIntent.getBroadcast(this, j, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        editor.putString(USER_ID, user)
-        editor.apply()
-        editor.putString(TO_ID, toId)
-        editor.apply()
-//        intent.putExtra(USER_ID, user)
-//        intent.putExtra(TO_ID, toId)
-
-
         var i = 0
         if (j > 0) {
             i = j
         }
+        val intent = Intent(this, MessageNotificationReceiver::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        intent.putExtra(USER_ID, user)
+        intent.putExtra(TO_ID, toId)
+        intent.putExtra(NOTIFICATION_ID, i)
+
+        val pendingIntent =
+            PendingIntent.getBroadcast(this, j, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
         val oreoNotification = OreoNotification(this)
         if (!appInForeground(applicationContext)) {
-            Log.d("notif", "final call recieved")
-            val icon_ = Icon.createWithResource(
+            val icon = Icon.createWithResource(
                 applicationContext,
                 android.R.drawable.ic_dialog_info
             )
-
-
-            val replyAction = Notification.Action.Builder(
-                icon_,
-                "Reply", pendingIntent
-            )
+            val replyAction = Notification.Action.Builder(icon, getString(R.string.reply), pendingIntent)
                 .addRemoteInput(remoteInput)
                 .build()
 
-            val userP = android.app.Person.Builder().setName(name).setKey(user).build()
+            val person = android.app.Person.Builder().setName(name).setKey(user).build()
 
 
-            val message = body?.let {
-                Notification.MessagingStyle.Message(
-                    it,
-                    Date().time, userP
-                )
-            }!!
-            Log.d("notif", "recieved :${message.text}")
+            val message = body?.let { Notification.MessagingStyle.Message(it, Date().time, person)}
 
-            val style = Notification.MessagingStyle(userP).addMessage(message)
-                .setConversationTitle("VCare Messaging")
+            val style = Notification.MessagingStyle(person).addMessage(message)
+                .setConversationTitle(getString(R.string.v_care_messaging))
 
 
-            val builder: Notification.Builder =
-                oreoNotification.getOreoNotification(pendingIntent, replyAction, style)
+            val builder: Notification.Builder = oreoNotification.getOreoNotification(pendingIntent, replyAction, style)
 
-            editor.putInt(NOTIFICATION_ID,i)
-            editor.apply()
-            oreoNotification.getManager!!.notify(i, builder.build())
+
+            oreoNotification.getManager?.notify(i, builder.build())
 
 
         } else {
-            oreoNotification.getManager!!.cancel(i)
+            oreoNotification.getManager?.cancel(i)
         }
-
 
     }
 

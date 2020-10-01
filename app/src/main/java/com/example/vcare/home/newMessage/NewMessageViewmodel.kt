@@ -12,20 +12,16 @@ import com.example.vcare.helper.User
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import dagger.hilt.android.AndroidEntryPoint
 
-class NewMessageViewmodel@ViewModelInject constructor(
-    private val repository: ChatRepository,
-    @Assisted private val savedStateHandle: SavedStateHandle
-) : ViewModel() {
+class NewMessageViewmodel@ViewModelInject constructor(private val repository: ChatRepository) : ViewModel() {
 
     private val _availableUsers: MutableLiveData<List<User>> = MutableLiveData()
     val availableUsers: LiveData<List<User>>
         get() = _availableUsers
 
     private fun fetchUsers() {
-        val db = Firebase.firestore
-        db.collection("Users").addSnapshotListener { snapshot, e ->
+
+        Firebase.firestore.collection("Users").addSnapshotListener { snapshot, e ->
             if (e != null) {
                 Log.w("NewMessageFragment", "Listen failed.", e)
                 return@addSnapshotListener

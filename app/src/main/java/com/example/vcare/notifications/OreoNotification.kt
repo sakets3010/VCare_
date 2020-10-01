@@ -7,71 +7,67 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.ContextWrapper
-import android.net.Uri
 import android.os.Build
-import androidx.media.session.MediaButtonReceiver.handleIntent
 import com.example.vcare.R
-import kotlinx.android.synthetic.main.chat_row_to.*
 
-class OreoNotification(base:Context?):ContextWrapper(base) {
-    private var notificationManager : NotificationManager?=null
+class OreoNotification(base: Context?) : ContextWrapper(base) {
+    private var _notificationManager: NotificationManager? = null
 
 
-    companion object{
+    companion object {
         const val CHANNEL_ID = "com.example.vcare"
         private const val CHANNEL_NAME = "VCare"
     }
-    init{
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O)
-        {
+
+    init {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createChannel()
-
-
         }
 
     }
 
 
-
     @TargetApi(Build.VERSION_CODES.O)
-    private fun createChannel(){
-          val channel = NotificationChannel(
-              CHANNEL_ID,
-              CHANNEL_NAME,
-              NotificationManager.IMPORTANCE_DEFAULT
-          )
+    private fun createChannel() {
+        val channel = NotificationChannel(
+            CHANNEL_ID,
+            CHANNEL_NAME,
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
         channel.enableLights(true)
         channel.enableVibration(true)
-        channel.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
-        getManager!!.createNotificationChannel(channel)
-
+        channel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+        getManager?.createNotificationChannel(channel)
     }
 
 
+    val getManager: NotificationManager?
+        get() {
+            if (_notificationManager == null) {
+                _notificationManager =
+                    getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            }
 
+            return _notificationManager
 
-
-    val getManager  :NotificationManager? get() {
-        if(notificationManager==null){
-            notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         }
 
-            return notificationManager
-
-    }
     @TargetApi(Build.VERSION_CODES.O)
-    fun getOreoNotification(pendingIntent: PendingIntent?,replyAction:Notification.Action,style: Notification.Style)
-            :Notification.Builder{
+    fun getOreoNotification(
+        pendingIntent: PendingIntent?,
+        replyAction: Notification.Action,
+        style: Notification.Style
+    )
+            : Notification.Builder {
 
-        return Notification.Builder(applicationContext, OreoNotification.CHANNEL_ID)
+        return Notification.Builder(applicationContext, CHANNEL_ID)
             .setContentIntent(pendingIntent)
-            .setContentTitle("Vcare")
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentTitle(getString(R.string.v_care))
+            .setSmallIcon(R.drawable.cherry378)
             .setAutoCancel(true)
             .addAction(replyAction)
             .setStyle(style)
     }
-
 
 
 }

@@ -13,11 +13,11 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.vcare.chatLog.paging.FirestorePagingSource
+import com.example.vcare.chatLog.paging.FirestorePagingSource.Companion.PAGING_LIMIT
 import com.example.vcare.helper.*
 import com.example.vcare.notifications.*
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -25,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageTask
@@ -37,50 +38,83 @@ import retrofit2.Response
 class ChatLogViewmodel @ViewModelInject constructor(
     private val repository: ChatRepository
 ) : ViewModel() {
-    private var status: MutableLiveData<User> = MutableLiveData()
-    var shouldRefresh: MutableLiveData<Boolean> = MutableLiveData()
-    private lateinit var id: String
+    private var _status: MutableLiveData<User> = MutableLiveData()
+    private var _documentId: MutableLiveData<String> = MutableLiveData()
+    val documentId: LiveData<String>
+    get() = _documentId
+    private lateinit var _id: String
     var notify = false
-    private val fromId = Firebase.auth.uid
+    private val _fromId = Firebase.auth.uid
     val uid = Firebase.auth.uid
-    private val firebaseUser = FirebaseAuth.getInstance().currentUser
+    private val _firebaseUser = Firebase.auth.currentUser
 
 
     fun evaluateStatus(user: User?): LiveData<User> {
         if (user != null) {
             repository.getUserReference(user.uid)?.addSnapshotListener { snap, _ ->
                 val details = snap?.toObject(User::class.java)
-                status.value = details
+                _status.value = details
             }
         }
-        return status
+        return _status
     }
 
     fun returnUser(user: User?): User? {
         return user
     }
 
-    fun listenForMessages(user: User): List<Id> {
+    private var _docId: String = ""
+    fun listenForMessages(user: User): LiveData<String> {
         val toId = user.uid
-        val betweenList = mutableListOf(Id(fromId), Id(toId))
+        val betweenList = mutableListOf(Id(_fromId), Id(toId))
         val sortedList = betweenList.sortedBy { it.Id }
-        shouldRefresh.value = true
-        return sortedList
+        repository.getChatReference()?.whereEqualTo("between", sortedList)
+            ?.addSnapshotListener { documents, e ->
+                if (e != null) {
+                    return@addSnapshotListener
+                }
+                if (documents != null) {
+                    for (document in documents ) {
+                        _docId = document.id
+                        Log.d("document","docvalue:${document.id}")
+                    }
+                    _documentId.value = _docId
+                }
+            }
+        return _documentId
     }
 
-    fun getFlow(docId:String): Flow<PagingData<ChatMessage>>{
-       val flow = Pager(PagingConfig(20)) {
-           FirestorePagingSource(FirebaseFirestore.getInstance(),docId)
-       }.flow.cachedIn(viewModelScope)
-       Log.d("return","flow:${flow}")
-       return flow
-   }
 
+    private var _isScrollable: MutableLiveData<Boolean> = MutableLiveData()
+    val isScrollable: LiveData<Boolean>
+        get() = _isScrollable
 
-    var isScrollable: MutableLiveData<Boolean> = MutableLiveData()
+    fun incomingMessageListener(docId: String): LiveData<Boolean> {
+        repository.getChatReference()?.document(docId)?.collection("Messages")?.orderBy(
+            "timestamp",
+            Query.Direction.ASCENDING
+        )?.addSnapshotListener { snap, e ->
+            if (e != null) {
+                return@addSnapshotListener
+            }
+            if (snap != null) {
+
+                _isScrollable.value = true
+
+            }
+        }
+        return _isScrollable
+    }
+
+    fun getFlow(docId: String): Flow<PagingData<ChatMessage>> {
+        return Pager(PagingConfig(PAGING_LIMIT.toInt())) {
+            FirestorePagingSource(FirebaseFirestore.getInstance(), docId)
+        }.flow.cachedIn(viewModelScope)
+    }
+
 
     fun updateTypingStatus(status: Long) {
-        val uid = FirebaseAuth.getInstance().uid ?: ""
+        val uid = Firebase.auth.uid ?: ""
         repository.getUserReference(uid)?.update(
             mapOf(
                 "status" to status
@@ -91,8 +125,8 @@ class ChatLogViewmodel @ViewModelInject constructor(
     fun performSendMessage(user: User?, text: String, apiService: ApiService?) {
         val toId = user?.uid
         val time = System.currentTimeMillis() / 1000
-        val chatMessage = ChatMessage(text, fromId!!, toId!!, time)
-        val betweenList = mutableListOf(Id(fromId), Id(toId))
+        val chatMessage = toId?.let { ChatMessage(text, _fromId!!, it, time) }
+        val betweenList = mutableListOf(Id(_fromId), Id(toId))
         val sortedList = betweenList.sortedBy { it.Id }
 
         repository.getChatReference()?.whereEqualTo("between", sortedList)
@@ -100,43 +134,53 @@ class ChatLogViewmodel @ViewModelInject constructor(
                 if (!(documents.isEmpty)) {
                     for (document in documents) {
                         if (document.exists()) {
-                            id = document.id
-                            addMessage(id, chatMessage)
+                            _id = document.id
+                            if (chatMessage != null) {
+                                addMessage(_id, chatMessage)
+                            }
                             return@addOnSuccessListener
                         }
                     }
                 }
                 repository.getChatReference()!!.add(ChatChannelId(sortedList))
                     .addOnSuccessListener { doc ->
-                        id = doc.id
-                        addMessage(id, chatMessage)
+                        _id = doc.id
+                        if (chatMessage != null) {
+                            addMessage(_id, chatMessage)
+                        }
                         return@addOnSuccessListener
                     }
             }
         //fcm
-        if (firebaseUser != null) {
-            repository.getUserReference(uid!!)?.addSnapshotListener { snapshot, e ->
-                if (e != null) {
-                    Log.d("ChatLogActivity", "Listen failed.", e)
-                    return@addSnapshotListener
-                }
-                if (snapshot != null && snapshot.exists()) {
-                    val userLocal = snapshot.toObject(User::class.java)
-                    if (notify) {
-                        if (userLocal != null) {
-                            sendNotifications(
-                                toId,
-                                userLocal.username,
-                                chatMessage.text,
-                                apiService!!
-                            )
-                            Log.d("notif", "sent:${userLocal.username}")
-                        }
+        if (_firebaseUser != null) {
+            if (uid != null) {
+                repository.getUserReference(uid)?.addSnapshotListener { snapshot, e ->
+                    if (e != null) {
+                        Log.d("ChatLogActivity", "Listen failed.", e)
+                        return@addSnapshotListener
                     }
-                    notify = false
+                    if (snapshot != null && snapshot.exists()) {
+                        val userLocal = snapshot.toObject(User::class.java)
+                        if (notify) {
+                            if (userLocal != null) {
+                                if (toId != null) {
+                                    if (chatMessage != null) {
+                                        sendNotifications(
+                                            toId,
+                                            userLocal.username,
+                                            chatMessage.text,
+                                            apiService!!
+                                        )
+                                    }
+                                }
 
-                } else {
-                    Log.d("ChatLogActivity", "Current data: null")
+                            }
+                        }
+                        notify = false
+
+                    } else {
+                        Log.d("ChatLogActivity", "Current data: null")
+                    }
                 }
             }
         }
@@ -146,9 +190,9 @@ class ChatLogViewmodel @ViewModelInject constructor(
         repository.getChatReference()?.document(Id)?.collection("Messages")?.add(chatMessage)
             ?.addOnSuccessListener {
                 updateMessageStatus(Id, it)
-                shouldRefresh.value = true
+                _isScrollable.value = true
             }
-        shouldRefresh.value = false
+        _isScrollable.value = false
     }
 
     private fun updateMessageStatus(id: String, it: DocumentReference?) {
@@ -158,10 +202,18 @@ class ChatLogViewmodel @ViewModelInject constructor(
                     mapOf(
                         "status" to true
                     )
-                )?.addOnSuccessListener { shouldRefresh.value = true }
+                )?.addOnSuccessListener { _isScrollable.value = true }
 
         }
-        shouldRefresh.value = false
+        _isScrollable.value = false
+    }
+
+    fun updateStatus(userId: String, status: Long) {
+        repository.getUserReference(userId)?.update(
+            mapOf(
+                "status" to status
+            )
+        )
     }
 
 
@@ -184,26 +236,37 @@ class ChatLogViewmodel @ViewModelInject constructor(
 
                     val token: Token? = snap.getValue(Token::class.java)
                     val chatMessage =
-                        ChatMessage(text, fromId!!, toId, System.currentTimeMillis() / 1000)
+                        _fromId?.let {
+                            ChatMessage(
+                                text,
+                                it, toId, System.currentTimeMillis() / 1000
+                            )
+                        }
 
                     val data =
-                        Data(uid!!, username, chatMessage.text, "New Message from $username", toId)
-                    val sender = Sender(data, token?.getToken().toString())
-
-                    apiService.sendNotification(sender).enqueue(object : Callback<MyResponse> {
-
-                        override fun onFailure(call: Call<MyResponse>, t: Throwable) {
-                            //does nothing
+                        chatMessage?.text?.let {
+                            Data(
+                                uid!!, username,
+                                it, "New Message from $username", toId
+                            )
                         }
+                    val sender = data?.let { Sender(it, token?.getToken().toString()) }
 
-                        override fun onResponse(
-                            call: Call<MyResponse>,
-                            response: Response<MyResponse>
-                        ) {
-                            //does nothing
-                            Log.d("notif", "sending:${data}")
-                        }
-                    })
+                    if (sender != null) {
+                        apiService.sendNotification(sender).enqueue(object : Callback<MyResponse> {
+
+                            override fun onFailure(call: Call<MyResponse>, t: Throwable) {
+                                //does nothing
+                            }
+
+                            override fun onResponse(
+                                call: Call<MyResponse>,
+                                response: Response<MyResponse>
+                            ) {
+                                //does nothing
+                            }
+                        })
+                    }
                 }
             }
         })
@@ -232,56 +295,27 @@ class ChatLogViewmodel @ViewModelInject constructor(
                 val toId = user.uid
                 val time = System.currentTimeMillis() / 1000
                 val chatMessage =
-                    ChatMessage(fromId = fromId!!, toId = toId, timestamp = time, url = url)
-                val betweenList = mutableListOf(Id(fromId), Id(toId))
+                    _fromId?.let {
+                        ChatMessage(
+                            fromId = it,
+                            toId = toId,
+                            timestamp = time,
+                            url = url
+                        )
+                    }
+                val betweenList = mutableListOf(Id(_fromId), Id(toId))
                 val sortedList = betweenList.sortedBy { it.Id }
                 repository.getChatReference()?.whereEqualTo("between", sortedList)
                     ?.get()?.addOnSuccessListener { documents ->
                         if (documents !== null) {
                             for (document in documents) {
-                                repository.getChatReference()!!.document(document.id)
-                                    .collection("Messages").add(chatMessage).addOnSuccessListener {
-                                        if (firebaseUser != null) {
-                                            repository.getUserReference(uid!!)
-                                                ?.addSnapshotListener { snapshot, e ->
-                                                    if (e != null) {
-                                                        Log.w(
-                                                            "ChatLogActivity",
-                                                            "Listen failed.",
-                                                            e
-                                                        )
-                                                        return@addSnapshotListener
-                                                    }
-                                                    if (snapshot != null && snapshot.exists()) {
-                                                        val userSnap =
-                                                            snapshot.toObject(User::class.java)
-                                                        if (notify) {
-                                                            sendNotifications(
-                                                                toId,
-                                                                userSnap!!.username,
-                                                                "sent you an image",
-                                                                apiService
-                                                            )
-                                                        }
-                                                        notify = false
-                                                    } else {
-                                                        Log.d(
-                                                            "ChatLogActivity",
-                                                            "Current data: null"
-                                                        )
-                                                    }
-                                                }
-                                        }
-                                    }
-                            }
-                        } else {
-                            repository.getChatReference()!!.add(ChatChannelId(sortedList))
-                                .addOnSuccessListener { documentReference ->
-                                    repository.getChatReference()!!.document(documentReference.id)
-                                        .collection("Messages").add(chatMessage)
-                                        .addOnSuccessListener {
-                                            if (firebaseUser != null) {
-                                                repository.getUserReference(firebaseUser.uid)
+                                if (chatMessage != null) {
+                                    repository.getChatReference()?.document(document.id)
+                                        ?.collection("Messages")?.add(chatMessage)
+                                        ?.addOnSuccessListener {
+                                            updateMessageStatus(document.id, it)
+                                            if (_firebaseUser != null) {
+                                                repository.getUserReference(uid!!)
                                                     ?.addSnapshotListener { snapshot, e ->
                                                         if (e != null) {
                                                             Log.w(
@@ -295,12 +329,14 @@ class ChatLogViewmodel @ViewModelInject constructor(
                                                             val userSnap =
                                                                 snapshot.toObject(User::class.java)
                                                             if (notify) {
-                                                                sendNotifications(
-                                                                    toId,
-                                                                    userSnap!!.username,
-                                                                    "sent you an image",
-                                                                    apiService
-                                                                )
+                                                                if (userSnap != null) {
+                                                                    sendNotifications(
+                                                                        toId,
+                                                                        userSnap.username,
+                                                                        "sent you an image",
+                                                                        apiService
+                                                                    )
+                                                                }
                                                             }
                                                             notify = false
                                                         } else {
@@ -312,6 +348,50 @@ class ChatLogViewmodel @ViewModelInject constructor(
                                                     }
                                             }
                                         }
+                                }
+                            }
+                        } else {
+                            repository.getChatReference()?.add(ChatChannelId(sortedList))
+                                ?.addOnSuccessListener { documentReference ->
+                                    if (chatMessage != null) {
+                                        repository.getChatReference()
+                                            ?.document(documentReference.id)
+                                            ?.collection("Messages")?.add(chatMessage)
+                                            ?.addOnSuccessListener {
+                                                updateMessageStatus(documentReference.id, it)
+                                                if (_firebaseUser != null) {
+                                                    repository.getUserReference(_firebaseUser.uid)
+                                                        ?.addSnapshotListener { snapshot, e ->
+                                                            if (e != null) {
+                                                                Log.w(
+                                                                    "ChatLogActivity",
+                                                                    "Listen failed.",
+                                                                    e
+                                                                )
+                                                                return@addSnapshotListener
+                                                            }
+                                                            if (snapshot != null && snapshot.exists()) {
+                                                                val userSnap =
+                                                                    snapshot.toObject(User::class.java)
+                                                                if (notify) {
+                                                                    sendNotifications(
+                                                                        toId,
+                                                                        userSnap!!.username,
+                                                                        "sent you an image",
+                                                                        apiService
+                                                                    )
+                                                                }
+                                                                notify = false
+                                                            } else {
+                                                                Log.d(
+                                                                    "ChatLogActivity",
+                                                                    "Current data: null"
+                                                                )
+                                                            }
+                                                        }
+                                                }
+                                            }
+                                    }
                                 }
                         }
                     }

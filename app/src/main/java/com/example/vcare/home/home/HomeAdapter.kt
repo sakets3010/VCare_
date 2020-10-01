@@ -11,16 +11,17 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vcare.R
 import com.example.vcare.helper.ChatMessage
+import com.example.vcare.helper.Status
 import com.example.vcare.helper.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.home_list.view.*
+import kotlinx.android.synthetic.main.home_list_item.view.*
 
 class HomeAdapter(private val chatMessages: List<ChatMessage>,private val listener: (User?) -> Unit) : RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.home_list,parent,false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.home_list_item,parent,false)
         return ViewHolder(view)
     }
     override fun getItemCount(): Int = chatMessages.size
@@ -34,8 +35,8 @@ class HomeAdapter(private val chatMessages: List<ChatMessage>,private val listen
         } else{
             chatMessage.fromId
         }
-        val db = Firebase.firestore
-        db.collection("Users").document(chatPartnerId).addSnapshotListener {snapshot, e ->
+        
+        Firebase.firestore.collection("Users").document(chatPartnerId).addSnapshotListener { snapshot, e ->
             if (e != null) {
                 Log.w("HomeFragment", "Listen failed.", e)
                 return@addSnapshotListener
@@ -53,10 +54,10 @@ class HomeAdapter(private val chatMessages: List<ChatMessage>,private val listen
                     holder.category.setTextColor(Color.parseColor("#fdd835"))
                 }
                 holder.category.text = chatPartner?.category
-                if(chatPartner?.status==100L)
+                if(chatPartner?.status==Status.ONLINE)
                 {holder.onlineStatus.visibility = View.VISIBLE}
-                else if(chatPartner?.status==102L)
-                {holder.onlineStatus.visibility = View.GONE }
+                else if(chatPartner?.status==Status.OFFLINE)
+                {holder.onlineStatus.visibility = View.GONE}
                 Picasso.get().load(chatPartner?.profileImageUrl).into(holder.profile)
             } else {
                 Log.d("HomeFragment", "Current data: null")

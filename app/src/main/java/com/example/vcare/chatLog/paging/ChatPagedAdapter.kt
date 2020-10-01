@@ -1,13 +1,17 @@
 package com.example.vcare.chatLog.paging
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -15,13 +19,11 @@ import com.example.vcare.R
 import com.example.vcare.chatLog.ViewFullImageActivity
 import com.example.vcare.helper.ChatMessage
 import com.example.vcare.helper.convertDurationToFormatted
+import com.example.vcare.settings.SettingsFragment
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.chat_row_list.view.imageCover
-import kotlinx.android.synthetic.main.chat_row_list.view.imageMessage
-import kotlinx.android.synthetic.main.chat_row_list.view.messageTimestamp
-import kotlinx.android.synthetic.main.chat_row_list.view.textMessage
+import kotlinx.android.synthetic.main.chat_row_from.view.*
 import kotlinx.android.synthetic.main.chat_row_to.view.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -35,9 +37,12 @@ class ChatPagedAdapter : PagingDataAdapter<ChatMessage, RecyclerView.ViewHolder>
         override fun areContentsTheSame(oldItem: ChatMessage, newItem: ChatMessage): Boolean {
             return oldItem == newItem
         }
+
         const val VIEW_TYPE_1 = 1
         const val VIEW_TYPE_2 = 2
+        const val URL = "url"
     }
+
     private inner class View1ViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         val textMessage: TextView = itemView.textMessage
@@ -45,15 +50,14 @@ class ChatPagedAdapter : PagingDataAdapter<ChatMessage, RecyclerView.ViewHolder>
         val imageMessage: ImageView = itemView.imageMessage
         val imageCover: ImageView = itemView.imageCover
         val deliveredReceipt: ImageView = itemView.delivered_image
-        fun bind(item:ChatMessage,itemPrev:ChatMessage,position: Int) {
+        fun bind(item: ChatMessage, itemPrev: ChatMessage) {
             setIsRecyclable(false)
-            if(item.status){
+            if (item.status) {
                 deliveredReceipt.visibility = View.VISIBLE
             }
 
             if (item.url == "") {
                 textMessage.text = item.text
-                Log.d("return","text1:${item.text}")
                 if (convertDurationToFormatted(
                         itemPrev.timestamp * 1000,
                         item.timestamp * 1000
@@ -81,7 +85,7 @@ class ChatPagedAdapter : PagingDataAdapter<ChatMessage, RecyclerView.ViewHolder>
                     builder.setItems(options) { _, which ->
                         if (which == 0) {
                             val intent = Intent(builder.context, ViewFullImageActivity::class.java)
-                            intent.putExtra("url", item.url)
+                            intent.putExtra(URL, item.url)
                             builder.context.startActivity(intent)
                         }
                     }
@@ -93,17 +97,37 @@ class ChatPagedAdapter : PagingDataAdapter<ChatMessage, RecyclerView.ViewHolder>
 
     private inner class View2ViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
-        val textMessage: TextView = itemView.textMessage
-        val messageTimestamp: TextView = itemView.messageTimestamp
-        val imageMessage: ImageView = itemView.imageMessage
-        val imageCover: ImageView = itemView.imageCover
-        fun bind(item:ChatMessage,itemPrev:ChatMessage,position: Int) {
+        val textMessage: TextView = itemView.textMessageFrom
+        val messageTimestamp: TextView = itemView.messageTimestampFrom
+        val imageMessage: ImageView = itemView.imageMessageFrom
+        val imageCover: ImageView = itemView.imageCoverFrom
+
+        @SuppressLint("ResourceAsColor")
+        @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+        fun bind(item: ChatMessage, itemPrev: ChatMessage) {
+            val sharedPref = itemView.context.getSharedPreferences("Vcare", Context.MODE_PRIVATE)
+            Log.d("color", "value:${sharedPref.getLong("theme", 2L)}")
+            when (sharedPref.getLong("theme", 1L)) {
+                SettingsFragment.THEME_1 -> {
+                    textMessage.setBackgroundResource(R.drawable.theme_1_tv)
+                    imageCover.setBackgroundResource(R.drawable.theme_1_tv)
+                }
+                SettingsFragment.THEME_2 -> {
+                    textMessage.setBackgroundResource(R.drawable.theme_2_tv)
+                    imageCover.setBackgroundResource(R.drawable.theme_2_tv)
+                }
+                SettingsFragment.THEME_3 -> {
+                    textMessage.setBackgroundResource(R.drawable.theme_3_tv)
+                    imageCover.setBackgroundResource(R.drawable.theme_3_tv)
+                }
+                SettingsFragment.THEME_4 -> {
+                    textMessage.setBackgroundResource(R.drawable.theme_4_tv)
+                    imageCover.setBackgroundResource(R.drawable.theme_4_tv)
+                }
+            }
             setIsRecyclable(false)
-
-
             if (item.url == "") {
                 textMessage.text = item.text
-                Log.d("return","text2:${item.text}")
                 if (convertDurationToFormatted(
                         itemPrev.timestamp * 1000,
                         item.timestamp * 1000
@@ -128,7 +152,7 @@ class ChatPagedAdapter : PagingDataAdapter<ChatMessage, RecyclerView.ViewHolder>
                     builder.setItems(options) { _, which ->
                         if (which == 0) {
                             val intent = Intent(builder.context, ViewFullImageActivity::class.java)
-                            intent.putExtra("url", item.url)
+                            intent.putExtra(URL, item.url)
                             builder.context.startActivity(intent)
                         }
                     }
@@ -138,15 +162,12 @@ class ChatPagedAdapter : PagingDataAdapter<ChatMessage, RecyclerView.ViewHolder>
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == VIEW_TYPE_1) {
-            Log.d("return","first viewholder called")
             return View1ViewHolder(
-
                 LayoutInflater.from(parent.context).inflate(R.layout.chat_row_to, parent, false)
             )
         }
-        Log.d("return","second viewholder called")
         return View2ViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.chat_row_from, parent, false)
         )
@@ -160,19 +181,19 @@ class ChatPagedAdapter : PagingDataAdapter<ChatMessage, RecyclerView.ViewHolder>
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position)
-        val itemPrev = if (position !== 0) {
-            getItem(position-1)
+        val itemPrev = if (!position.equals(itemCount - 1)) {
+            getItem(position + 1)
         } else getItem(position)
         if (item?.fromId == Firebase.auth.uid) {
-            Log.d("return","first viewholder set")
-            (holder as ChatPagedAdapter.View1ViewHolder).bind(item!!,itemPrev!!,position)
+            (holder as ChatPagedAdapter.View1ViewHolder).bind(item!!, itemPrev!!)
         } else {
-            Log.d("return","second viewholder set")
-            (holder as ChatPagedAdapter.View2ViewHolder).bind(item!!,itemPrev!!,position)
+            (holder as ChatPagedAdapter.View2ViewHolder).bind(item!!, itemPrev!!)
         }
     }
+
     private fun getDateTime(s: Long): String? {
         return try {
             val sdf = SimpleDateFormat("EEE,hh:mmaa", Locale.getDefault())

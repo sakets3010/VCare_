@@ -14,7 +14,6 @@ class MyFirebaseInstanceId:FirebaseMessagingService() {
 
       val firebaseUser = Firebase.auth.currentUser
         if (firebaseUser!==null){
-
             updateToken(newToken)
         }
     }

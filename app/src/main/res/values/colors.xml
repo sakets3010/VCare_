@@ -28,9 +28,9 @@
   <color name="primaryTextColorD">#ffffff</color>
   <color name="secondaryTextColorD">#ffffff</color>
   //non default-dark
-  <color name="primaryColorND">#37474f</color>
-  <color name="primaryLightColorND">#62727b</color>
-  <color name="primaryDarkColorND">#102027</color>
+  <color name="primaryColorND">#009688</color>
+  <color name="primaryLightColorND">#B2DFDB</color>
+  <color name="primaryDarkColorND">#00796B</color>
   <color name="secondaryColorND">#283593</color>
   <color name="secondaryLightColorND">#5f5fc4</color>
   <color name="secondaryDarkColorND">#001064</color>

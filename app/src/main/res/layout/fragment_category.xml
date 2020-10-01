@@ -7,33 +7,29 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        style="@style/AppTheme"
-        android:background="@color/primaryColor">
+        style="@style/AppTheme">
 
         <TextView
             android:id="@+id/textView3"
             style="@style/TextToolbar"
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"
-            android:gravity="center"
-            android:text="@string/choose_a_category"
-            android:textAllCaps="false"
-            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageButton
-            android:id="@+id/back_button_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:backgroundTint="@color/secondaryColor"
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="@id/textView3"
             app:layout_constraintBottom_toBottomOf="@id/textView3"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/textView3"
-            app:srcCompat="@drawable/ic_action_back"
-            tools:targetApi="lollipop" />
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="@string/choose_a_category"/>
 
         <TextView
             android:id="@+id/textView"
@@ -41,7 +37,6 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_bold"
             android:text="@string/how_do_you_want_to_use_the_app"
-            android:textColor="@color/colorWhite"
             android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@+id/text_input_layout"
             app:layout_constraintEnd_toEndOf="parent"
@@ -59,9 +54,7 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="32dp"
-            android:background="@color/primaryLightColor"
             android:hint="@string/select_category"
-            android:textColorHint="@color/primaryColor"
             app:endIconMode="dropdown_menu"
             app:layout_constraintBottom_toTopOf="@+id/button_get_started"
             app:layout_constraintEnd_toEndOf="parent"
@@ -76,8 +69,7 @@
                 android:fontFamily="@font/poppins"
                 android:inputType="none"
                 android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:textColor="@color/primaryColor" />
+                android:paddingEnd="12dp" />
 
         </com.google.android.material.textfield.TextInputLayout>
 

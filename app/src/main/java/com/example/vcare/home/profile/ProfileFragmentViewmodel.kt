@@ -8,25 +8,24 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.example.vcare.helper.ChatRepository
 import com.example.vcare.helper.User
-import dagger.hilt.android.AndroidEntryPoint
 
 class ProfileFragmentViewmodel@ViewModelInject constructor(
     private val repository: ChatRepository,
     @Assisted private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
-    private var userDetails:MutableLiveData<User> = MutableLiveData()
+    private var _userDetails:MutableLiveData<User> = MutableLiveData()
 
     fun fetchUserDetails(uid:String):LiveData<User>{
         repository.getUserReference(uid)?.addSnapshotListener { doc, _ ->
             val user = doc?.toObject(User::class.java)
-            userDetails.value = user
+            _userDetails.value = user
         }
-        return userDetails
+        return _userDetails
     }
-    fun updateUserDetails(uid:String,Bio:String){
+    fun updateUserDetails(uid:String, bio:String){
         repository.getUserReference(uid)?.update(
             mapOf(
-                "bio" to Bio
+                "bio" to bio
             )
         )
     }

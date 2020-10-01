@@ -12,11 +12,11 @@ import com.example.vcare.R
 import com.example.vcare.helper.Status
 import com.example.vcare.helper.User
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.new_message_list.view.*
+import kotlinx.android.synthetic.main.new_message_list_item.view.*
 
 class NewMessageAdapter(private val users: List<User>,private val listener: (User?) -> Unit) : RecyclerView.Adapter<NewMessageAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.new_message_list,parent,false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.new_message_list_item,parent,false)
         return ViewHolder(view)
     }
     override fun getItemCount(): Int = users.size

@@ -8,5 +8,4 @@ private val ONE_MINUTE_MILLIS = TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTE
 fun convertDurationToFormatted(startTimeMilli: Long, endTimeMilli: Long): Boolean {
     val durationMilli = endTimeMilli - startTimeMilli
     return durationMilli > (2*ONE_MINUTE_MILLIS)
-
 }

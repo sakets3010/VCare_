@@ -3,82 +3,70 @@ package com.example.vcare.home
 import android.content.Context
 import android.content.res.Resources
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
 import com.example.vcare.R
-import com.example.vcare.home.HomeActivity.Status.Companion.updateStatus
-import com.example.vcare.helper.User
+import com.example.vcare.helper.ChatRepository
+import com.example.vcare.helper.Status
+import com.example.vcare.settings.SettingsFragment.Companion.THEME_1
+import com.example.vcare.settings.SettingsFragment.Companion.THEME_2
+import com.example.vcare.settings.SettingsFragment.Companion.THEME_3
+import com.example.vcare.settings.SettingsFragment.Companion.THEME_4
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {
-    companion object{
-       lateinit var currentUser: User
-    }
+
+
+    private val _repository = ChatRepository()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_home)
         val navController = Navigation.findNavController(this, R.id.home_nav)
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottom_navigation)
         bottomNavigationView.setupWithNavController(navController)
-        fetchCurrentUser()
     }
 
     override fun getTheme(): Resources.Theme {
         val theme = super.getTheme()
-        val sharedPref = this.getSharedPreferences("Vcare", Context.MODE_PRIVATE)
-        Log.d("theme","called :${sharedPref.getLong("theme",1L)}")
-        when(sharedPref.getLong("theme",1L)){
-            1L -> theme.applyStyle(R.style.AppTheme,true)
-            2L -> theme.applyStyle(R.style.OverlayThemeBlue,true)
-            3L -> theme.applyStyle(R.style.DarkOverlayDefault,true)
-            4L -> theme.applyStyle(R.style.DarkOverlayNonDefault,true)
+        val sharedPref = this.getSharedPreferences(getString(R.string.v_care), Context.MODE_PRIVATE)
+        when (sharedPref.getLong("theme", 1L)) {
+            THEME_1 -> theme.applyStyle(R.style.AppTheme, true)
+            THEME_2 -> theme.applyStyle(R.style.OverlayThemeBlue, true)
+            THEME_3 -> theme.applyStyle(R.style.DarkOverlayDefault, true)
+            THEME_4 -> theme.applyStyle(R.style.DarkOverlayNonDefault, true)
         }
         return theme
     }
 
-    private fun fetchCurrentUser() {
-        val uid = FirebaseAuth.getInstance().uid ?:""
-        val db = Firebase.firestore
-        db.collection("Users").document(uid).addSnapshotListener { snapshot, e ->
-            if (e != null) {
-                Log.w("HomeActivity", "Listen failed.", e)
-                return@addSnapshotListener
-            }
-            if (snapshot != null && snapshot.exists()) {
-                currentUser = snapshot.toObject(User::class.java)!!
-            } else {
-                Log.d("HomeActivity", "Current data: null")
-            }
-        }
-    }
-class Status{
-    companion object{
-        private val db = Firebase.firestore
-        fun updateStatus(userId:String,status:Long){
-            db.collection("Users").document(userId).update(
-                mapOf(
-                    "status" to status
-                )
+    private fun updateStatus(userId: String, status: Long) {
+        _repository.getUserReference(userId)?.update(
+            mapOf(
+                "status" to status
             )
-        }
+        )
     }
-}
+
+
     override fun onResume() {
         super.onResume()
-        updateStatus(FirebaseAuth.getInstance().currentUser?.uid.toString(),100L)
+        Firebase.auth.uid?.let {
+            updateStatus(
+                it, Status.ONLINE
+            )
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        updateStatus(FirebaseAuth.getInstance().currentUser?.uid.toString(),102L)
+        Firebase.auth.uid?.let {
+            updateStatus(
+                it, Status.OFFLINE
+            )
+        }
     }
 }

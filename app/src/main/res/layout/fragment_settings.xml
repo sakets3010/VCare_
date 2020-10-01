@@ -98,7 +98,7 @@
                 android:id="@+id/radio_button_1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="@string/white_grey"
+                android:text="@string/white_blue"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -106,7 +106,7 @@
                 android:id="@+id/radio_button_2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="@string/blue_white"
+                android:text="@string/grey_white"
                 android:textSize="20sp"
                 android:textStyle="bold" />
         </RadioGroup>
@@ -126,7 +126,7 @@
                 android:id="@+id/radio_button_1_dark"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="@string/metallic_grey_green"
+                android:text="@string/metallic_blue"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -134,7 +134,7 @@
                 android:id="@+id/radio_button_2_dark"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="@string/blue_grey"
+                android:text="@string/teal"
                 android:textSize="20sp"
                 android:textStyle="bold" />
         </RadioGroup>

@@ -14,25 +14,21 @@ class HelperActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_helper)
-        val sharedPref = this.getSharedPreferences("Vcare", Context.MODE_PRIVATE)
+        val sharedPref = this.getSharedPreferences(getString(R.string.v_care), Context.MODE_PRIVATE)
 
-        if(sharedPref.getBoolean("isDark",false)){
+        if (sharedPref.getBoolean("isDark", false)) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        }
-        else{
+        } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
 
 
-        if(sharedPref.getBoolean("ifBiometric",true)){
+        if (sharedPref.getBoolean("ifBiometric", true)) {
             val intent = Intent(this, BiometricActivity::class.java)
-            Log.d("check","1 called")
             startActivity(intent)
             finish()
-        }
-        else{
+        } else {
             val intent = Intent(this, LoginActivity::class.java)
-            Log.d("check","2 called")
             startActivity(intent)
             finish()
         }

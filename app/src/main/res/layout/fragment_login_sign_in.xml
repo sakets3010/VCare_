@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/primaryColor">
+        android:layout_height="match_parent">
         <TextView
             android:id="@+id/textView7"
             style="@style/TextToolbar"
@@ -34,7 +33,6 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/carter_one"
             android:text="@string/vcare"
-            android:textColor="@color/colorWhite"
             android:textSize="32sp"
             app:layout_constraintBottom_toTopOf="@+id/google_button"
             app:layout_constraintEnd_toEndOf="@id/icon"

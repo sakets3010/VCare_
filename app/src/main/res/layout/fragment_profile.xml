@@ -37,8 +37,7 @@
             app:civ_border_width="2dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView_profile"
-            app:srcCompat="@drawable/online_color" />
+            app:layout_constraintTop_toBottomOf="@+id/textView_profile" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/textView9"
@@ -53,8 +52,8 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/login_username_text_layout_profile"
-            android:layout_width="match_parent"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
@@ -89,15 +88,14 @@
             app:counterMaxLength="25"
             app:layout_constraintEnd_toEndOf="@id/login_username_text_layout_profile"
             app:layout_constraintStart_toStartOf="@+id/login_username_text_layout_profile"
-            app:layout_constraintTop_toBottomOf="@id/bio_header"
-            >
+            app:layout_constraintTop_toBottomOf="@id/bio_header">
+
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edit_text_bio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
                 android:hint="@string/tell_us_about_yourself"
-                />
+                android:textSize="18sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
 

@@ -21,8 +21,9 @@ class CategoryFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val sharedPref = requireContext().getSharedPreferences("Vcare", Context.MODE_PRIVATE)
-        if (sharedPref.getString("category", " ") !== " ") {
+        val sharedPref =
+            requireContext().getSharedPreferences(getString(R.string.v_care), Context.MODE_PRIVATE)
+        if (sharedPref.getString(getString(R.string.category), " ") !== " ") {
             Navigation.findNavController(
                 requireActivity(),
                 R.id.login_navhost
@@ -32,7 +33,8 @@ class CategoryFragment : Fragment() {
             inflater,
             R.layout.fragment_category, container, false
         )
-        val items = arrayOf("Helper", "Seeker")
+
+        val items = arrayOf(getString(R.string.helper), getString(R.string.seeker))
         val dropDownAdapter = ArrayAdapter(
             requireContext(),
             R.layout.category_list_item, items
@@ -42,24 +44,17 @@ class CategoryFragment : Fragment() {
         binding.buttonGetStarted.setOnClickListener {
             val category = binding.dropdownText.text.toString().trim()
             if (category.isEmpty()) {
-                binding.dropdownText.error = "Category Required"
+                binding.dropdownText.error = getString(R.string.category_)
                 binding.dropdownText.requestFocus()
                 return@setOnClickListener
             } else {
                 val editor = sharedPref.edit()
-                editor.putString("category", binding.dropdownText.text.toString())
+                editor.putString(getString(R.string.category), binding.dropdownText.text.toString())
                 editor.apply()
-                val action =
-                    CategoryFragmentDirections.actionCategoryFragmentToLoginEnterDetailFragment(
-                        category
-                    )
+                val action = CategoryFragmentDirections.actionCategoryFragmentToLoginEnterDetailFragment(category)
                 findNavController().navigate(action)
             }
         }
-        binding.backButton2.setOnClickListener {
-            findNavController().navigate(R.id.action_categoryFragment_to_loginSignInFragment)
-        }
-
         return binding.root
     }
 

@@ -16,12 +16,16 @@ import kotlinx.android.synthetic.main.fragment_new_message.*
 
 @AndroidEntryPoint
 class NewMessageFragment : Fragment() {
+    companion object {
+        const val USER_KEY = "USER_KEY"
+    }
+
     private val viewModel by viewModels<NewMessageViewmodel>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel.availableUsers.observe(viewLifecycleOwner, Observer { users ->
+        viewModel.availableUsers.observe(viewLifecycleOwner, { users ->
             recyclerview_newMessage.adapter = NewMessageAdapter(users) { availableUsers ->
                 val intent = Intent(requireContext(), ChatLogActivity::class.java)
                 intent.putExtra(USER_KEY, availableUsers)
@@ -31,9 +35,7 @@ class NewMessageFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_new_message, container, false)
     }
 
-    companion object {
-        const val USER_KEY = "USER_KEY"
-    }
+
 }
 
 
