@@ -90,4 +90,5 @@
     <string name="error_occured">error occurred</string>
     <string name="auth_failed">authentication failed,retry</string>
     <string name="welcome">welcome</string>
+    <string name="username_">username</string>
 </resources>

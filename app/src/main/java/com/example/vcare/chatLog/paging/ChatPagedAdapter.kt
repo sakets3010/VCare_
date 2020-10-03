@@ -5,7 +5,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,6 +42,7 @@ class ChatPagedAdapter : PagingDataAdapter<ChatMessage, RecyclerView.ViewHolder>
         const val URL = "url"
     }
 
+
     private inner class View1ViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         val textMessage: TextView = itemView.textMessage
@@ -50,6 +50,7 @@ class ChatPagedAdapter : PagingDataAdapter<ChatMessage, RecyclerView.ViewHolder>
         val imageMessage: ImageView = itemView.imageMessage
         val imageCover: ImageView = itemView.imageCover
         val deliveredReceipt: ImageView = itemView.delivered_image
+
         fun bind(item: ChatMessage, itemPrev: ChatMessage) {
             setIsRecyclable(false)
             if (item.status) {
@@ -102,11 +103,8 @@ class ChatPagedAdapter : PagingDataAdapter<ChatMessage, RecyclerView.ViewHolder>
         val imageMessage: ImageView = itemView.imageMessageFrom
         val imageCover: ImageView = itemView.imageCoverFrom
 
-        @SuppressLint("ResourceAsColor")
-        @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-        fun bind(item: ChatMessage, itemPrev: ChatMessage) {
+        init {
             val sharedPref = itemView.context.getSharedPreferences("Vcare", Context.MODE_PRIVATE)
-            Log.d("color", "value:${sharedPref.getLong("theme", 2L)}")
             when (sharedPref.getLong("theme", 1L)) {
                 SettingsFragment.THEME_1 -> {
                     textMessage.setBackgroundResource(R.drawable.theme_1_tv)
@@ -125,6 +123,11 @@ class ChatPagedAdapter : PagingDataAdapter<ChatMessage, RecyclerView.ViewHolder>
                     imageCover.setBackgroundResource(R.drawable.theme_4_tv)
                 }
             }
+        }
+
+        @SuppressLint("ResourceAsColor")
+        @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+        fun bind(item: ChatMessage, itemPrev: ChatMessage) {
             setIsRecyclable(false)
             if (item.url == "") {
                 textMessage.text = item.text

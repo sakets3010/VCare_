@@ -1,6 +1,5 @@
 package com.example.vcare.chatLog
 
-import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
@@ -30,6 +29,8 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.UploadTask
+import com.google.mlkit.nl.smartreply.SmartReply
+import com.google.mlkit.nl.smartreply.TextMessage
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Call
 import retrofit2.Callback
@@ -41,7 +42,15 @@ class ChatLogViewmodel @ViewModelInject constructor(
     private var _status: MutableLiveData<User> = MutableLiveData()
     private var _documentId: MutableLiveData<String> = MutableLiveData()
     val documentId: LiveData<String>
-    get() = _documentId
+        get() = _documentId
+    private val _messages = arrayListOf<TextMessage>()
+    private val _smartReply = SmartReply.getClient()
+    private val _suggestions = arrayListOf<String>()
+    private var _replies: MutableLiveData<List<String>> = MutableLiveData()
+    val replies: LiveData<List<String>>
+        get() = _replies
+
+
     private lateinit var _id: String
     var notify = false
     private val _fromId = Firebase.auth.uid
@@ -74,9 +83,8 @@ class ChatLogViewmodel @ViewModelInject constructor(
                     return@addSnapshotListener
                 }
                 if (documents != null) {
-                    for (document in documents ) {
+                    for (document in documents) {
                         _docId = document.id
-                        Log.d("document","docvalue:${document.id}")
                     }
                     _documentId.value = _docId
                 }
@@ -89,21 +97,51 @@ class ChatLogViewmodel @ViewModelInject constructor(
     val isScrollable: LiveData<Boolean>
         get() = _isScrollable
 
-    fun incomingMessageListener(docId: String): LiveData<Boolean> {
+    fun incomingMessageListener(docId: String): LiveData<List<String>> {
         repository.getChatReference()?.document(docId)?.collection("Messages")?.orderBy(
             "timestamp",
             Query.Direction.ASCENDING
-        )?.addSnapshotListener { snap, e ->
+        )?.addSnapshotListener { snapshot, e ->
             if (e != null) {
                 return@addSnapshotListener
             }
-            if (snap != null) {
-
+            if (snapshot != null) {
                 _isScrollable.value = true
-
+                for (snap in snapshot) {
+                    val message = snap.toObject(ChatMessage::class.java)
+                    if (message.fromId.equals(Firebase.auth.uid)) {
+                        _messages.add(
+                            TextMessage.createForLocalUser(
+                                message.text,
+                                System.currentTimeMillis()
+                            )
+                        )
+                        Log.d("smart","local user")
+                    } else {
+                        Log.d("smart","remote user")
+                        _messages.add(
+                            TextMessage.createForRemoteUser(
+                                message.text,
+                                System.currentTimeMillis(),
+                                message.toId
+                            )
+                        )
+                    }
+                    _smartReply.suggestReplies(
+                        _messages.takeLast(3)
+                    )
+                        .addOnSuccessListener {
+                            _suggestions.clear()
+                            it.suggestions.forEach {
+                                _suggestions.add(it.text)
+                            }
+                            _replies.value = _suggestions
+                            Log.d("smart","suggestions:${_suggestions}")
+                        }
+                }
             }
         }
-        return _isScrollable
+        return _replies
     }
 
     fun getFlow(docId: String): Flow<PagingData<ChatMessage>> {
@@ -272,15 +310,14 @@ class ChatLogViewmodel @ViewModelInject constructor(
         })
     }
 
-    fun imageMessage(data: Intent, user: User, apiService: ApiService) {
-        val fileUri = data.data
+    fun imageMessage(uri:Uri, user: User, apiService: ApiService) {
         val storageReference = FirebaseStorage.getInstance().reference.child("chat_images")
         val ref = FirebaseDatabase.getInstance().reference
         val messageId = ref.push().key
         val filePath = storageReference.child("$messageId.jpg")
 
         val uploadTask: StorageTask<*>
-        uploadTask = filePath.putFile(fileUri!!)
+        uploadTask = filePath.putFile(uri)
         uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
             if (!task.isSuccessful) {
                 task.exception?.let {

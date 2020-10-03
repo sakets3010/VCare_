@@ -3,82 +3,98 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".chatLog.ChatLogActivity">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/toolbar_chat_log"
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/intro"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorLightGrey"
-            style="@style/TextToolbar"
-            android:textAllCaps="false"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/username_chat_log"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@id/chat_log_profile"
-            android:textSize="22sp"
-            android:textColor="@color/colorWhite"
-            android:textStyle="bold"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_marginStart="16dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/online_indicator" />
-        <ImageButton
-            android:id="@+id/back_button_chat_log"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/toolbar_chat_log"
-            app:srcCompat="@drawable/ic_action_back"
-            android:background="@color/colorLightGrey"
-            app:layout_constraintBottom_toBottomOf="@id/toolbar_chat_log"
-            tools:targetApi="lollipop" />
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/chat_log_profile"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="4dp"
-            app:layout_constraintTop_toTopOf="@id/toolbar_chat_log"
-            app:layout_constraintBottom_toBottomOf="@id/toolbar_chat_log"
-            app:layout_constraintStart_toEndOf="@id/back_button_chat_log" />
-        <ImageView
-            android:id="@+id/online_indicator"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            app:layout_constraintStart_toEndOf="@id/chat_log_profile"
-            app:layout_constraintBottom_toBottomOf="@id/chat_log_profile"
-            android:layout_marginStart="16dp" />
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/category_text_chat_log"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="45dp"
-            android:background="@drawable/rounded_bg_green_coloured"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:textAlignment="center"
-            android:textColor="#00e676"
-            android:textColorHint="#00e676"
-            app:layout_constraintBottom_toBottomOf="@+id/toolbar_chat_log"
+            app:cardElevation="8dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/toolbar_chat_log" />
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/typing_status_chat_log"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="@color/colorWhite"
-            android:layout_marginStart="4dp"
-            app:layout_constraintTop_toTopOf="@id/online_indicator"
-            app:layout_constraintBottom_toBottomOf="@id/online_indicator"
-            app:layout_constraintStart_toEndOf="@id/online_indicator" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/username_chat_log"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@id/chat_log_profile"
+                    app:layout_constraintTop_toTopOf="@id/chat_log_profile" />
+
+                <ImageButton
+                    android:id="@+id/back_button_chat_log"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:background="@color/transparent"
+                    app:layout_constraintBottom_toBottomOf="@id/chat_log_profile"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/chat_log_profile"
+                    app:srcCompat="@drawable/ic_arrow_back"
+                    tools:targetApi="lollipop" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/chat_log_profile"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    app:civ_border_width="4dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/back_button_chat_log"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/online_indicator"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="2dp"
+                    app:layout_constraintStart_toEndOf="@id/chat_log_profile"
+                    app:layout_constraintTop_toBottomOf="@id/username_chat_log" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/category_text_chat_log"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="45dp"
+                    android:background="@drawable/rounded_bg_green_coloured"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:textAlignment="center"
+                    android:textColor="#00e676"
+                    android:textColorHint="#00e676"
+                    app:layout_constraintBottom_toBottomOf="@id/chat_log_profile"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/chat_log_profile" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/typing_status_chat_log"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@id/online_indicator"
+                    app:layout_constraintStart_toEndOf="@id/online_indicator"
+                    app:layout_constraintTop_toTopOf="@id/online_indicator" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
         <EditText
             android:id="@+id/edittext_chat_log"
             android:layout_width="0dp"
@@ -93,8 +109,8 @@
             android:padding="8dp"
             android:paddingStart="16dp"
             android:paddingEnd="75dp"
-            android:textColorHint="@color/colorWhite"
             android:textColor="@color/colorWhite"
+            android:textColorHint="@color/colorWhite"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintCircleRadius="25dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -107,15 +123,15 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="8dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:reverseLayout="true"
+            app:layout_constraintBottom_toTopOf="@id/suggestion_rv"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar_chat_log"
-            app:layout_constraintBottom_toTopOf="@id/suggestion_rv"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintTop_toBottomOf="@id/intro"
+            app:layout_constraintVertical_bias="1.0"
+            app:reverseLayout="true" />
 
         <androidx.recyclerview.widget.RecyclerView
 
@@ -123,20 +139,20 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toTopOf="@id/edittext_chat_log"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent" />
 
         <ImageButton
             android:id="@+id/send_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="2dp"
-            app:cornerRadius="25dp"
             android:backgroundTint="@color/colorLightGrey"
+            app:cornerRadius="25dp"
             app:layout_constraintBottom_toBottomOf="@id/edittext_chat_log"
             app:layout_constraintEnd_toEndOf="@id/edittext_chat_log"
             app:layout_constraintTop_toTopOf="@+id/edittext_chat_log"
@@ -161,7 +177,7 @@
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar_chat_log" />
+            app:layout_constraintTop_toBottomOf="@id/intro" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

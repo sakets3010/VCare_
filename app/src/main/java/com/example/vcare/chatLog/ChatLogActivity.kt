@@ -4,14 +4,15 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,8 +29,6 @@ import com.example.vcare.settings.SettingsFragment
 import com.example.vcare.settings.SettingsFragment.Companion.THEME_1
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.ml.naturallanguage.FirebaseNaturalLanguage
-import com.google.firebase.ml.naturallanguage.smartreply.FirebaseTextMessage
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_chat_log.*
@@ -42,15 +41,7 @@ import kotlinx.coroutines.launch
 class ChatLogActivity : AppCompatActivity() {
     private val viewModel by viewModels<ChatLogViewmodel>()
     private var _apiService: ApiService? = null
-    private val _messages = arrayListOf<FirebaseTextMessage>()
-    private val _suggestions = arrayListOf<String>()
 
-    private val suggestionAdapter = SuggestionAdapter(_suggestions) {
-        binding.edittextChatLog.text.clear()
-        binding.edittextChatLog.setText(it)
-    }
-
-    private val _smartReply = FirebaseNaturalLanguage.getInstance().smartReply
     private lateinit var binding: ActivityChatLogBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +52,6 @@ class ChatLogActivity : AppCompatActivity() {
         setRecycler(chatAdapter)
         suggestion_rv.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true)
-        suggestion_rv.adapter = suggestionAdapter
 
         val user = intent.getParcelableExtra<User>(NewMessageFragment.USER_KEY)
 
@@ -82,6 +72,23 @@ class ChatLogActivity : AppCompatActivity() {
                     binding.onlineIndicator.setImageResource(R.drawable.online_color)
                     binding.typingStatusChatLog.text = getString(R.string.typing)
                 }
+            }
+        })
+
+
+        viewModel.documentId.observe(this, {
+            if (it.isNotEmpty() && it !== null) {
+                viewModel.incomingMessageListener(it).observe(this, {
+                    chatAdapter.refresh()
+                    binding.chatLogRecycler.smoothScrollToPosition(0)
+                })
+            }
+        })
+
+        viewModel.replies.observe(this, {
+            binding.suggestionRv.adapter = SuggestionAdapter(it) { reply ->
+                binding.edittextChatLog.text.clear()
+                binding.edittextChatLog.setText(reply)
             }
         })
 
@@ -113,16 +120,6 @@ class ChatLogActivity : AppCompatActivity() {
             })
         }
 
-        viewModel.documentId.observe(this, Observer {
-            if(it.isNotEmpty() && it!==null){
-                viewModel.incomingMessageListener(it).observe(this,{
-                    chatAdapter.refresh()
-                    binding.chatLogRecycler.scrollToPosition(0)
-                })
-            }
-        })
-
-
         lifecycleScope.launch {
             chatAdapter.loadStateFlow.collectLatest { loadStates ->
                 binding.loadMoreProgressBar.isVisible = loadStates.refresh is LoadState.Loading
@@ -140,33 +137,8 @@ class ChatLogActivity : AppCompatActivity() {
             } else {
                 viewModel.notify = true
                 viewModel.performSendMessage(user, edittext_chat_log.text.toString(), _apiService)
-                val message = user?.uid?.let { it1 ->
-                    FirebaseTextMessage.createForRemoteUser(
-                        edittext_chat_log.text.toString(),
-                        System.currentTimeMillis(),
-                        it1
-                    )
-                }
-                if (message != null) {
-                    _messages.add(
-                        message
-                    )
-                }
                 binding.edittextChatLog.text.clear()
-                binding.chatLogRecycler.scrollToPosition(0)
-                _smartReply.suggestReplies(
-                    _messages.takeLast(10)
-                )
-                    .addOnSuccessListener { it ->
-                        _suggestions.clear()
-                        it.suggestions.forEach {
-                            _suggestions.add(it.text)
-                        }
-                        suggestionAdapter.notifyDataSetChanged()
-                    }
-                    .addOnFailureListener {
-                        it.printStackTrace()
-                    }
+                binding.chatLogRecycler.smoothScrollToPosition(0)
             }
         }
         binding.edittextChatLog.addTextChangedListener(object : TextWatcher {
@@ -191,10 +163,7 @@ class ChatLogActivity : AppCompatActivity() {
         })
         binding.sendImage.setOnClickListener {
             viewModel.notify = true
-            val intent = Intent()
-            intent.action = Intent.ACTION_GET_CONTENT
-            intent.type = "image/*"
-            startActivityForResult(Intent.createChooser(intent, "pick an image"), 438)
+            pickImages.launch("image/*")
         }
     }
 
@@ -203,7 +172,7 @@ class ChatLogActivity : AppCompatActivity() {
         val sharedPref = this.getSharedPreferences(getString(R.string.v_care), Context.MODE_PRIVATE)
         Log.d("color", "getting:${sharedPref.getLong("theme", THEME_1)}")
         when (sharedPref.getLong("theme", THEME_1)) {
-            SettingsFragment.THEME_1 -> theme.applyStyle(R.style.AppTheme, true)
+            THEME_1 -> theme.applyStyle(R.style.AppTheme, true)
             SettingsFragment.THEME_2 -> theme.applyStyle(R.style.OverlayThemeBlue, true)
             SettingsFragment.THEME_3 -> theme.applyStyle(R.style.DarkOverlayDefault, true)
             SettingsFragment.THEME_4 -> theme.applyStyle(R.style.DarkOverlayNonDefault, true)
@@ -231,7 +200,7 @@ class ChatLogActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         if (binding.chatLogRecycler.adapter !== null)
-            binding.chatLogRecycler.scrollToPosition(0)
+            binding.chatLogRecycler.smoothScrollToPosition(0)
 
         Firebase.auth.uid?.let {
             viewModel.updateStatus(
@@ -252,13 +221,11 @@ class ChatLogActivity : AppCompatActivity() {
     }
 
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 438 && resultCode == RESULT_OK && data?.data !== null) {
+    private val pickImages =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             val user = intent.getParcelableExtra<User>(NewMessageFragment.USER_KEY)
-            if (user != null) {
-                _apiService?.let { viewModel.imageMessage(data, user, it) }
+            if (user != null && uri != null) {
+                _apiService?.let { viewModel.imageMessage(uri, user, it) }
             }
         }
-    }
 }

@@ -1,5 +1,7 @@
 package com.example.vcare.login
 
+import android.app.Activity
+import android.app.Instrumentation.ActivityResult
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -22,7 +24,6 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 
-
 class LoginSignInFragment : Fragment() {
     private val _rcSignIn: Int = 1
     private lateinit var _googleSignInClient: GoogleSignInClient
@@ -33,7 +34,12 @@ class LoginSignInFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_login_sign_in,container,false)
+        binding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.fragment_login_sign_in,
+            container,
+            false
+        )
         return binding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -47,7 +53,7 @@ class LoginSignInFragment : Fragment() {
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
-        _googleSignInClient = GoogleSignIn.getClient(requireContext(),_googleSignInOptions)
+        _googleSignInClient = GoogleSignIn.getClient(requireContext(), _googleSignInOptions)
     }
     private fun setupUI() {
         binding.googleButton.setOnClickListener {
@@ -82,12 +88,21 @@ class LoginSignInFragment : Fragment() {
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
         _firebaseAuth.signInWithCredential(credential).addOnCompleteListener {
             if (it.isSuccessful) {
-                Navigation.findNavController(requireActivity(),
+                Navigation.findNavController(
+                    requireActivity(),
                     R.id.login_navhost
                 ).navigate(R.id.action_loginSignInFragment_to_categoryFragment)
-                Toast.makeText(requireContext(),getString(R.string.sign_in_successful),Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.sign_in_successful),
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
-                Toast.makeText(requireContext(), getString(R.string.g_sign_in_failed), Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.g_sign_in_failed),
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
     }
@@ -95,7 +110,8 @@ class LoginSignInFragment : Fragment() {
         super.onStart()
         val user = _firebaseAuth.currentUser
         if (user != null) {
-            Navigation.findNavController(requireActivity(),
+            Navigation.findNavController(
+                requireActivity(),
                 R.id.login_navhost
             ).navigate(R.id.action_loginSignInFragment_to_categoryFragment)
         }

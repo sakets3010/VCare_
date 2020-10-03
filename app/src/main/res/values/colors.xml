@@ -36,4 +36,5 @@
   <color name="secondaryDarkColorND">#001064</color>
   <color name="primaryTextColorND">#ffffff</color>
   <color name="secondaryTextColorND">#ffffff</color>
+  <color name="transparent">#00000000</color>
 </resources>

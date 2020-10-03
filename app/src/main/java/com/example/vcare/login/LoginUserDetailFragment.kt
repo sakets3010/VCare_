@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
@@ -23,12 +24,14 @@ import com.example.vcare.home.HomeActivity
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import com.squareup.picasso.Picasso
 import java.util.*
 
 
 class LoginUserDetailFragment : Fragment() {
     private lateinit var binding: FragmentLoginEnterDetailFragmentBinding
     private val _repository = ChatRepository()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -36,7 +39,7 @@ class LoginUserDetailFragment : Fragment() {
         val args: LoginUserDetailFragmentArgs by navArgs()
         val sharedPref =
             requireContext().getSharedPreferences(getString(R.string.v_care), Context.MODE_PRIVATE)
-        if (sharedPref?.getString("username", " ") !== " ") {
+        if (sharedPref?.getString(getString(R.string.username_), " ") !== " ") {
             val intent = Intent(
                 requireContext(),
                 HomeActivity::class.java
@@ -53,9 +56,7 @@ class LoginUserDetailFragment : Fragment() {
         )
         setupUI()
         binding.selectPhotoButton.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/*"
-            startActivityForResult(intent, 0)
+            pickImages.launch("image/*")
         }
         binding.register.setOnClickListener {
             if (binding.loginUsernameEdit.text.toString().trim().isEmpty()) {
@@ -77,7 +78,10 @@ class LoginUserDetailFragment : Fragment() {
                     .show()
                 val intent = Intent(requireContext(), HomeActivity::class.java)
                 val editor = sharedPref?.edit()
-                editor?.putString("username", binding.loginUsernameEdit.toString())
+                editor?.putString(
+                    getString(R.string.username_),
+                    binding.loginUsernameEdit.toString()
+                )
                 editor?.apply()
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
@@ -87,18 +91,15 @@ class LoginUserDetailFragment : Fragment() {
     }
 
     private var _selectedPhotoUri: Uri? = null
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 0 && resultCode == Activity.RESULT_OK && data != null) {
-            _selectedPhotoUri = data.data
-            val bitmap = MediaStore.Images.Media.getBitmap(
-                requireActivity().contentResolver,
-                _selectedPhotoUri
-            )
-            binding.circularProfileHolder.setImageBitmap(bitmap)
+
+    private val pickImages = registerForActivityResult(ActivityResultContracts.GetContent()){ uri: Uri? ->
+        uri?.let { it ->
+            _selectedPhotoUri = uri
+            Picasso.get().load(it).into(binding.circularProfileHolder)
             binding.selectPhotoButton.alpha = 0f
         }
     }
+
 
     private fun setupUI() {
         binding.signOut.setOnClickListener {
