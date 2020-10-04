@@ -2,11 +2,9 @@ package com.example.vcare.chatLog
 
 import android.net.Uri
 import android.util.Log
+import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -14,6 +12,7 @@ import androidx.paging.cachedIn
 import com.example.vcare.chatLog.paging.FirestorePagingSource
 import com.example.vcare.chatLog.paging.FirestorePagingSource.Companion.PAGING_LIMIT
 import com.example.vcare.helper.*
+import com.example.vcare.home.newMessage.NewMessageFragment
 import com.example.vcare.notifications.*
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
@@ -37,18 +36,28 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class ChatLogViewmodel @ViewModelInject constructor(
-    private val repository: ChatRepository
-) : ViewModel() {
+    private val repository: ChatRepository,
+    @Assisted private val savedStateHandle: SavedStateHandle
+) : ViewModel(), LifecycleObserver {
     private var _status: MutableLiveData<User> = MutableLiveData()
+    val status: LiveData<User>
+        get() = _status
+
     private var _documentId: MutableLiveData<String> = MutableLiveData()
     val documentId: LiveData<String>
         get() = _documentId
+
     private val _messages = arrayListOf<TextMessage>()
     private val _smartReply = SmartReply.getClient()
     private val _suggestions = arrayListOf<String>()
+
     private var _replies: MutableLiveData<List<String>> = MutableLiveData()
     val replies: LiveData<List<String>>
         get() = _replies
+
+    private var _messageAdded: MutableLiveData<Boolean> = MutableLiveData()
+    val messageAdded: LiveData<Boolean>
+        get() = _messageAdded
 
 
     private lateinit var _id: String
@@ -57,8 +66,14 @@ class ChatLogViewmodel @ViewModelInject constructor(
     val uid = Firebase.auth.uid
     private val _firebaseUser = Firebase.auth.currentUser
 
+    private val _userIntent = savedStateHandle.get<User>(NewMessageFragment.USER_KEY)
 
-    fun evaluateStatus(user: User?): LiveData<User> {
+    init {
+        evaluateStatus(_userIntent)
+        listenForMessages(_userIntent)
+    }
+
+    private fun evaluateStatus(user: User?): LiveData<User> {
         if (user != null) {
             repository.getUserReference(user.uid)?.addSnapshotListener { snap, _ ->
                 val details = snap?.toObject(User::class.java)
@@ -68,13 +83,9 @@ class ChatLogViewmodel @ViewModelInject constructor(
         return _status
     }
 
-    fun returnUser(user: User?): User? {
-        return user
-    }
-
     private var _docId: String = ""
-    fun listenForMessages(user: User): LiveData<String> {
-        val toId = user.uid
+    private fun listenForMessages(user: User?) {
+        val toId = user?.uid
         val betweenList = mutableListOf(Id(_fromId), Id(toId))
         val sortedList = betweenList.sortedBy { it.Id }
         repository.getChatReference()?.whereEqualTo("between", sortedList)
@@ -87,17 +98,18 @@ class ChatLogViewmodel @ViewModelInject constructor(
                         _docId = document.id
                     }
                     _documentId.value = _docId
+                    Log.d("observe","value:${_documentId.value}")
+                    if(_documentId.value.toString().isNotEmpty()){
+                        updateReplies(_documentId.value.toString())
+                        checkForIncomingMessages(_documentId.value.toString())
+                    }
                 }
             }
-        return _documentId
+
     }
 
 
-    private var _isScrollable: MutableLiveData<Boolean> = MutableLiveData()
-    val isScrollable: LiveData<Boolean>
-        get() = _isScrollable
-
-    fun incomingMessageListener(docId: String): LiveData<List<String>> {
+    private fun updateReplies(docId: String): LiveData<List<String>> {
         repository.getChatReference()?.document(docId)?.collection("Messages")?.orderBy(
             "timestamp",
             Query.Direction.ASCENDING
@@ -106,7 +118,6 @@ class ChatLogViewmodel @ViewModelInject constructor(
                 return@addSnapshotListener
             }
             if (snapshot != null) {
-                _isScrollable.value = true
                 for (snap in snapshot) {
                     val message = snap.toObject(ChatMessage::class.java)
                     if (message.fromId.equals(Firebase.auth.uid)) {
@@ -116,9 +127,9 @@ class ChatLogViewmodel @ViewModelInject constructor(
                                 System.currentTimeMillis()
                             )
                         )
-                        Log.d("smart","local user")
+
                     } else {
-                        Log.d("smart","remote user")
+
                         _messages.add(
                             TextMessage.createForRemoteUser(
                                 message.text,
@@ -130,18 +141,33 @@ class ChatLogViewmodel @ViewModelInject constructor(
                     _smartReply.suggestReplies(
                         _messages.takeLast(3)
                     )
-                        .addOnSuccessListener {
+                        .addOnSuccessListener { it ->
                             _suggestions.clear()
                             it.suggestions.forEach {
                                 _suggestions.add(it.text)
                             }
                             _replies.value = _suggestions
-                            Log.d("smart","suggestions:${_suggestions}")
+
                         }
                 }
             }
         }
         return _replies
+    }
+
+    private fun checkForIncomingMessages(docId: String){
+        repository.getChatReference()?.document(docId)?.collection("Messages")?.orderBy(
+            "timestamp",
+            Query.Direction.ASCENDING
+        )?.addSnapshotListener { snapshot, e ->
+            if (e != null) {
+                return@addSnapshotListener
+            }
+            if (snapshot != null) {
+                _messageAdded.postValue(true)
+            }
+        }
+
     }
 
     fun getFlow(docId: String): Flow<PagingData<ChatMessage>> {
@@ -228,9 +254,9 @@ class ChatLogViewmodel @ViewModelInject constructor(
         repository.getChatReference()?.document(Id)?.collection("Messages")?.add(chatMessage)
             ?.addOnSuccessListener {
                 updateMessageStatus(Id, it)
-                _isScrollable.value = true
+
             }
-        _isScrollable.value = false
+
     }
 
     private fun updateMessageStatus(id: String, it: DocumentReference?) {
@@ -240,10 +266,10 @@ class ChatLogViewmodel @ViewModelInject constructor(
                     mapOf(
                         "status" to true
                     )
-                )?.addOnSuccessListener { _isScrollable.value = true }
+                )
 
         }
-        _isScrollable.value = false
+
     }
 
     fun updateStatus(userId: String, status: Long) {
@@ -310,7 +336,7 @@ class ChatLogViewmodel @ViewModelInject constructor(
         })
     }
 
-    fun imageMessage(uri:Uri, user: User, apiService: ApiService) {
+    fun imageMessage(uri: Uri, user: User, apiService: ApiService) {
         val storageReference = FirebaseStorage.getInstance().reference.child("chat_images")
         val ref = FirebaseDatabase.getInstance().reference
         val messageId = ref.push().key

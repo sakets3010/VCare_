@@ -91,4 +91,7 @@
     <string name="auth_failed">authentication failed,retry</string>
     <string name="welcome">welcome</string>
     <string name="username_">username</string>
+    <string name="isdark">isDark</string>
+    <string name="ifbiometric">ifBiometric</string>
+    <string name="start_a_conversation">start a conversation.</string>
 </resources>

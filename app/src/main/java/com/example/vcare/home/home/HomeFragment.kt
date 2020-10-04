@@ -12,12 +12,11 @@ import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import com.example.vcare.notifications.OreoNotification
 import com.example.vcare.R
 import com.example.vcare.chatLog.ChatLogActivity
 import com.example.vcare.databinding.FragmentHomeBinding
 import com.example.vcare.home.newMessage.NewMessageFragment
+import com.example.vcare.notifications.OreoNotification
 import com.google.firebase.iid.FirebaseInstanceId
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -40,20 +39,30 @@ class HomeFragment : Fragment() {
         )
 
 
-        viewModel.listenForNewMessage().observe(viewLifecycleOwner, {
-            viewModel.displayUsers(it).observe(viewLifecycleOwner, { chatMessages ->
+        setEmpty()
+        viewModel.activeUsers.observe(viewLifecycleOwner, { chatMessages ->
+            if(chatMessages.isNotEmpty()){
+                setNotEmpty()
                 binding.homeRecycler.adapter = HomeAdapter(chatMessages) { chatPartner ->
                     val intent = Intent(requireContext(), ChatLogActivity::class.java)
                     intent.putExtra(NewMessageFragment.USER_KEY, chatPartner)
                     startActivity(intent)
                 }
-            })
+
+            }
         })
-
-
-
         viewModel.updateToken(FirebaseInstanceId.getInstance().token)
         return binding.root
+    }
+
+    private fun setNotEmpty() {
+        binding.homeRecycler.visibility = View.VISIBLE
+        binding.chatsEmpty.visibility = View.GONE
+    }
+
+    private fun setEmpty() {
+        binding.homeRecycler.visibility = View.GONE
+        binding.chatsEmpty.visibility = View.VISIBLE
     }
 
 }

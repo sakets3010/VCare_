@@ -1,13 +1,12 @@
 package com.example.vcare.login
 
-import android.app.Activity
-import android.app.Instrumentation.ActivityResult
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
@@ -25,7 +24,6 @@ import com.google.firebase.ktx.Firebase
 
 
 class LoginSignInFragment : Fragment() {
-    private val _rcSignIn: Int = 1
     private lateinit var _googleSignInClient: GoogleSignInClient
     private lateinit var _googleSignInOptions: GoogleSignInOptions
     private val _firebaseAuth = Firebase.auth
@@ -42,6 +40,7 @@ class LoginSignInFragment : Fragment() {
         )
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         configureGoogleSignIn()
@@ -55,35 +54,45 @@ class LoginSignInFragment : Fragment() {
             .build()
         _googleSignInClient = GoogleSignIn.getClient(requireContext(), _googleSignInOptions)
     }
+
     private fun setupUI() {
         binding.googleButton.setOnClickListener {
             signIn()
         }
     }
+
     private fun signIn() {
         val signInIntent: Intent = _googleSignInClient.signInIntent
-        startActivityForResult(signInIntent, _rcSignIn)
+        _signInLauncher.launch(signInIntent)
     }
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == _rcSignIn) {
-            val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                if (account != null) {
 
-                    //if(account.email?.toLowerCase()?.endsWith("@hyderabad.bits-pilani.ac.in")!!)
-                    firebaseAuthWithGoogle(account)
-//                    else{
-//                        Toast.makeText(requireContext(),"Use your BITS Email Id to log in",Toast.LENGTH_SHORT).show()
-//                        mGoogleSignInClient.signOut()
-//                    }
-                }
-            } catch (e: ApiException) {
-                Toast.makeText(requireContext(), getString(R.string.failed), Toast.LENGTH_LONG).show()
+
+//To restrict the application to use by bits-mail only
+
+//if(account.email?.toLowerCase()?.endsWith("@hyderabad.bits-pilani.ac.in")!!){}
+//else{
+//Toast.makeText(requireContext(),"Use your BITS Email Id to log in",Toast.LENGTH_SHORT).show()
+//_googleSignInClient.signOut()
+// }
+
+
+    private fun getAccount(data: Intent) {
+        val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            if (account != null) {
+                firebaseAuthWithGoogle(account)
             }
+        } catch (e: ApiException) {
+            Toast.makeText(requireContext(), getString(R.string.failed), Toast.LENGTH_LONG).show()
         }
     }
+
+    private val _signInLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            it.data?.let { it1 -> getAccount(it1) }
+        }
+
     private fun firebaseAuthWithGoogle(account: GoogleSignInAccount) {
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
         _firebaseAuth.signInWithCredential(credential).addOnCompleteListener {
@@ -106,6 +115,7 @@ class LoginSignInFragment : Fragment() {
             }
         }
     }
+
     override fun onStart() {
         super.onStart()
         val user = _firebaseAuth.currentUser

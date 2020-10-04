@@ -45,7 +45,7 @@ class ProfileFragment : Fragment() {
             Snackbar.make(requireView(),getString(R.string.updated_bio),Snackbar.LENGTH_SHORT).show()
         }
         if (uid != null) {
-            viewModel.fetchUserDetails(uid).observe(viewLifecycleOwner, {
+            viewModel.userDetails.observe(viewLifecycleOwner, {
                 binding.loginUsernameTextLayoutProfile.text = it.username
                 binding.editTextBio.setText(it.bio, TextView.BufferType.EDITABLE)
                 Picasso.get().load(it.profileImageUrl).into(binding.imageViewProfilePicture)

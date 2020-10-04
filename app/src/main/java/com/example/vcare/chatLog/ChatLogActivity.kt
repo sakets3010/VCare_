@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +15,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.vcare.R
 import com.example.vcare.chatLog.paging.ChatPagedAdapter
 import com.example.vcare.databinding.ActivityChatLogBinding
@@ -48,17 +48,104 @@ class ChatLogActivity : AppCompatActivity() {
         binding = ActivityChatLogBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+
         val chatAdapter = ChatPagedAdapter()
+
         setRecycler(chatAdapter)
-        suggestion_rv.layoutManager =
+
+        binding.suggestionRv.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true)
 
         val user = intent.getParcelableExtra<User>(NewMessageFragment.USER_KEY)
 
+
         val toId = user?.uid
         setUi(user)
 
-        viewModel.evaluateStatus(user).observe(this, {
+        binding.backButtonChatLog.setOnClickListener {
+            val intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
+        binding.sendButton.setOnClickListener {
+            if (binding.edittextChatLog.text.toString() == "") {
+                binding.edittextChatLog.requestFocus()
+                return@setOnClickListener
+            } else {
+                viewModel.notify = true
+                viewModel.performSendMessage(user, edittext_chat_log.text.toString(), _apiService)
+                binding.edittextChatLog.text.clear()
+                binding.chatLogRecycler.smoothScrollToPosition(0)
+            }
+        }
+
+        binding.edittextChatLog.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                //does nothing
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                //does nothing
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                if (binding.edittextChatLog.text.toString().trim().isNotEmpty()) {
+                    if (toId !== null) {
+                        viewModel.updateTypingStatus(Status.ONLINE_AND_TYPING)
+                    }
+                } else {
+                    viewModel.updateTypingStatus(Status.ONLINE)
+                }
+            }
+        })
+        binding.sendImage.setOnClickListener {
+            viewModel.notify = true
+            _pickImages.launch("image/*")
+        }
+
+        binding.chatLogRecycler.adapter?.registerAdapterDataObserver(object :
+            RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                if (positionStart == 0) {
+                    binding.chatLogRecycler.smoothScrollToPosition(0)
+                }
+            }
+        })
+
+        viewModel.messageAdded.observe(this, {
+            if (it) {
+                chatAdapter.refresh()
+            }
+        })
+
+        if (user != null) {
+            viewModel.documentId.observe(this@ChatLogActivity, { docId ->
+                lifecycleScope.launch {
+                    viewModel.getFlow(docId).collect {
+                        chatAdapter.submitData(it)
+                    }
+                }
+
+            })
+        }
+
+        viewModel.replies.observe(this, {
+            binding.suggestionRv.adapter = SuggestionAdapter(it) { reply ->
+                binding.edittextChatLog.text.clear()
+                binding.edittextChatLog.setText(reply)
+            }
+        })
+
+        lifecycleScope.launch {
+            chatAdapter.loadStateFlow.collectLatest { loadStates ->
+                binding.loadMoreProgressBar.isVisible = loadStates.refresh is LoadState.Loading
+                binding.loadMoreProgressBar.isVisible = loadStates.append is LoadState.Loading
+            }
+        }
+
+        viewModel.status.observe(this, {
             when (it.status) {
                 Status.ONLINE -> {
                     binding.onlineIndicator.setImageResource(R.drawable.online_color)
@@ -75,102 +162,16 @@ class ChatLogActivity : AppCompatActivity() {
             }
         })
 
-
-        viewModel.documentId.observe(this, {
-            if (it.isNotEmpty() && it !== null) {
-                viewModel.incomingMessageListener(it).observe(this, {
-                    chatAdapter.refresh()
-                    binding.chatLogRecycler.smoothScrollToPosition(0)
-                })
-            }
-        })
-
-        viewModel.replies.observe(this, {
-            binding.suggestionRv.adapter = SuggestionAdapter(it) { reply ->
-                binding.edittextChatLog.text.clear()
-                binding.edittextChatLog.setText(reply)
-            }
-        })
-
-        binding.backButtonChatLog.setOnClickListener {
-            val intent = Intent(this, HomeActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-
-
-        viewModel.isScrollable.observe(this, {
-            if (it) {
-                if (binding.chatLogRecycler.adapter !== null)
-                    chatAdapter.refresh()
-                binding.chatLogRecycler.scrollToPosition(0)
-            }
-        })
-
-
-
-        if (user != null) {
-            viewModel.listenForMessages(user).observe(this@ChatLogActivity, { docId ->
-                lifecycleScope.launch {
-                    viewModel.getFlow(docId).collect {
-                        chatAdapter.submitData(it)
-                    }
-                }
-
-            })
-        }
-
-        lifecycleScope.launch {
-            chatAdapter.loadStateFlow.collectLatest { loadStates ->
-                binding.loadMoreProgressBar.isVisible = loadStates.refresh is LoadState.Loading
-                binding.loadMoreProgressBar.isVisible = loadStates.append is LoadState.Loading
-            }
-        }
         _apiService = Client.getClient("https://fcm.googleapis.com/")!!.create(
             ApiService::class.java
         )
 
-        binding.sendButton.setOnClickListener {
-            if (binding.edittextChatLog.text.toString() == "") {
-                binding.edittextChatLog.requestFocus()
-                return@setOnClickListener
-            } else {
-                viewModel.notify = true
-                viewModel.performSendMessage(user, edittext_chat_log.text.toString(), _apiService)
-                binding.edittextChatLog.text.clear()
-                binding.chatLogRecycler.smoothScrollToPosition(0)
-            }
-        }
-        binding.edittextChatLog.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-                if (binding.edittextChatLog.text.toString().trim().isNotEmpty()) {
-                    if (toId !== null) {
-                        viewModel.updateTypingStatus(Status.ONLINE_AND_TYPING)
-                    }
-                } else {
-                    viewModel.updateTypingStatus(Status.ONLINE)
-                }
-            }
-        })
-        binding.sendImage.setOnClickListener {
-            viewModel.notify = true
-            pickImages.launch("image/*")
-        }
     }
 
     override fun getTheme(): Resources.Theme {
         val theme = super.getTheme()
         val sharedPref = this.getSharedPreferences(getString(R.string.v_care), Context.MODE_PRIVATE)
-        Log.d("color", "getting:${sharedPref.getLong("theme", THEME_1)}")
+
         when (sharedPref.getLong("theme", THEME_1)) {
             THEME_1 -> theme.applyStyle(R.style.AppTheme, true)
             SettingsFragment.THEME_2 -> theme.applyStyle(R.style.OverlayThemeBlue, true)
@@ -188,14 +189,22 @@ class ChatLogActivity : AppCompatActivity() {
     }
 
     private fun setUi(user: User?) {
-        if (viewModel.returnUser(user)?.category == getString(R.string.seeker)) {
+        if (user?.category == getString(R.string.seeker)) {
             binding.categoryTextChatLog.setBackgroundResource(R.drawable.rounded_bg_yellow_coloured)
             binding.categoryTextChatLog.setTextColor(Color.parseColor("#fdd835"))
         }
-        binding.usernameChatLog.text = viewModel.returnUser(user)?.username
-        Picasso.get().load(viewModel.returnUser(user)?.profileImageUrl).into(binding.chatLogProfile)
+        binding.usernameChatLog.text = user?.username
+        Picasso.get().load(user?.profileImageUrl).into(binding.chatLogProfile)
         binding.categoryTextChatLog.text = user?.category
     }
+
+    private val _pickImages =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            val user = intent.getParcelableExtra<User>(NewMessageFragment.USER_KEY)
+            if (user != null && uri != null) {
+                _apiService?.let { viewModel.imageMessage(uri, user, it) }
+            }
+        }
 
     override fun onResume() {
         super.onResume()
@@ -221,11 +230,4 @@ class ChatLogActivity : AppCompatActivity() {
     }
 
 
-    private val pickImages =
-        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            val user = intent.getParcelableExtra<User>(NewMessageFragment.USER_KEY)
-            if (user != null && uri != null) {
-                _apiService?.let { viewModel.imageMessage(uri, user, it) }
-            }
-        }
 }

@@ -1,11 +1,9 @@
 package com.example.vcare.login
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,7 +54,7 @@ class LoginUserDetailFragment : Fragment() {
         )
         setupUI()
         binding.selectPhotoButton.setOnClickListener {
-            pickImages.launch("image/*")
+            _pickImages.launch("image/*")
         }
         binding.register.setOnClickListener {
             if (binding.loginUsernameEdit.text.toString().trim().isEmpty()) {
@@ -92,13 +90,14 @@ class LoginUserDetailFragment : Fragment() {
 
     private var _selectedPhotoUri: Uri? = null
 
-    private val pickImages = registerForActivityResult(ActivityResultContracts.GetContent()){ uri: Uri? ->
-        uri?.let { it ->
-            _selectedPhotoUri = uri
-            Picasso.get().load(it).into(binding.circularProfileHolder)
-            binding.selectPhotoButton.alpha = 0f
+    private val _pickImages =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let { it ->
+                _selectedPhotoUri = uri
+                Picasso.get().load(it).into(binding.circularProfileHolder)
+                binding.selectPhotoButton.alpha = 0f
+            }
         }
-    }
 
 
     private fun setupUI() {
@@ -124,7 +123,7 @@ class LoginUserDetailFragment : Fragment() {
     private fun uploadimageToFirebaseStorage(category: String) {
         val fileName = UUID.randomUUID().toString()
         val ref = FirebaseStorage.getInstance().getReference("/images/$fileName")
-        _selectedPhotoUri?.let {
+        _selectedPhotoUri?.let { it ->
             ref.putFile(it).addOnSuccessListener {
                 ref.downloadUrl.addOnSuccessListener {
                     saveUserToFirebaseDatabase(it.toString(), category)
