@@ -76,7 +76,6 @@ class ChatLogActivity : AppCompatActivity() {
                 viewModel.notify = true
                 viewModel.performSendMessage(user, edittext_chat_log.text.toString(), _apiService)
                 binding.edittextChatLog.text.clear()
-                binding.chatLogRecycler.smoothScrollToPosition(0)
             }
         }
 

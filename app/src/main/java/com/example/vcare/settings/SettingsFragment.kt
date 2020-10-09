@@ -70,7 +70,6 @@ class SettingsFragment : Fragment() {
                 editor.apply()
                 binding.radioGroupLight.visibility = View.GONE
                 binding.radioGroupDark.visibility = View.VISIBLE
-                Log.d("theme", "going to helper")
                 val intent = Intent(requireContext(), HelperActivity::class.java)
                 startActivity(intent)
 
