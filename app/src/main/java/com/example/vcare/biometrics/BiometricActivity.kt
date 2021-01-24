@@ -49,7 +49,7 @@ class BiometricActivity : AppCompatActivity() {
         val promptInfo = BiometricPrompt.PromptInfo.Builder()
             .setTitle(getString(R.string.auth_required))
             .setSubtitle(getString(R.string.continue_using_app))
-            .setDeviceCredentialAllowed(true)
+            .setNegativeButtonText("cancel")
             .build()
 
         val biometricPrompt = executor?.let {
