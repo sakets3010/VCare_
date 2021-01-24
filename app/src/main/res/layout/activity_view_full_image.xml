@@ -4,26 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primaryColor"
     tools:context=".chatLog.ViewFullImageActivity">
-    <TextView
-        android:id="@+id/textView6"
-        style="@style/TextToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"
-        android:gravity="center"
-        android:text="@string/image"
-        android:textAllCaps="false"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
     <com.jsibbold.zoomage.ZoomageView
         android:id="@+id/image_full"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView6"
+        app:layout_constraintTop_toTopOf="parent"
         app:zoomage_restrictBounds="false"
         app:zoomage_animateOnReset="true"
         app:zoomage_autoResetMode="UNDER"

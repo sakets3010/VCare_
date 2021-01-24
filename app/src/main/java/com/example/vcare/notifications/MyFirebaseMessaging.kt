@@ -9,7 +9,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Icon
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import com.example.vcare.R
 import com.example.vcare.helper.ChatRepository
@@ -21,10 +20,10 @@ import java.util.*
 
 class MyFirebaseMessaging() : FirebaseMessagingService() {
     companion object {
-        val KEY_TEXT_REPLY = "key_text_reply"
-        val USER_ID = "userId"
-        val TO_ID = "toId"
-        val NOTIFICATION_ID = "notificationId"
+        const val KEY_TEXT_REPLY = "key_text_reply"
+        const val USER_ID = "userId"
+        const val TO_ID = "toId"
+        const val NOTIFICATION_ID = "notificationId"
     }
 
 

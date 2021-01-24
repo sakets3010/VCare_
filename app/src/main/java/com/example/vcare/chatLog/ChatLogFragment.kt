@@ -1,71 +1,69 @@
 package com.example.vcare.chatLog
 
-import android.content.Context
-import android.content.Intent
-import android.content.res.Resources
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vcare.R
 import com.example.vcare.chatLog.paging.ChatPagedAdapter
-import com.example.vcare.databinding.ActivityChatLogBinding
+import com.example.vcare.databinding.FragmentChatLogBinding
 import com.example.vcare.helper.Status
 import com.example.vcare.helper.User
-import com.example.vcare.home.HomeActivity
-import com.example.vcare.home.newMessage.NewMessageFragment
 import com.example.vcare.notifications.ApiService
 import com.example.vcare.notifications.Client
-import com.example.vcare.settings.SettingsFragment
-import com.example.vcare.settings.SettingsFragment.Companion.THEME_1
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_chat_log.*
+import kotlinx.android.synthetic.main.fragment_chat_log.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-
 @AndroidEntryPoint
-class ChatLogActivity : AppCompatActivity() {
+class ChatLogFragment : Fragment() {
     private val viewModel by viewModels<ChatLogViewmodel>()
     private var _apiService: ApiService? = null
+    private lateinit var binding: FragmentChatLogBinding
+    private val args: ChatLogFragmentArgs by navArgs()
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.fragment_chat_log, container, false
+        )
 
-    private lateinit var binding: ActivityChatLogBinding
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityChatLogBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
 
         val chatAdapter = ChatPagedAdapter()
 
         setRecycler(chatAdapter)
 
-        binding.suggestionRv.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true)
+        binding.suggestionRv.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, true)
 
-        val user = intent.getParcelableExtra<User>(NewMessageFragment.USER_KEY)
-
-
-        val toId = user?.uid
+        val user = args.userId
+        user.uid
         setUi(user)
 
         binding.backButtonChatLog.setOnClickListener {
-            val intent = Intent(this, HomeActivity::class.java)
-            startActivity(intent)
-            finish()
+            findNavController().navigate(R.id.action_chatLogFragment_to_homeFragment)
         }
 
         binding.sendButton.setOnClickListener {
@@ -91,9 +89,7 @@ class ChatLogActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
 
                 if (binding.edittextChatLog.text.toString().trim().isNotEmpty()) {
-                    if (toId !== null) {
-                        viewModel.updateTypingStatus(Status.ONLINE_AND_TYPING)
-                    }
+                    viewModel.updateTypingStatus(Status.ONLINE_AND_TYPING)
                 } else {
                     viewModel.updateTypingStatus(Status.ONLINE)
                 }
@@ -113,24 +109,23 @@ class ChatLogActivity : AppCompatActivity() {
             }
         })
 
-        viewModel.messageAdded.observe(this, {
+        viewModel.messageAdded.observe(viewLifecycleOwner, {
             if (it) {
                 chatAdapter.refresh()
             }
         })
 
-        if (user != null) {
-            viewModel.documentId.observe(this@ChatLogActivity, { docId ->
-                lifecycleScope.launch {
-                    viewModel.getFlow(docId).collect {
-                        chatAdapter.submitData(it)
-                    }
+        viewModel.documentId.observe(viewLifecycleOwner, { docId ->
+            lifecycleScope.launch {
+                Log.d("observe","calling observe")
+                viewModel.getFlow(docId).collect {
+                    chatAdapter.submitData(it)
                 }
+            }
 
-            })
-        }
+        })
 
-        viewModel.replies.observe(this, {
+        viewModel.replies.observe(viewLifecycleOwner, {
             binding.suggestionRv.adapter = SuggestionAdapter(it) { reply ->
                 binding.edittextChatLog.text.clear()
                 binding.edittextChatLog.setText(reply)
@@ -144,7 +139,7 @@ class ChatLogActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.status.observe(this, {
+        viewModel.status.observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.ONLINE -> {
                     binding.onlineIndicator.setImageResource(R.drawable.online_color)
@@ -161,23 +156,13 @@ class ChatLogActivity : AppCompatActivity() {
             }
         })
 
-        _apiService = Client.getClient("https://fcm.googleapis.com/")!!.create(
+        _apiService = Client.getClient("https://fcm.googleapis.com/")?.create(
             ApiService::class.java
-        )
+        ) ?: throw IllegalArgumentException("name expected")
 
-    }
 
-    override fun getTheme(): Resources.Theme {
-        val theme = super.getTheme()
-        val sharedPref = this.getSharedPreferences(getString(R.string.v_care), Context.MODE_PRIVATE)
 
-        when (sharedPref.getLong("theme", THEME_1)) {
-            THEME_1 -> theme.applyStyle(R.style.AppTheme, true)
-            SettingsFragment.THEME_2 -> theme.applyStyle(R.style.OverlayThemeBlue, true)
-            SettingsFragment.THEME_3 -> theme.applyStyle(R.style.DarkOverlayDefault, true)
-            SettingsFragment.THEME_4 -> theme.applyStyle(R.style.DarkOverlayNonDefault, true)
-        }
-        return theme
+        return binding.root
     }
 
 
@@ -199,8 +184,8 @@ class ChatLogActivity : AppCompatActivity() {
 
     private val _pickImages =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            val user = intent.getParcelableExtra<User>(NewMessageFragment.USER_KEY)
-            if (user != null && uri != null) {
+            val user = args.userId
+            if (uri != null) {
                 _apiService?.let { viewModel.imageMessage(uri, user, it) }
             }
         }

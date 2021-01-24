@@ -13,7 +13,6 @@ object Client {
                 .baseUrl(url)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
-
         }
         return retrofit
     }

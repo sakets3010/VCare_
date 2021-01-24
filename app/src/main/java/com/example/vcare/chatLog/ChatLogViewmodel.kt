@@ -242,7 +242,7 @@ class ChatLogViewmodel @ViewModelInject constructor(
                         }
                         notify = false
 
-                    } else {
+                    }else {
                         Log.d("ChatLogActivity", "Current data: null")
                     }
                 }
@@ -254,9 +254,7 @@ class ChatLogViewmodel @ViewModelInject constructor(
         repository.getChatReference()?.document(Id)?.collection("Messages")?.add(chatMessage)
             ?.addOnSuccessListener {
                 updateMessageStatus(Id, it)
-
             }
-
     }
 
     private fun updateMessageStatus(id: String, it: DocumentReference?) {
