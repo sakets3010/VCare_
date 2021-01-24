@@ -9,12 +9,20 @@
         android:id="@+id/newMessageFrag"
         android:name="com.example.vcare.home.newMessage.NewMessageFragment"
         android:label="fragment_new_message"
-        tools:layout="@layout/fragment_new_message" />
+        tools:layout="@layout/fragment_new_message" >
+        <action
+            android:id="@+id/action_newMessageFrag_to_chatLogFragment"
+            app:destination="@id/chatLogFragment" />
+    </fragment>
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.vcare.home.home.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_chatLogFragment"
+            app:destination="@id/chatLogFragment" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.vcare.home.profile.ProfileFragment"
@@ -29,4 +37,20 @@
         android:name="com.example.vcare.settings.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/chatLogFragment"
+        android:name="com.example.vcare.chatLog.ChatLogFragment"
+        android:label="ChatLogFragment" >
+        <action
+            android:id="@+id/action_chatLogFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <argument
+            android:name="userId"
+            app:argType="com.example.vcare.helper.User" />
+    </fragment>
+    <activity
+        android:id="@+id/viewFullImageActivity"
+        android:name="com.example.vcare.chatLog.ViewFullImageActivity"
+        android:label="activity_view_full_image"
+        tools:layout="@layout/activity_view_full_image" />
 </navigation>

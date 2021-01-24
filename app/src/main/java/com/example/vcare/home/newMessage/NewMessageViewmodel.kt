@@ -30,7 +30,7 @@ class NewMessageViewmodel@ViewModelInject constructor(private val repository: Ch
                 val users = mutableListOf<User>()
                 snapshot.documents.forEach {
                     val user = it.toObject(User::class.java)
-                    if (user !== null && !(user.uid.equals(Firebase.auth.uid))) {
+                    if (user !== null && user.uid != Firebase.auth.uid) {
                         users.add(user)
                     }
                 }

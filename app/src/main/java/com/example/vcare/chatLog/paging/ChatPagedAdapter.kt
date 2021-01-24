@@ -187,7 +187,7 @@ class ChatPagedAdapter : PagingDataAdapter<ChatMessage, RecyclerView.ViewHolder>
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position)
-        val itemPrev = if (!position.equals(itemCount - 1)) {
+        val itemPrev = if (position != itemCount - 1) {
             getItem(position + 1)
         } else getItem(position)
         if (item?.fromId == Firebase.auth.uid) {

@@ -1,4 +1,4 @@
-package com.example.vcare.biometrics
+ package com.example.vcare.biometrics
 
 import android.content.Intent
 import android.hardware.biometrics.BiometricManager
@@ -49,7 +49,7 @@ class BiometricActivity : AppCompatActivity() {
         val promptInfo = BiometricPrompt.PromptInfo.Builder()
             .setTitle(getString(R.string.auth_required))
             .setSubtitle(getString(R.string.continue_using_app))
-            .setDeviceCredentialAllowed(true)
+            .setNegativeButtonText("cancel")
             .build()
 
         val biometricPrompt = executor?.let {

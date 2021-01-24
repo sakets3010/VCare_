@@ -1,10 +1,8 @@
 package com.example.vcare.home.home
 
 
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,10 +10,9 @@ import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.example.vcare.R
-import com.example.vcare.chatLog.ChatLogActivity
 import com.example.vcare.databinding.FragmentHomeBinding
-import com.example.vcare.home.newMessage.NewMessageFragment
 import com.example.vcare.notifications.OreoNotification
 import com.google.firebase.iid.FirebaseInstanceId
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,11 +41,9 @@ class HomeFragment : Fragment() {
             if(chatMessages.isNotEmpty()){
                 setNotEmpty()
                 binding.homeRecycler.adapter = HomeAdapter(chatMessages) { chatPartner ->
-                    val intent = Intent(requireContext(), ChatLogActivity::class.java)
-                    intent.putExtra(NewMessageFragment.USER_KEY, chatPartner)
-                    startActivity(intent)
+                    val action = HomeFragmentDirections.actionHomeFragmentToChatLogFragment(chatPartner ?: throw IllegalArgumentException("null encountered"))
+                    findNavController().navigate(action)
                 }
-
             }
         })
         viewModel.updateToken(FirebaseInstanceId.getInstance().token)

@@ -1,16 +1,13 @@
 package com.example.vcare.home.newMessage
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.example.vcare.R
-import com.example.vcare.chatLog.ChatLogActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_new_message.*
 
@@ -27,9 +24,10 @@ class NewMessageFragment : Fragment() {
     ): View? {
         viewModel.availableUsers.observe(viewLifecycleOwner, { users ->
             recyclerview_newMessage.adapter = NewMessageAdapter(users) { availableUsers ->
-                val intent = Intent(requireContext(), ChatLogActivity::class.java)
-                intent.putExtra(USER_KEY, availableUsers)
-                startActivity(intent)
+                val action = NewMessageFragmentDirections.actionNewMessageFragToChatLogFragment(
+                    availableUsers ?: throw IllegalArgumentException("null encountered")
+                )
+                findNavController().navigate(action)
             }
         })
         return inflater.inflate(R.layout.fragment_new_message, container, false)
